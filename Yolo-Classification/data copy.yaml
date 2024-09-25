@@ -1,0 +1,11 @@
+names: ['pencil - v1 2022-04-21 11-44am']
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: detecting-pencils
+  url: https://universe.roboflow.com/ethan-muchnik/detecting-pencils/dataset/1
+  version: 1
+  workspace: ethan-muchnik
+test: ./Images/Detecting-Pencils-1/test/images
+train: ./Images/Detecting-Pencils-1/train/images
+val: ./Images/Detecting-Pencils-1/valid/images

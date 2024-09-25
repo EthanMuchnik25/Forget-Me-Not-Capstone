@@ -10,7 +10,7 @@ def runifmain():
     model = YOLO('YoloModels/yolov10x.pt')
 
     # Perform object detection
-    results = model('Images/image.jpg')
+    results = model('Images/monitor2.png')
 
     # Access the first image result (if you're processing multiple images, iterate over them)
     result = results[0]
