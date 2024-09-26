@@ -1,5 +1,5 @@
 # given a folder containing text files i want the first character  of each file to be changed from 0 to 9 and then a 1 added after it
-modText = "0"
+modText = "80"
 
 def modifyFile(myFile):
     # Open the file
@@ -40,4 +40,4 @@ def modifyFiles(folder):
         modifyFile(os.path.join(folder, file))
 
 # Modify all the files in the folder
-modifyFiles("./datasets/Images/Detecting-Pencils-1/test/labels/")
+modifyFiles("./datasets/Images/Detecting-Pencils-1/train/labels/")
