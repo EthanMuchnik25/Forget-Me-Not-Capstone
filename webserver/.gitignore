@@ -8,4 +8,5 @@
 notes_private/
 __pycache__/
 .venv/
+.venv/*
 file_uploads/*
