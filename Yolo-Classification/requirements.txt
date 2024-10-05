@@ -20,4 +20,6 @@ tqdm
 torchvision
 scipy
 pillow
-fiftyone
+fiftyone  # Use the version you're working with
+motor  # Specify the version compatible with pymongo
+pymongo   # Ensure compatibility with motor
