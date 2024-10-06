@@ -5,12 +5,11 @@ import cv2
 
 
 def runifmain():
-
     # Load the YOLOv8 model
-    model = YOLO('YoloModels/yolov10x.pt')
+    model = YOLO('../YoloTrainingRes/Yolo11X-200-epoch-results/weights/best.pt')
 
     # Perform object detection
-    results = model('datasets/Images/monitor2.png')
+    results = model('datasets/Images/Monitors.jpg')
 
     # Access the first image result (if you're processing multiple images, iterate over them)
     result = results[0]
@@ -19,7 +18,7 @@ def runifmain():
     result.show()
 
     # Save photo
-    result.save('datasets/Images/monitor2.png')
+    # result.save('datasets/Images/monitor2.png')
 
 
 def runifmain2():

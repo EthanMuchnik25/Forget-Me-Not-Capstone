@@ -79,7 +79,7 @@ names:
   77: toothbrush
   78: toaster
   79: hair drier
-  80: pencil - v1 2022-04-21 11-44am
+  80: pencil
 nc: 81
 test: ./Images/Final/test/images
 train: ./Images/Final/train/images

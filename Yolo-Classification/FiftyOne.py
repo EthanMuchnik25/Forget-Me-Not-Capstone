@@ -79,6 +79,7 @@ def filterCoco(middleDataStorageDirectory):
 
 
     sourceFolder = middleDataStorageDirectory + "/{}/val/"
+
     # Make a list of all nums from 0 to 80 not present in CategoriesNum.txt
     notInList = [x for x in range(0, 81) if x not in categories]   
 
@@ -109,6 +110,30 @@ def filterCoco(middleDataStorageDirectory):
         if shouldDelete:
             os.remove(sourceFolder.format("labels") + labelFile)
             os.remove(sourceFolder.format("images") + labelFile.replace(".txt", ".jpg"))
+    
+       # Create conversion dictionary
+    conversionDict = {str(categories[i]): str(i) for i in range(len(categories))}
+
+    # Modify the label files sourceFolder.format("labels") to have the correct values
+    modifyFiles(sourceFolder.format("labels"), conversionDict=conversionDict)
+
+    # Open dataset.yaml file
+    with open(middleDataStorageDirectory + "/dataset.yaml", 'r') as stream:
+        try:
+            data = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+
+        # Delete all the categories that are in notInList
+        data['names'] = [data['names'][i] for i in range(len(data['names'])) if i in categories]
+
+    # Write the new data to the dataset.yaml file
+    with open(middleDataStorageDirectory + "/dataset.yaml", 'w') as f:
+        yaml.dump(data, f)
+
+        
+
+    
 
 def CopyFiles(dataStorageDirectory, middleDataStorageDirectory):
     # Take 70% of files in the "F:\Data\\not-initial\\images\\val" folder and move them to the "F:\Data\\Final\\train\images" folder
@@ -117,14 +142,6 @@ def CopyFiles(dataStorageDirectory, middleDataStorageDirectory):
     for folder in trainValTestFolders:
         for imageLabel in imagesLabels:
             os.makedirs(os.path.join(dataStorageDirectory, folder, imageLabel), exist_ok=True)
-
-    # os.makedirs(train_folder.format("images"), exist_ok=True)
-    # os.makedirs(val_folder.format("images"), exist_ok=True)
-    # os.makedirs(test_folder.format("images"), exist_ok=True)
-
-    # os.makedirs(train_folder.format("labels"), exist_ok=True)
-    # os.makedirs(val_folder.format("labels"), exist_ok=True)
-    # os.makedirs(test_folder.format("labels"), exist_ok=True)
 
     # Remove all Image files in the "F:\Data\\Intermediary\\images\\val\\"" folder that are also not present in the "F:\Data\\Intermediary\\labels\\val\\" folder
     sourceFolder = middleDataStorageDirectory + "/{}/val/"
@@ -147,9 +164,6 @@ def CopyFiles(dataStorageDirectory, middleDataStorageDirectory):
     # change each filename in filesLabel to be .txt instead of .jpg
     for i in range(len(filesLabel)):
         filesLabel[i] = filesLabel[i].replace(".jpg", ".txt")
-
-    # change each filename in files to be .jpg instead of .txt
-    "F:\Data\Intermediary\labels\val\000000000139.txt"
 
     trainSplit = int(len(files) * 0.7)
 
@@ -265,6 +279,7 @@ def dockerPrep(basePath):
     train_folder = settings['datasets_dir'][:5] + 'Final/train/{}/'
     val_folder = settings['datasets_dir'][:5] + 'Final/val/{}/'
     test_folder = settings['datasets_dir'][:5] + 'Final/test/{}/'
+
 def convertLabelValues():
     
         # Go through the list of all label files in the "F:\Data\\Intermediary\\labels\\val\\" folder
@@ -322,14 +337,44 @@ def modifyFile(myFile, modText):
     file.write(text)
     file.close()
 
-def modifyFiles(folder, modAmmount):
+def modifyFileUsingConversionDict(myFile, conversionDict):
+    # Open the file
+    file = open(myFile, "r")
+    text = file.read()
+    file.close()
+
+    # Modify the "first few characters until the first space of each line"
+    
+    #for each line
+    lines = text.split("\n")
+    for i in range(len(lines)):
+        line = lines[i]
+        #for each character in the line
+        for j in range(len(line)):
+            #if the character is a space
+            if line[j] == " ":
+                #modify the first character
+                lines[i] = conversionDict[line[:j]] + line[j:]
+                break
+    # Join the lines back together
+    text = "\n".join(lines)
+    
+
+    # Write the modified text back to the file
+    file = open(myFile, "w")
+    file.write(text)
+    file.close()
+
+def modifyFiles(folder, modAmmount = None, conversionDict=None):
     # Get all the files in the folder
-    import os
     files = os.listdir(folder)
 
     # Modify each file
     for file in files:
-        modifyFile(os.path.join(folder, file), modAmmount)
+        if conversionDict is not None:
+            modifyFileUsingConversionDict(os.path.join(folder, file), conversionDict)
+        else:
+            modifyFile(os.path.join(folder, file), modAmmount)
 
 def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
     testPath = os.path.join(addDatasetPath, "test/{}")
@@ -357,7 +402,7 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
             print(exc)
 
     ncOriginal = originalData['nc']
-
+    print(type(originalData['names']))
     if type(data['names']) == list:
         # get length of originalData['names']
         length = len(originalData['names'])
@@ -373,7 +418,7 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
 
     # add key value pairs in data to originalData
     for key in data['names']:
-        originalData['names'][key] = data['names'][key]
+        originalData['names'].append(data['names'][key])
 
     #update nc in originalData  
     originalData['nc'] = len(originalData['names'])
@@ -397,26 +442,20 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
             for file in os.listdir(imageLabelPath):
                 shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i].format(imageLabel), file))
 
-
-    
-
 def train(dataStorageDirectory):
 
     settings['datasets_dir'] = dataStorageDirectory
 
-    # Load the YOLOv8 model
+    # Load the YOLOv11 model
     model = YOLO('YoloModels/yolo11l.pt')
 
     # Perform object detection
-    model.train(data=os.path.join(dataStorageDirectory, "data.yaml"), imgsz=640, epochs=10)
+    model.train(data=os.path.join(dataStorageDirectory, "data.yaml"), imgsz=640, epochs=400)
         
 
 # based on arg of -d, -c, -t you either run download data, copyfiles and train, copyfiles and train or train
 
 if __name__ == "__main__":
-    
-    # settings['datasets_dir'] = "F:\Data\\datasets\\"
-    # print(settings)
     parser = argparse.ArgumentParser()
     parser.add_argument('-is', '--initialDataStorageDirectory', type =str, default="/app/initial-download")
     parser.add_argument('-ms', '--middleDataStorageDirectory', type =str, default="/app/Intermediary") 
@@ -431,13 +470,6 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--copyFiles', action='store_true')
     parser.add_argument('-t', '--train', action='store_true')
     args = parser.parse_args()
-    # if args.dataStorageDirectory:
-    #     settings['datasets_dir'] = args.data_storage_directory
-
-    # train_folder = settings['datasets_dir'][:9] + 'Final\\train\\{}\\'
-    # val_folder = settings['datasets_dir'][:9] + 'Final\\val\\{}\\'
-    # test_folder = settings['datasets_dir'][:9] + 'Final\\test\\{}\\'
-
 
     if args.downloadData:
         downLoadData(args.initialDataStorageDirectory, args.middleDataStorageDirectory)
@@ -449,8 +481,6 @@ if __name__ == "__main__":
     if args.dockerPrep:
         dockerPrep(args.dockerPrep)
     if args.add:
-        print("yoo wassup this is your boi sk")
-        print(args.add)
         addDatasetToBiggerDataset(args.dataStorageDirectory, args.add)
     if args.train:
         train(args.dataStorageDirectory)
