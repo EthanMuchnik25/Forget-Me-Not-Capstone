@@ -58,17 +58,23 @@ test_folder = ''
 
 # print(conversionFromJSONToYAML)
 
-def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory):
+def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split):
     
     name = "coco-2017"
     settings['datasets_dir'] = initialDataStorageDirectory
-    dataset = foz.load_zoo_dataset(name, label_types="detections", split="validation")
+    dataset = foz.load_zoo_dataset(name, label_types="detections", split=split)
+    
+    # delete and create
+    if os.path.exists(middleDataStorageDirectory):
+        shutil.rmtree(middleDataStorageDirectory)
+    os.makedirs(middleDataStorageDirectory)
 
     dataset.export(
         export_dir= middleDataStorageDirectory,
         dataset_type=fo.types.YOLOv5Dataset,  # Specify the export format
         label_field="ground_truth",           # Specify the field containing labels (if applicable)
     )
+
 
 def filterCoco(middleDataStorageDirectory):
 
@@ -112,7 +118,7 @@ def filterCoco(middleDataStorageDirectory):
             os.remove(sourceFolder.format("images") + labelFile.replace(".txt", ".jpg"))
     
        # Create conversion dictionary
-    conversionDict = {str(categories[i]): str(i) for i in range(len(categories))}
+    conversionDict = {categories[i]: i for i in range(len(categories))}
 
     # Modify the label files sourceFolder.format("labels") to have the correct values
     modifyFiles(sourceFolder.format("labels"), conversionDict=conversionDict)
@@ -124,18 +130,19 @@ def filterCoco(middleDataStorageDirectory):
         except yaml.YAMLError as exc:
             print(exc)
 
-        # Delete all the categories that are in notInList
-        data['names'] = [data['names'][i] for i in range(len(data['names'])) if i in categories]
+        # # Delete all the categories that are in notInList
+        data['names'] = [data['names'][i] for i in range(len(data['names']))]
 
     # Write the new data to the dataset.yaml file
     with open(middleDataStorageDirectory + "/dataset.yaml", 'w') as f:
         yaml.dump(data, f)
 
-        
-
-    
-
 def CopyFiles(dataStorageDirectory, middleDataStorageDirectory):
+    # delete and create dataStorageDirectory
+    if os.path.exists(dataStorageDirectory):
+        shutil.rmtree(dataStorageDirectory)
+    os.makedirs(dataStorageDirectory)   
+
     # Take 70% of files in the "F:\Data\\not-initial\\images\\val" folder and move them to the "F:\Data\\Final\\train\images" folder
     trainValTestFolders = ["train", "val", "test"]
     imagesLabels = ["images", "labels"]
@@ -227,6 +234,9 @@ def CopyFiles(dataStorageDirectory, middleDataStorageDirectory):
         data['train'] = dataStorageDirectory + "/train/images"
         data['test'] = dataStorageDirectory + "/test/images"
         data['nc'] = len(data['names'])
+
+        # convert names from list to dict
+        data['names'] = {i: data['names'][i] for i in range(len(data['names']))}
 
     # write to data.yaml
     with open(dataStorageDirectory + "/data.yaml", 'w') as f:
@@ -354,7 +364,7 @@ def modifyFileUsingConversionDict(myFile, conversionDict):
             #if the character is a space
             if line[j] == " ":
                 #modify the first character
-                lines[i] = conversionDict[line[:j]] + line[j:]
+                lines[i] = str(conversionDict[int(line[:j])]) + line[j:]
                 break
     # Join the lines back together
     text = "\n".join(lines)
@@ -377,16 +387,14 @@ def modifyFiles(folder, modAmmount = None, conversionDict=None):
             modifyFile(os.path.join(folder, file), modAmmount)
 
 def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
+    print("add dataset path is : " + addDatasetPath)
     testPath = os.path.join(addDatasetPath, "test/{}")
     trainPath = os.path.join(addDatasetPath, "train/{}")
-    valPath = os.path.join(addDatasetPath, "val/{}")
+    valPath = os.path.join(addDatasetPath, "valid/{}")
 
     listPaths = [testPath, trainPath, valPath]
     
-    print(addDatasetPath)
     dataYamlPath = os.path.join(addDatasetPath, "data.yaml")
-    print(dataYamlPath)
-    print("helldoasfasdf asdfasdf")
 
     # add names in add dataset to original dataset
     with open(dataYamlPath, 'r') as stream:
@@ -403,22 +411,48 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
 
     ncOriginal = originalData['nc']
     print(type(originalData['names']))
+    print(data)
+    print("data is : " + str(data))
     if type(data['names']) == list:
         # get length of originalData['names']
         length = len(originalData['names'])
         # add length to each element in data['names'] after converting to dict
-        data['names'] = {length + i: data['names'][i] for i in range(len(data['names']))}
-        
-    for key in data['names']:
-        for path in listPaths:
-            modifyFiles(path.format("labels"), str(ncOriginal))
-        
+        data['names'] = {i: data['names'][i] for i in range(len(data['names']))}
+    conversionDict = {}
+    newLabels = 0
+    # print(data['names'][i])
+    for i in data['names']:
+        print(data['names'][i])
+        if data['names'][i] in originalData['names'].values():
+            conversionDict[i] = (next(k for k, v in originalData['names'].items() if v == data['names'][i]))
+        else:
+            conversionDict[i] = newLabels + ncOriginal
+            newLabels += 1
+    print("the conversion dict is: ")
+    print(conversionDict)
+
+    # dump data to data.yaml
+    with open(dataYamlPath, 'w') as f:
+        # convert data['names'] via the conversionDict
+        tempDataNames = {}
+        for key, value in data['names'].items():
+            tempDataNames[conversionDict[key]] = value
+
+
+        data['names'] = tempDataNames
+
+
+        yaml.dump(data, f)
+
+
+    for path in listPaths:
+        modifyFiles(path.format("labels"), conversionDict=conversionDict)
 
         #TODO should modify labels in data names. should utilize modify script
 
     # add key value pairs in data to originalData
     for key in data['names']:
-        originalData['names'].append(data['names'][key])
+        originalData['names'][key] = data['names'][key]
 
     #update nc in originalData  
     originalData['nc'] = len(originalData['names'])
@@ -442,15 +476,15 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
             for file in os.listdir(imageLabelPath):
                 shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i].format(imageLabel), file))
 
-def train(dataStorageDirectory):
+def train(dataStorageDirectory, model = "yolo11n.yaml", epochs = 400, resume = False):
 
     settings['datasets_dir'] = dataStorageDirectory
 
     # Load the YOLOv11 model
-    model = YOLO('YoloModels/yolo11l.pt')
+    model = YOLO(model=model, task="detect")
 
     # Perform object detection
-    model.train(data=os.path.join(dataStorageDirectory, "data.yaml"), imgsz=640, epochs=400)
+    model.train(data=os.path.join(dataStorageDirectory, "data.yaml"), imgsz=640, epochs=epochs, resume=resume)
         
 
 # based on arg of -d, -c, -t you either run download data, copyfiles and train, copyfiles and train or train
@@ -462,17 +496,29 @@ if __name__ == "__main__":
     parser.add_argument('-ds', '--dataStorageDirectory', type =str, default="/app/datasets/Final")
     parser.add_argument('-dd', '--dockerDataPath',nargs='?', const=False, default=False)
     parser.add_argument('-yp', '--yamlPath',nargs='?', const=False, default=False)
-
+    parser.add_argument('-m', '--model', type =str, nargs='?', default=False)
     parser.add_argument('-d', '--downloadData', action='store_true')
     parser.add_argument('-f', '--filterCoco', action='store_true')
     parser.add_argument('-dp', '--dockerPrep', nargs='?', const=True, default=False)
-    parser.add_argument('-a', '--add', type=str, nargs='?', const="/app/datasets/Images/Detecting-Pencils-1/", default=None) 
+    parser.add_argument('-a', '--add', type=str, nargs='*',  default=None)
+    # parser.add_argument('-a', '--add', type=str, nargs='+', const="/app/datasets/Images/", default=None) 
     parser.add_argument('-c', '--copyFiles', action='store_true')
     parser.add_argument('-t', '--train', action='store_true')
+    parser.add_argument('-r', '--resume', action='store_true')
+    parser.add_argument('-s', '--split',  type =str, nargs='?', const="validation",default="validation")
+    parser.add_argument('-e', '--epochs',  type =int, nargs='?', const=400, default=400)
     args = parser.parse_args()
+    if args.add == []:
+        print(" is this running?")
+        folder_path = "/app/datasets/Images/"
+        directories = [d for d in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, d))]
+
+        for directory in directories:
+            args.add.append(os.path.join(folder_path, directory))
+        print("args add after modifying: " + str(args.add))
 
     if args.downloadData:
-        downLoadData(args.initialDataStorageDirectory, args.middleDataStorageDirectory)
+        downLoadData(args.initialDataStorageDirectory, args.middleDataStorageDirectory, args.split)
     if args.filterCoco:
         # convertLabelValues()
         filterCoco(args.middleDataStorageDirectory)
@@ -481,13 +527,16 @@ if __name__ == "__main__":
     if args.dockerPrep:
         dockerPrep(args.dockerPrep)
     if args.add:
-        addDatasetToBiggerDataset(args.dataStorageDirectory, args.add)
+        for i in args.add:
+            addDatasetToBiggerDataset(args.dataStorageDirectory, i)
     if args.train:
-        train(args.dataStorageDirectory)
-
-
-
-
-
-
-
+        if args.resume and args.model:
+            model = "/app/runs/detect/{}/weights/last.pt".format(args.model)
+        elif args.resume and not args.model:
+            model ="/app/runs/detect/train/weights/last.pt"
+        elif not args.resume and args.model:
+           model =  args.model
+        elif not args.resume and not args.model:
+          model =  "yolo11n.yaml"
+        
+        train(args.dataStorageDirectory, model, args.epochs, args.resume)

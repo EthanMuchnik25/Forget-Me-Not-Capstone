@@ -47,7 +47,7 @@ def runifmain2():
 
 def runifmain3():
      # get yolov4 model
-    model = YOLO('yolov4.pt')
+    model = YOLO('yolov4.pt', 
 
     # perform object detection
     results = model('image.jpg')

@@ -87,6 +87,7 @@ roboflow:
   url: https://universe.roboflow.com/ethan-muchnik/detecting-pencils/dataset/1
   version: 1
   workspace: ethan-muchnik
+task: detect
 test: ./Images/Detecting-Pencils-1/test/images
 train: ./Images/Detecting-Pencils-1/train/images
 val: ./Images/Detecting-Pencils-1/valid/images
