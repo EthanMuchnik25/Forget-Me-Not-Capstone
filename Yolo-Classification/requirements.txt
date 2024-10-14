@@ -1,0 +1,25 @@
+requests
+matplotlib
+ultralytics
+ultralytics-thop
+opencv-python-headless
+py-cpuinfo
+mpmath
+sympy
+pyyaml
+numpy
+networkx
+MarkupSafe
+fsspec
+filelock
+jinja2
+ultralytics-thop
+torchvision
+seaborn
+tqdm
+torchvision
+scipy
+pillow
+fiftyone  # Use the version you're working with
+motor  # Specify the version compatible with pymongo
+pymongo   # Ensure compatibility with motor

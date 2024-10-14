@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 9
+names: ['cup', 'dining table', 'keyboard', 'laptop', 'marker', 'mouse', 'pen', 'pencil - v1 2022-04-21 11-44am', 'tv']
+
+roboflow:
+  workspace: capstone-5zojy
+  project: detecting-pencils
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/capstone-5zojy/detecting-pencils/dataset/2

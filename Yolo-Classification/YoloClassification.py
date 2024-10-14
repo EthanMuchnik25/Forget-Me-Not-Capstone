@@ -1,22 +1,24 @@
 import matplotlib.pyplot as plt
 from ultralytics import YOLO
 import cv2
-from transformers import pipeline
+# from transformers import pipeline
 
 
 def runifmain():
-
     # Load the YOLOv8 model
-    model = YOLO('YoloModels/yolov10x.pt')
+    model = YOLO('../YoloTrainingRes/Yolo11X-200-epoch-results/weights/best.pt')
 
     # Perform object detection
-    results = model('Images/monitor2.png')
+    results = model('datasets/Images/Monitors.jpg')
 
     # Access the first image result (if you're processing multiple images, iterate over them)
     result = results[0]
 
     # Display the image with detections
     result.show()
+
+    # Save photo
+    # result.save('datasets/Images/monitor2.png')
 
 
 def runifmain2():
@@ -45,7 +47,7 @@ def runifmain2():
 
 def runifmain3():
      # get yolov4 model
-    model = YOLO('yolov4.pt')
+    model = YOLO('yolov4.pt', 
 
     # perform object detection
     results = model('image.jpg')
