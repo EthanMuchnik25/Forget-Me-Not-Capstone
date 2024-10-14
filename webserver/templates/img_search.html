@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Object Finder</title>
+  <!-- HTML notes: 
+     # means style applies to html things with id=...
+     . means stype applies to html things with class=...
+    -->
+  <!-- TODO this is nonfinal and arguably not great design. Redo later once
+     more decision have been made -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .container {
+      margin: 20px auto;
+      max-width: 600px;
+    }
+
+    img {
+      width: 100%;
+      max-width: 500px;
+      border: 2px solid #ccc;
+      margin: 20px 0;
+    }
+
+    #message {
+      color: red;
+      margin: 10px 0;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Object Finder</h1>
+
+    <!-- Search Form -->
+    <form id="search-form">
+      <input type="text" id="query" placeholder="Search for an object" required>
+      <button type="submit">Find Object</button>
+    </form>
+
+    <!-- Image Display Section -->
+    <div id="image-container">
+      <img id="object-image" src="" alt="Object not found{def}" style="display:none;">
+    </div>
+
+    <!-- Error/Message Section -->
+    <div id="message"></div>
+
+    <!-- Navigation Buttons -->
+    <div id="navigation-buttons" style="display:none;">
+      <button id="previous">See Previous</button>
+      <button id="next">See Next</button>
+    </div>
+  </div>
+
+  <script>
+    let currentImageIndex = 0;
+    let query = '';
+
+    // Handle search form submission
+    document.getElementById('search-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      query = document.getElementById('query').value;
+      currentImageIndex = 0;
+      fetchImage(query, currentImageIndex);
+    });
+
+    // Fetch image from the server
+    function fetchImage(query, index) {
+      fetch(`/text_query?query=${query}&index=${index}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById('object-image').src = data.imageUrl;
+            document.getElementById('object-image').style.display = 'block';
+            document.getElementById('message').textContent = '';
+            document.getElementById('navigation-buttons').style.display = 'block';
+          } else {
+            document.getElementById('message').textContent = data.message || 'Object not found{def2}';
+            document.getElementById('object-image').style.display = 'none';
+            document.getElementById('navigation-buttons').style.display = 'none';
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching image:', error);
+          document.getElementById('message').textContent = 'Server error. Please try again later.';
+          document.getElementById('object-image').style.display = 'none';
+        });
+    }
+
+    // Handle previous button click
+    document.getElementById('previous').addEventListener('click', function () {
+      if (currentImageIndex > 0) {
+        currentImageIndex--;
+        fetchImage(query, currentImageIndex);
+      }
+    });
+
+    // Handle next button click
+    document.getElementById('next').addEventListener('click', function () {
+      currentImageIndex++;
+      fetchImage(query, currentImageIndex);
+    });
+  </script>
+
+</body>
+
+</html>

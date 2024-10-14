@@ -19,9 +19,29 @@ This hopes to document some of the things we probably eventually have to get sor
 - Make a website that looks nice
 - Structure our whole website - home page, login, auth, eventually our other webpage
 
+### ***After making the initial draft, further website discussion
+- Would be helpful to clarify a couple of details on how the workflow should work
+  - For our cloud backend we need some way to authenticate. Should we add authentication to the local version as well?
+  - Does anyone know a common way that usernames and passwords are stored?
+  - How is session stored?
+  - -> For self, sean will probably be useful for this
+- What pages do we need? Home page? Login? Our webpage
+- I am trash at UI. A few more sketches would be helpful
 
-#### Check in with groupmates
-- Do we want to go all in on modular, or pick a platform and go with it?
-- What database are we actually using?
-  - Architecture choices, remote, local, etc...
-- some hardware stuff, designing and 3d printing something slightly nicer
+### Webserver refactoring
+- refactor the way recommended by chattyg
+- add necessary responses for website to work
+
+### Ensure file diagram in README.MD are up to date
+- do it
+
+## Personal notes dump
+#### Useful sites:
+nginx beginners guide: http://nginx.org/en/docs/beginners_guide.html\
+flask mega tutorial: https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xvii-deployment-on-linux\
+flask quickstart: https://flask.palletsprojects.com/en/3.0.x/quickstart/\
+bottom text
+
+
+
+

@@ -6,3 +6,7 @@
 !*/
 
 temp_images/*
+__pycache__/
+.venv/
+.venv/*
+
