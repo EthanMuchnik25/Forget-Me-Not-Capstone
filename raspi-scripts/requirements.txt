@@ -1,4 +1,0 @@
-requests
-picamzero
-SpeechRecognition
-pyttsx3
