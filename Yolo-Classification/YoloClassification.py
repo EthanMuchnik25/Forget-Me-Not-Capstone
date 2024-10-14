@@ -6,16 +6,25 @@ import cv2
 
 def runifmain():
     # Load the YOLOv8 model
-    model = YOLO('../YoloTrainingRes/Yolo11X-200-epoch-results/weights/best.pt')
+    model = YOLO('yolo11x.pt')
+    
+    #change the default path to dataset.yaml
+    
+
+    model.to('cpu')
 
     # Perform object detection
-    results = model('datasets/Images/Monitors.jpg')
-
+    results = model.val(data='C:\\Users\\muchn\\Intermediary\\dataset.yaml', imgsz=640, batch=8)
+    # print(result.boxes.map50)
     # Access the first image result (if you're processing multiple images, iterate over them)
-    result = results[0]
+    # result = results[0]
+    print(results.box.map50)
+
+    # access the labels from the result
+    # print(result.labels)
 
     # Display the image with detections
-    result.show()
+    # result.show()
 
     # Save photo
     # result.save('datasets/Images/monitor2.png')
@@ -47,7 +56,7 @@ def runifmain2():
 
 def runifmain3():
      # get yolov4 model
-    model = YOLO('yolov4.pt', 
+    model = YOLO('yolov4.pt')
 
     # perform object detection
     results = model('image.jpg')
@@ -59,4 +68,4 @@ def runifmain3():
 
 
 if __name__ == "__main__":
-    runifmain()
+    runifmain() 
