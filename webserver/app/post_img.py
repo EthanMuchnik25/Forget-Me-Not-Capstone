@@ -4,7 +4,7 @@ import time
 
 # Import YOLO
 if Config.YOLO_VER == "MOCK":
-    from fakes.fake_yolo import run_yolo
+    from app.model.fake_yolo import run_yolo
 elif Config.YOLO_VER == "V11":
     from app.model.run_yolo import run_yolo
 else:
@@ -46,7 +46,6 @@ def handle_img(f):
     image_path = str(img_time) + ".jpg"
 
     yolo_output = run_yolo(f)
-    print(yolo_output)
         
     f.seek(0)
     db_save_image(f, image_path)

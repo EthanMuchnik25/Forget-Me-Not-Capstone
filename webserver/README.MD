@@ -24,7 +24,6 @@ To Organize:
 │
 ├── /templates           # Template HTML webpages - sendable with flask fn render_template()
 │
-├── /fakes              # Contains dummy implementations of components
 ├── /notes              # Additional Documentation
 ├── /file_uploads       # Temporary directory to test file uploads
 │
