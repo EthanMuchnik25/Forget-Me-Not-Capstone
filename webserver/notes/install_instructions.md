@@ -13,9 +13,14 @@ The git repository still stores old commits even if the current branch is not at
 
 # To run with Docker container
 
+### Docker for vscode
+If you want to modify files in your docker container in vscode, install the `Remote-Containers` extension and connect to the container with `ctrl+shift+P -> Attach to Running Container`
+
+## Prod Container
+
 ### Create Container
 
-cd into this directory and type:
+cd into this directory (webserver) and type:
 ```
 docker build -t myapp .
 ```
@@ -27,16 +32,40 @@ docker run -p 4000:80 myapp
 ```
 Note that this commands sets port 80 of the docker container as port 4000 of your computer. In this case, you would have to access the website through [http://localhost:4000](http://localhost:4000). If you don't want to have to specify a port, map port 80 directly to port 80.
 
-To enter the docker container like a shell, type:
+
+## Debug Container
+
+With the debug container, you can edit the files in your computer's local directory and the changes will appear in the container. Additionally, this container doesn't automatically run gunicorn, allowing the user to enter the container with a shell, and easily restart gunicorn to keep up with modifications to the source code.
+
+cd into this directory and type:
 ```
-docker exec -it myapp /bin/bash
+docker build -f ./Dockerfile-dbg -t myapp-dbg .
+```
+my_app is the container name, but you can rename it if you wish
+
+Next, to run the container, and enter a shell on it, type:
+```
+docker run -v $(pwd)/:/webserver -p 4000:80 -it --entrypoint /bin/bash --name myapp-dbg myapp-dbg
 ```
 
-One more potentially useful detail, we can mount a local volume to a docker container when we run it by adding:
+Once you are in a shell in the container, you first want to start nginx because the dockerfile is stupid ;-;. Type this in the terminal:
 ```
--v $(pwd)/my-local-dir:/webserver
+nginx
+service status nginx
 ```
-to the `docker run` command.
+This command must be run whenever you restart the container.
+
+Next, you will want to run gunicorn to get the server operational. To do this, type: 
+```
+gunicorn --workers 1 --bind 0.0.0.0:8000 myapp:app
+```
+
+If you would like to get back into a shell on the container after leaving, type:
+```
+docker restart myapp-dbg
+docker exec -it myapp-dbg /bin/bash 
+```
+
 
 # To Run Server Locally:
 
