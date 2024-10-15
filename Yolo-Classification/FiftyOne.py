@@ -6,10 +6,13 @@ import argparse
 import json
 import yaml
 import shutil
+import cv2
+import numpy as np
 
 import matplotlib.pyplot as plt
 from ultralytics import YOLO
 from ultralytics import settings
+import albumentations as A
 
 
 
@@ -58,12 +61,14 @@ test_folder = ''
 
 # print(conversionFromJSONToYAML)
 
-def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split):
+def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split, max_samples):
     
     name = "coco-2017"
     settings['datasets_dir'] = initialDataStorageDirectory
-    dataset = foz.load_zoo_dataset(name, label_types="detections", split=split)
-    
+    if max_samples is None:
+        dataset = foz.load_zoo_dataset(name, label_types="detections", split=split)
+    else:
+        dataset = foz.load_zoo_dataset(name, label_types="detections", split=split, max_samples=max_samples)
     # delete and create
     if os.path.exists(middleDataStorageDirectory):
         shutil.rmtree(middleDataStorageDirectory)
@@ -77,11 +82,18 @@ def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split)
 
 
 def filterCoco(middleDataStorageDirectory):
-
+    print("in filterCoco")
     # import CategoriesNum.txt file
-    with open('categoriesNum.txt', 'r') as f:
+    # with open('categoriesNum.txt', 'r') as f:
+    #     categories = f.readlines()
+    #     categories = [int(x.strip()) for x in categories]   
+    
+    with open('categories.txt', 'r') as f:
         categories = f.readlines()
-        categories = [int(x.strip()) for x in categories]   
+        categories = [x for x in categories]
+        # clearn up the list
+        for i in range(len(categories)):
+            categories[i] = categories[i].strip()
 
 
     sourceFolder = middleDataStorageDirectory + "/{}/val/"
@@ -92,6 +104,24 @@ def filterCoco(middleDataStorageDirectory):
     # Go through the list of all label files in the "F:\Data\\Intermediary\\labels\\val\\"
 
     labelsList = os.listdir(sourceFolder.format("labels"))
+
+        # open up the dataset.yaml file
+    with open(middleDataStorageDirectory + "/dataset.yaml", 'r') as stream:
+        try:
+            data = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+        
+        # create conversion dictionary of 
+
+        # create conversion dictionary from categories variable to corresponding index in data['names']
+        conversionDict = {}
+        for i in range(len(data['names'])):
+            # check if i is in data['names'] and if so get corresponding index
+            if data['names'][i] in categories:
+                conversionDict[i] = categories.index(data['names'][i])
+
+    # Go through the list of all label files in the "F:\Data\\Intermediary\\labels\\val\\"
 
     # For each file, i want to get a list of the first word in the file before the first space on each line
 
@@ -109,16 +139,16 @@ def filterCoco(middleDataStorageDirectory):
             # delete the label files and corresponding image files that are not in the CategoriesNum.txt
             shouldDelete = False
             for i in range(len(lines)):
-                if lines[i] in notInList:
+                if lines[i] not in conversionDict.keys():
                     shouldDelete = True
                     break
 
         if shouldDelete:
             os.remove(sourceFolder.format("labels") + labelFile)
             os.remove(sourceFolder.format("images") + labelFile.replace(".txt", ".jpg"))
-    
-       # Create conversion dictionary
-    conversionDict = {categories[i]: i for i in range(len(categories))}
+
+    # conversionDict = {categories[i]: i for i in range(len(categories))}
+    # print(conversionDict)
 
     # Modify the label files sourceFolder.format("labels") to have the correct values
     modifyFiles(sourceFolder.format("labels"), conversionDict=conversionDict)
@@ -130,11 +160,12 @@ def filterCoco(middleDataStorageDirectory):
         except yaml.YAMLError as exc:
             print(exc)
 
-        # # Delete all the categories that are in notInList
-        data['names'] = [data['names'][i] for i in range(len(data['names']))]
+        data['names'] = categories
 
+        print("len(data['names']) : " + str(len(data['names'])))
     # Write the new data to the dataset.yaml file
     with open(middleDataStorageDirectory + "/dataset.yaml", 'w') as f:
+        print("dumping")
         yaml.dump(data, f)
 
 def CopyFiles(dataStorageDirectory, middleDataStorageDirectory):
@@ -386,6 +417,206 @@ def modifyFiles(folder, modAmmount = None, conversionDict=None):
         else:
             modifyFile(os.path.join(folder, file), modAmmount)
 
+def augmentData(modDirectory, addDirectory):
+
+    # remove mod directory and everything inside of it if it exists
+    for dir in modDirectory:
+        if os.path.exists(dir):
+            shutil.rmtree(dir)
+    
+    # exit()
+
+
+    # Function to load YOLO format labels
+    def load_yolo_labels(label_path, img_w, img_h):
+        boxes = []
+        gofwd = True
+        with open(label_path, 'r') as f:
+            for line in f.readlines():
+                # print(line)
+
+                # if there more then 5 words in the line, then it is not a label
+
+                if len(line.split()) > 5:
+                    gofwd = False
+                    return boxes, gofwd
+
+                class_id, x_center, y_center, width, height = map(float, line.strip().split())
+                
+                x_min = (x_center - width / 2) * img_w
+                y_min = (y_center - height / 2) * img_h
+                x_max = (x_center + width / 2) * img_w
+                y_max = (y_center + height / 2) * img_h
+                boxes.append([x_min, y_min, x_max, y_max, int(class_id)])
+                
+        return boxes, gofwd
+
+    # Function to save YOLO format labels
+    def save_yolo_labels(save_path, boxes, img_w, img_h):
+        with open(save_path, 'w') as f:
+            for box in boxes:
+                class_id = int(box[4])
+                x_center = (box[0] + box[2]) / 2 / img_w
+                y_center = (box[1] + box[3]) / 2 / img_h
+                width = (box[2] - box[0]) / img_w
+                height = (box[3] - box[1]) / img_h
+                if x_center - width / 2 < 0 or x_center + width / 2 > 1 or y_center - height / 2 < 0 or y_center + height / 2 > 1:
+                    print(f"Invalid label: {save_path}")
+                    print("bbox[0]: ", box[0], "bbox[1]: ", box[1], "bbox[2]: ", box[2], "bbox[3]: ", box[3])
+                    print("img_w: ", img_w, "img_h: ", img_h)
+                    exit()
+                f.write(f"{class_id} {x_center} {y_center} {width} {height}\n")
+
+    # Augmentation pipeline
+    transform = A.Compose([
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.1),
+        A.RandomRotate90(p=0.5),
+        A.RandomResizedCrop(height=416, width=416, scale=(0.8, 1.0), p=0.5),
+        A.OneOf([
+            A.MotionBlur(p=0.2),
+            A.MedianBlur(blur_limit=3, p=0.1),
+            A.GaussianBlur(blur_limit=3, p=0.1),
+        ], p=0.5),
+        A.ColorJitter(p=0.5),
+        A.RandomBrightnessContrast(p=0.5),
+        A.GaussNoise(p=0.2),
+        A.RandomScale(scale_limit=0.2, p=0.5),
+        A.Affine(scale=(0.9, 1.1), translate_percent=0.1, rotate=15, shear=10, p=0.5),
+        A.Perspective(p=0.5),
+        A.ToGray(p=0.1),
+        A.ToFloat(max_value=255),
+    ], bbox_params=A.BboxParams(format='pascal_voc', label_fields=['class_labels']))
+
+    # get all the folders in the add dataset path
+    print("add dataset path is : " + str(addDirectory))
+    print("mod dataset path is : " + str(modDirectory))
+    for i, folder in enumerate(addDirectory):
+
+
+        # get all the files in the folder
+        valPath = os.path.join(folder, 'valid')
+        trainPath = os.path.join(folder, 'train')
+        testPath = os.path.join(folder, 'test')
+
+        valModPath = os.path.join(modDirectory[i], 'valid')
+        trainModPath = os.path.join(modDirectory[i], 'train')
+        testModPath = os.path.join(modDirectory[i], 'test')
+
+        # Create the folders
+        os.makedirs(valModPath, exist_ok=True)
+        os.makedirs(trainModPath, exist_ok=True)
+        os.makedirs(testModPath, exist_ok=True)
+
+        # Create the val, train, and test folders
+        valTrainTest = [valPath, trainPath, testPath]
+        imageLabels =['images', 'labels']
+
+        valModTrainTest = [valModPath, trainModPath, testModPath]
+
+
+
+        # Directory paths
+        images_dir = 'path_to_images'
+        labels_dir = 'path_to_labels'
+        aug_images_dir = 'augmented_images'
+        aug_labels_dir = 'augmented_labels'
+
+        # Copy over data.yaml file
+        shutil.copy(os.path.join(folder, 'data.yaml'), os.path.join(modDirectory[i], 'data.yaml'))
+        
+        for i,path in enumerate(valTrainTest):
+            images_dir = os.path.join(path, imageLabels[0])
+            labels_dir = os.path.join(path, imageLabels[1])
+
+            aug_images_dir = os.path.join(valModTrainTest[i], imageLabels[0])
+            aug_labels_dir = os.path.join(valModTrainTest[i], imageLabels[1])
+
+
+            # Create the folders
+            os.makedirs(aug_images_dir, exist_ok=True)
+            os.makedirs(aug_labels_dir, exist_ok=True)
+
+            # Number of augmented versions per image
+            n_augmentations_per_image = 5
+
+            # Iterate through the images and labels
+            for image_name in os.listdir(images_dir):
+                if not image_name.endswith('.jpg'):  # Assuming .jpg images
+                    continue
+                
+
+                # Load image and corresponding label
+                image_path = os.path.join(images_dir, image_name)
+                label_path = os.path.join(labels_dir, image_name.replace('.jpg', '.txt'))
+                
+                image = cv2.imread(image_path)
+
+                img_h, img_w = image.shape[:2]
+                boxes, gofwd = load_yolo_labels(label_path, img_w, img_h)
+                cv2.imwrite(os.path.join(aug_images_dir, image_name), image)
+                # write original label from label_path to by copied to augmented folder
+                shutil.copy(label_path, os.path.join(aug_labels_dir, image_name.replace('.jpg', '.txt')))
+
+                if gofwd is False:
+                    # print("skipped image")
+                    continue
+                # print(boxes)
+
+                # Prepare boxes and labels for Albumentations
+                class_labels = [box[4] for box in boxes]
+                bboxes = [box[:4] for box in boxes]  # Only take x_min, y_min, x_max, y_max
+
+                # write original image/label to augmented folder
+
+
+                for i in range(n_augmentations_per_image):
+                    # Apply augmentations
+                    augmented = transform(image=image, bboxes=bboxes, class_labels=class_labels)
+
+                    shouldContinue = False
+
+                    # ensure transformations are not out of bounds
+                    for bbox in augmented['bboxes']:
+                        # every value should be normalized and within boyunds and continue otherwise
+
+                        if bbox[0] < 0 or bbox[1] < 0 or bbox[2] < 0 or bbox[3] < 0 or bbox[0] > img_w or bbox[1] > img_h or bbox[2] > img_w or bbox[3] > img_h:
+                            if image_name == "Snipaste_2022-04-21_10-07-48_jpg.rf.18f22f1e3eab1f21a2dae5eb203f353d.jpg":
+                                print("printing bounding box")
+
+                                print("bbox[0]: ", bbox[0], "bbox[1]: ", bbox[1], "bbox[2]: ", bbox[2], "bbox[3]: ", bbox[3])
+                                print(bbox)
+
+                            shouldContinue = True
+                            continue
+                    
+                    if shouldContinue:
+                        continue
+
+                    aug_image = augmented['image']
+
+                    if aug_image.dtype != np.uint8:
+                        aug_image = (aug_image * 255).astype(np.uint8)
+
+                    aug_bboxes = augmented['bboxes']
+                    aug_class_labels = augmented['class_labels']
+
+                    # Convert and save augmented image and label
+                    aug_image_name = f"{image_name.replace('.jpg', '')}_aug_{i}.jpg"
+                    aug_label_name = f"{image_name.replace('.jpg', '')}_aug_{i}.txt"
+                    
+                    aug_image_path = os.path.join(aug_images_dir, aug_image_name)
+                    aug_label_path = os.path.join(aug_labels_dir, aug_label_name)
+
+                    cv2.imwrite(aug_image_path, aug_image)
+                    aug_boxes = [list(bbox) + [cls] for bbox, cls in zip(aug_bboxes, aug_class_labels)]
+                    save_yolo_labels(aug_label_path, aug_boxes, img_w, img_h)
+
+                    print(f"Saved: {aug_image_name} and {aug_label_name}")
+
+    print("Augmentation complete!")
+
+
 def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
     print("add dataset path is : " + addDatasetPath)
     testPath = os.path.join(addDatasetPath, "test/{}")
@@ -476,7 +707,7 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
             for file in os.listdir(imageLabelPath):
                 shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i].format(imageLabel), file))
 
-def train(dataStorageDirectory, model = "yolo11n.yaml", epochs = 400, resume = False):
+def train(dataStorageDirectory, model = "yolo11n.yaml", epochs = 400, resume = False, batch_size = 32):
 
     settings['datasets_dir'] = dataStorageDirectory
 
@@ -484,8 +715,19 @@ def train(dataStorageDirectory, model = "yolo11n.yaml", epochs = 400, resume = F
     model = YOLO(model=model, task="detect")
 
     # Perform object detection
-    model.train(data=os.path.join(dataStorageDirectory, "data.yaml"), imgsz=640, epochs=epochs, resume=resume)
-        
+    model.train(data=os.path.join(dataStorageDirectory, "data.yaml"), imgsz=640, epochs=epochs, resume=resume, batch=batch_size)
+
+def validate(dataStorageDirectory, model = "yolo11n.yaml"):
+
+    settings['datasets_dir'] = dataStorageDirectory
+
+    # Load the YOLOv11 model
+    model = YOLO(model=model, task="detect")
+
+    # Perform object detection
+    metrics = model.val(data=os.path.join(dataStorageDirectory, "data.yaml"), imgsz=640, batch=8) 
+
+    print(metrics.box.maps)
 
 # based on arg of -d, -c, -t you either run download data, copyfiles and train, copyfiles and train or train
 
@@ -494,31 +736,58 @@ if __name__ == "__main__":
     parser.add_argument('-is', '--initialDataStorageDirectory', type =str, default="/app/initial-download")
     parser.add_argument('-ms', '--middleDataStorageDirectory', type =str, default="/app/Intermediary") 
     parser.add_argument('-ds', '--dataStorageDirectory', type =str, default="/app/datasets/Final")
+    parser.add_argument('-modd', '--modDirectory', type=str, default="/app/datasets/Augmentation")
+    parser.add_argument('-ad', '--addDatasetPath', type=str, default="/app/datasets/Images/")
     parser.add_argument('-dd', '--dockerDataPath',nargs='?', const=False, default=False)
     parser.add_argument('-yp', '--yamlPath',nargs='?', const=False, default=False)
+    parser.add_argument('-mxs', '--maxSamples', type =int, nargs='?', const=None, default=None)
     parser.add_argument('-m', '--model', type =str, nargs='?', default=False)
     parser.add_argument('-d', '--downloadData', action='store_true')
     parser.add_argument('-f', '--filterCoco', action='store_true')
     parser.add_argument('-dp', '--dockerPrep', nargs='?', const=True, default=False)
     parser.add_argument('-a', '--add', type=str, nargs='*',  default=None)
+    parser.add_argument('-b', '--batch_size', type =int, nargs='?', const=32, default=32)
     # parser.add_argument('-a', '--add', type=str, nargs='+', const="/app/datasets/Images/", default=None) 
     parser.add_argument('-c', '--copyFiles', action='store_true')
+    parser.add_argument('-md', '--modData', action='store_true')
     parser.add_argument('-t', '--train', action='store_true')
     parser.add_argument('-r', '--resume', action='store_true')
+    parser.add_argument('-lt', '--locallyTrained', action='store_true')
     parser.add_argument('-s', '--split',  type =str, nargs='?', const="validation",default="validation")
     parser.add_argument('-e', '--epochs',  type =int, nargs='?', const=400, default=400)
+    parser.add_argument('-v', '--validate', action='store_true')
     args = parser.parse_args()
+    modDirectory = []
     if args.add == []:
-        print(" is this running?")
-        folder_path = "/app/datasets/Images/"
+        # remove all directories within args.addDatasetPath
+        # if the path exists 
+        if os.path.exists(args.modDirectory):
+            # list directories in args.modDirectory
+            directories = [d for d in os.listdir(args.modDirectory)]
+            # remove all directories in args.modDirectory
+            for directory in directories:
+                shutil.rmtree(os.path.join(args.modDirectory, directory))
+
+
+
+        folder_path = args.addDatasetPath
         directories = [d for d in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, d))]
 
         for directory in directories:
             args.add.append(os.path.join(folder_path, directory))
+            modDirectory.append(os.path.join(args.modDirectory, directory))
+        
         print("args add after modifying: " + str(args.add))
-
+    if args.validate:
+        if args.model == False:
+            model = "yolo11x.pt"
+        elif args.model == True and args.locallyTrained:
+            model = args.model
+        else:
+            model = "/app/runs/detect/{}/weights/last.pt".format(args.model)
+        validate(args.dataStorageDirectory, model = model)
     if args.downloadData:
-        downLoadData(args.initialDataStorageDirectory, args.middleDataStorageDirectory, args.split)
+        downLoadData(args.initialDataStorageDirectory, args.middleDataStorageDirectory, args.split, args.maxSamples)
     if args.filterCoco:
         # convertLabelValues()
         filterCoco(args.middleDataStorageDirectory)
@@ -526,9 +795,15 @@ if __name__ == "__main__":
         CopyFiles(args.dataStorageDirectory, args.middleDataStorageDirectory)
     if args.dockerPrep:
         dockerPrep(args.dockerPrep)
+    if args.modData:
+        augmentData( modDirectory, args.add)
     if args.add:
-        for i in args.add:
-            addDatasetToBiggerDataset(args.dataStorageDirectory, i)
+        if args.modData:
+            for i in modDirectory:
+                addDatasetToBiggerDataset(args.dataStorageDirectory, i)
+        else:
+            for i in args.add:
+                addDatasetToBiggerDataset(args.dataStorageDirectory, i)
     if args.train:
         if args.resume and args.model:
             model = "/app/runs/detect/{}/weights/last.pt".format(args.model)
@@ -539,4 +814,4 @@ if __name__ == "__main__":
         elif not args.resume and not args.model:
           model =  "yolo11n.yaml"
         
-        train(args.dataStorageDirectory, model, args.epochs, args.resume)
+        train(args.dataStorageDirectory, model, args.epochs, args.resume, args.batch_size)
