@@ -14,7 +14,7 @@ def runifmain():
     model.to('cpu')
 
     # Perform object detection
-    results = model('C:\\Users\\muchn\\Documents\\Classes\\18500\\Forget-Me-Not-Capstone\\Yolo-Classification\\datasets\\Images\\IMG_1563.jpg')
+    results = model('C:\\Users\\muchn\\Documents\\Classes\\18500\\Forget-Me-Not-Capstone\\Yolo-Classification\\datasets\\Images\\IMG_1728.jpg')
     # print(result.boxes.map50)
     # Access the first image result (if you're processing multiple images, iterate over them)
     result = results[0]
