@@ -10,6 +10,34 @@ If you do not, obtain a copy through the gc
 2. **You NEVER EVER commit a copy of the file**\
 The git repository still stores old commits even if the current branch is not at that commit.
 
+
+# To run with Docker container
+
+### Create Container
+
+cd into this directory and type:
+```
+docker build -t myapp .
+```
+my_app is the container name, but you can rename it if you wish
+
+Next, to run the container, type:
+```
+docker run -p 4000:80 myapp
+```
+Note that this commands sets port 80 of the docker container as port 4000 of your computer. In this case, you would have to access the website through [http://localhost:4000](http://localhost:4000). If you don't want to have to specify a port, map port 80 directly to port 80.
+
+To enter the docker container like a shell, type:
+```
+docker exec -it myapp /bin/bash
+```
+
+One more potentially useful detail, we can mount a local volume to a docker container when we run it by adding:
+```
+-v $(pwd)/my-local-dir:/webserver
+```
+to the `docker run` command.
+
 # To Run Server Locally:
 
 ## Python setup:
