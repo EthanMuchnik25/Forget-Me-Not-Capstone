@@ -102,6 +102,15 @@
           document.getElementById('object-image').style.display = 'none';
         });
     }
+    // NOTE: can either pass things through url parameter or http body: 
+    // fetch(url, {
+    // method: 'POST', // or 'PUT'
+    // headers: {
+    //     'Content-Type': 'application/json' // Specify the content type
+    // },
+    // body: JSON.stringify(data) // Convert the JavaScript object to a JSON string
+    // })
+
 
     // Handle previous button click
     document.getElementById('previous').addEventListener('click', function () {

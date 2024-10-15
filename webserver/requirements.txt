@@ -1,5 +1,13 @@
 # requirements.txt
-# Flask==2.0.3
-# gunicorn==20.1.0
+
+# TODO sort this out later... 
+# It would probably be in our best interest to have version numbers
 Flask
 gunicorn
+boto3
+psycopg2-binary
+datetime
+python-dotenv
+# TODO add these for sqlite, however, I can't get them to work on my machine
+# sqlite3
+# json

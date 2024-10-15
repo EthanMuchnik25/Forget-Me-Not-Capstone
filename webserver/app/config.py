@@ -7,5 +7,9 @@ class Config:
   ENV = 'CLOUD' # else 'APP'
   OPENAI_KEY = 'blah'
 
+  # Versions
+  YOLO_VER = "MOCK"
+  DATABASE_VER = "RDS"
+
 
 
