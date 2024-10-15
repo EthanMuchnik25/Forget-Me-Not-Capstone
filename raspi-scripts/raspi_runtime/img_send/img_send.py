@@ -4,9 +4,9 @@ from config import Config
 import time
 if Config.CAMERA_VER == "LAPTOP":
   # TODO implement laptop camera version
-  from mocks.img_capture import capture_image
+  from laptop_img_capture import capture_image
 elif Config.CAMERA_VER == "RPI":
-  from img_capture import capture_image
+  from pi_img_capture import capture_image
 elif Config.CAMERA_VER == "MOCK":
     from mocks.img_capture import capture_image
 else:

@@ -2,3 +2,4 @@ requests
 picamzero
 SpeechRecognition
 pyttsx3
+opencv-python

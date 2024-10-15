@@ -8,7 +8,7 @@ class Config:
     OPENAI_KEY = 'blah'
 
     # Versions
-    YOLO_VER = "MOCK"
+    YOLO_VER = "V11"
     DATABASE_VER = "DEBUG"
 
 

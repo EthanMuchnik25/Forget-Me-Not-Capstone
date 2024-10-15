@@ -9,7 +9,7 @@ class Config:
   # MOCKS
   MOCK_MIC = False
   MOCK_SPEAKER = False
-  CAMERA_VER = "MOCK"
+  CAMERA_VER = "LAPTOP"
   # NOTE: Can switch to string if we want like "MOCK", "LAPTOP", and "RPI" 
   #  camera versions
 

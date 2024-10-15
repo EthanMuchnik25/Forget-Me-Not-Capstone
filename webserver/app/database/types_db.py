@@ -6,7 +6,8 @@ import json
 class ImgObject:
     user: str
     object_name: str
-    location: Tuple[float]
+    p1: Tuple[float]
+    p2: Tuple[float]
     img_url: str
 
     def to_dict(self):

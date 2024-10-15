@@ -3,15 +3,23 @@ from ultralytics import YOLO
 import numpy as np
 
 
+# TODO run_yolo prints something every time it runs. Is there some way to shut it 
+#  up? Would this work?
+# import logging
+# logging.getLogger('ultralytics').setLevel(logging.ERROR)
 
+
+# TODO This seems extremely dubious for performance. Is the model loaded every 
+#  time? Could this only be loaded upon initialization?
 def run_yolo(f):
 
-    model = YOLO("yolo11n.pt")
+    model = YOLO("./app/model/binaries/yolo11x.pt")
     
     #change the default path to dataset.yaml
     class_names = model.names
     # print(class_names)
 
+    # TODO is this right for when we have a gpu?
     model.to('cpu')
 
     # Perform object detection
@@ -19,6 +27,9 @@ def run_yolo(f):
     
     results = model(image)
         # print(result.boxes.map50)
+
+    ret = []
+
     # Access the first image result (if you're processing multiple images, iterate over them)
     for result in results:
         for box in result.boxes:
@@ -31,20 +42,25 @@ def run_yolo(f):
             x_center, y_center, width, height = box.xywhn[0]  # Normalized x_center, y_center, width, height
 
             # Print the result in YOLO label file format: class_id x_center y_center width height (all normalized)
-            print(f'{cls_name} {x_center} {y_center} {width} {height}')
+            # print(f'{cls_name} {x_center} {y_center} {width} {height}')
+            ret.append((cls_name, x_center, y_center, width, height))
 
     # access the labels from the result
     # print(result.labels)
 
     # Display the image with detections
-    result.show()
+    # result.show()
 
     
+    # Sample code draw boxes
+    # # f.seek(0)
+    # draw_boxes(f, ret)
     # f is a file handle to the image you want to run yolo on
     
     # [write the code to run the yolo here]
 
-    # This code should return a file path to the yolo text file output
+    # This code now returns a list of yolo output tuples
+    return ret
 
 
 if __name__ == "__main__":
