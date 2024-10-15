@@ -9,7 +9,8 @@ def run_yolo(f):
     model = YOLO("yolo11n.pt")
     
     #change the default path to dataset.yaml
-    
+    class_names = model.names
+    # print(class_names)
 
     model.to('cpu')
 
@@ -21,9 +22,16 @@ def run_yolo(f):
     # Access the first image result (if you're processing multiple images, iterate over them)
     for result in results:
         for box in result.boxes:
-            # print out cls label and bbox coords
-            print(box.cls, box.xyxy)
-    
+            cls = int(box.cls)  # Class ID of the detected object
+
+            # convert cls id to class name
+            cls_name = class_names[cls]
+
+
+            x_center, y_center, width, height = box.xywhn[0]  # Normalized x_center, y_center, width, height
+
+            # Print the result in YOLO label file format: class_id x_center y_center width height (all normalized)
+            print(f'{cls_name} {x_center} {y_center} {width} {height}')
 
     # access the labels from the result
     # print(result.labels)
@@ -40,6 +48,6 @@ def run_yolo(f):
 
 
 if __name__ == "__main__":
-    with open("./binaries/swaglab.jpg", 'rb') as image_file:
+    with open("./binaries/testimg3.jpg", 'rb') as image_file:
 
         run_yolo(image_file)
