@@ -483,7 +483,7 @@ def augmentData(modDirectory, addDirectory):
         A.RandomBrightnessContrast(p=0.5, brightness_limit=0.1, contrast_limit=0.1),
         A.GaussNoise(p=0.2),
         A.RandomScale(scale_limit=0.2, p=0.5),
-        # A.Affine(scale=(0.9, 1.1), translate_percent=0.1, rotate=15, shear=10, p=0.5, cval=0, mode=cv2.BORDER_REFLECT),
+        A.Affine(scale=(0.9, 1.1), translate_percent=0.1, rotate=15, shear=10, p=0.5, cval=0, mode=cv2.BORDER_REFLECT),
         A.Perspective(p=0.5),
         A.ToGray(p=0.1),
         A.ToFloat(max_value=255),
