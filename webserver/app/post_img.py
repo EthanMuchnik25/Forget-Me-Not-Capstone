@@ -2,19 +2,19 @@ from app.config import Config
 
 # Import YOLO
 if Config.YOLO_VER == "MOCK":
-  from fakes.fake_yolo import run_yolo
+    from fakes.fake_yolo import run_yolo
 else:
-  # TODO swap this with the real yolo
-  raise NotImplementedError
+    # TODO swap this with the real yolo
+    raise NotImplementedError
 
 # Import database
 if Config.DATABASE_VER == "RDS":
-  # TODO BAD BAD BAD BAD Make good interface
-  from app.database.rds import rds_database
+    # TODO BAD BAD BAD BAD Make good interface
+    from app.database.rds import rds_database
 elif Config.DATABASE_VER == "SQLITE":
-  from app.database.sqlite import TODO
+    from app.database.sqlite import TODO
 else:
-  raise NotImplementedError
+    raise NotImplementedError
 
 
 # TODO not great name
