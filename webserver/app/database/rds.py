@@ -69,6 +69,8 @@ def rds_database(output_pkt):
     object_name = output_pkt[1]
     location = output_pkt[2]
 
+    # TODO BAD!!!
+    # Different objects from the same image will have different times!! Fix!!
     cur.execute("""
         INSERT INTO tracked_objects ("user", object, location, image_url, created_at)
         VALUES (%s, %s, %s, %s, %s);

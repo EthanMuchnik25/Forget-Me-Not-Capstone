@@ -1,8 +1,12 @@
 from flask import render_template, request, send_file, jsonify
 from myapp import app
+import urllib
+import json
+from app.database.types_db import ImgObject
 
 from app.post_img import handle_img
-from webserver.app.text_query import handle_text_query
+from app.text_query import handle_text_query
+from app.get_room_img import fs_get_room_img
 
 # For now, don't use blueprints
 
@@ -17,9 +21,11 @@ def hello_world():
 @app.route('/text_query')
 def text_query():
     query = request.args.get('query')
+    index = request.args.get('index')
+
     # Simple way to case on stuff to test database, neg num is how many back
     # In the future, can complicate policies to add stuff like auth/security
-    response = handle_text_query(query)
+    response = handle_text_query(query, index)
     
     return jsonify(response)
 
@@ -27,9 +33,23 @@ def text_query():
 # Intended for website to resolve provided image urls
 @app.route('/get_room_img', methods=['GET'])
 def get_room_img():
-    # we need enought to specify which url image to get
-    # return image to user
-    pass
+    data_arg = request.args.get('data')
+    if data_arg == None:
+        return {"error": "No data parameter provided"}, 400
+    
+    try:
+        decoded_data = urllib.parse.unquote(data_arg)
+        db_line_dict = json.loads(decoded_data)
+        db_line_obj = ImgObject(**db_line_dict)
+        img = fs_get_room_img(db_line_obj)
+    except Exception as e:
+        return {"error": "Invalid URL"}, 400
+
+    if img == None:
+        return {"error": "Image file not found"}, 400
+    
+    return send_file(img, download_name=db_line_obj.img_url)
+        
 
 # Intended for raspi speech query
 @app.route('/speech_query', methods=['POST'])

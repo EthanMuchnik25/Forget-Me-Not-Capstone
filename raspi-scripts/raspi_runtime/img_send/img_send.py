@@ -7,8 +7,10 @@ if Config.CAMERA_VER == "LAPTOP":
   from mocks.img_capture import capture_image
 elif Config.CAMERA_VER == "RPI":
   from img_capture import capture_image
-else:
+elif Config.CAMERA_VER == "MOCK":
     from mocks.img_capture import capture_image
+else:
+    raise NotImplementedError
 
 
 img_url = Config.URL + "/post_img"

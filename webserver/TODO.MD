@@ -55,6 +55,8 @@ This hopes to document some of the things we probably eventually have to get sor
 
 ### Update the things in the top level readme
 
+### Isolate install instructions from run instructions
+
 
 ## Personal notes dump
 #### Useful sites:

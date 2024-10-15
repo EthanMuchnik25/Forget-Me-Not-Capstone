@@ -9,7 +9,7 @@ class Config:
 
     # Versions
     YOLO_VER = "MOCK"
-    DATABASE_VER = "RDS"
+    DATABASE_VER = "DEBUG"
 
 
 

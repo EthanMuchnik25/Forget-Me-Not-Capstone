@@ -80,6 +80,7 @@ If we wish to handle websocket connections, we would need to modify something he
 The server can be sent requests locally at "http://127.0.0.1:8000" or "http://localhost"
 
 To send requests from a different computer, type `ip addr show` in the terminal. The correct ip address is the one on the line starting with `inet`.\
+Alternatively, `hostname -I` seems to work as well, pick the first ip address\
 Once you have the ip address, you can send requests from a different computer at ["http://\<ip-addr\>"](http://<ip-addr>). 
 
 
