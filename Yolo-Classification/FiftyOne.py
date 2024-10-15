@@ -469,6 +469,7 @@ def augmentData(modDirectory, addDirectory):
 
     # Augmentation pipeline
     transform = A.Compose([
+        # A.PadIfNeeded(min_height=600, min_width=600, border_mode=cv2.BORDER_REFLECT),
         A.HorizontalFlip(p=0.5),
         A.VerticalFlip(p=0.1),
         A.RandomRotate90(p=0.5),
@@ -479,10 +480,10 @@ def augmentData(modDirectory, addDirectory):
             A.GaussianBlur(blur_limit=3, p=0.1),
         ], p=0.5),
         A.ColorJitter(p=0.5),
-        A.RandomBrightnessContrast(p=0.5),
+        A.RandomBrightnessContrast(p=0.5, brightness_limit=0.1, contrast_limit=0.1),
         A.GaussNoise(p=0.2),
         A.RandomScale(scale_limit=0.2, p=0.5),
-        A.Affine(scale=(0.9, 1.1), translate_percent=0.1, rotate=15, shear=10, p=0.5),
+        # A.Affine(scale=(0.9, 1.1), translate_percent=0.1, rotate=15, shear=10, p=0.5, cval=0, mode=cv2.BORDER_REFLECT),
         A.Perspective(p=0.5),
         A.ToGray(p=0.1),
         A.ToFloat(max_value=255),
@@ -554,9 +555,9 @@ def augmentData(modDirectory, addDirectory):
 
                 img_h, img_w = image.shape[:2]
                 boxes, gofwd = load_yolo_labels(label_path, img_w, img_h)
-                cv2.imwrite(os.path.join(aug_images_dir, image_name), image)
-                # write original label from label_path to by copied to augmented folder
-                shutil.copy(label_path, os.path.join(aug_labels_dir, image_name.replace('.jpg', '.txt')))
+                # cv2.imwrite(os.path.join(aug_images_dir, image_name), image)
+                # # write original label from label_path to by copied to augmented folder
+                # shutil.copy(label_path, os.path.join(aug_labels_dir, image_name.replace('.jpg', '.txt')))
 
                 if gofwd is False:
                     # print("skipped image")
@@ -573,25 +574,36 @@ def augmentData(modDirectory, addDirectory):
                 for i in range(n_augmentations_per_image):
                     # Apply augmentations
                     augmented = transform(image=image, bboxes=bboxes, class_labels=class_labels)
+                    augImgWidth = augmented['image'].shape[1]
+                    augImgHeight = augmented['image'].shape[0]
 
                     shouldContinue = False
 
                     # ensure transformations are not out of bounds
-                    for bbox in augmented['bboxes']:
+                    for bbox in augmented['bboxes'][:]:
                         # every value should be normalized and within boyunds and continue otherwise
-
-                        if bbox[0] < 0 or bbox[1] < 0 or bbox[2] < 0 or bbox[3] < 0 or bbox[0] > img_w or bbox[1] > img_h or bbox[2] > img_w or bbox[3] > img_h:
-                            if image_name == "Snipaste_2022-04-21_10-07-48_jpg.rf.18f22f1e3eab1f21a2dae5eb203f353d.jpg":
-                                print("printing bounding box")
-
-                                print("bbox[0]: ", bbox[0], "bbox[1]: ", bbox[1], "bbox[2]: ", bbox[2], "bbox[3]: ", bbox[3])
-                                print(bbox)
-
-                            shouldContinue = True
+                        # if the entire bounding box is out of bounds
+                        if bbox[0] < 0 and bbox[1] < 0 or bbox[2] < 0 and bbox[3] < 0 or bbox[0] > augImgWidth and bbox[1] > augImgHeight or bbox[2] > augImgWidth and bbox[3] > augImgHeight:
+                            augmented['bboxes'].remove(bbox)
                             continue
-                    
-                    if shouldContinue:
-                        continue
+
+                        elif bbox[0] < 0 or bbox[1] < 0 or bbox[2] < 0 or bbox[3] < 0 or bbox[0] > augImgWidth or bbox[1] > augImgHeight or bbox[2] > augImgWidth or bbox[3] > augImgHeight:
+                            # clip out of bounds values
+                            originalHeight = bbox[3] - bbox[1]
+                            originalWidth = bbox[2] - bbox[0]
+                            bbox[0] = max(0, min(bbox[0], augImgWidth))
+                            bbox[1] = max(0, min(bbox[1], augImgHeight))
+                            bbox[2] = max(0, min(bbox[2], augImgWidth))
+                            bbox[3] = max(0, min(bbox[3], augImgHeight))
+
+                            # calculate new height and width
+                            newHeight = bbox[3] - bbox[1]
+                            newWidth = bbox[2] - bbox[0]
+
+                            # if new area is less than 70% of original area, continue
+                            if newHeight * newWidth < 0.7 * originalHeight * originalWidth:
+                                augmented['bboxes'].remove(bbox)
+                                continue
 
                     aug_image = augmented['image']
 
@@ -610,7 +622,7 @@ def augmentData(modDirectory, addDirectory):
 
                     cv2.imwrite(aug_image_path, aug_image)
                     aug_boxes = [list(bbox) + [cls] for bbox, cls in zip(aug_bboxes, aug_class_labels)]
-                    save_yolo_labels(aug_label_path, aug_boxes, img_w, img_h)
+                    save_yolo_labels(aug_label_path, aug_boxes, augImgWidth, augImgHeight)
 
                     print(f"Saved: {aug_image_name} and {aug_label_name}")
 
