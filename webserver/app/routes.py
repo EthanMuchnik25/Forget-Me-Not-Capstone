@@ -1,12 +1,14 @@
 from flask import render_template, request, send_file, jsonify
 from myapp import app
 
+from app.post_img import handle_img
+from webserver.app.text_query import handle_text_query
+
 # For now, don't use blueprints
 
 @app.route('/')
 def hello_world():
     return render_template('img_search.html')
-
 
 # TODO These are temporary routes. Shore up design later on in accordance with
 #  UI decisions
@@ -17,23 +19,17 @@ def text_query():
     query = request.args.get('query')
     # Simple way to case on stuff to test database, neg num is how many back
     # In the future, can complicate policies to add stuff like auth/security
-    index = request.args.get('index')
-    if query == 'swaglab':
-        response = {
-            'imageUrl': '/static/swaglab.jpg',
-            'success': True
-        }
-    elif query == 'sign':
-        response = {
-            'imageUrl': 'https://i.redd.it/87xuofmvnlud1.png',
-            'success': True
-        }
-    else:
-        response = {
-            'success': False,
-            'message': 'random message'
-        }
+    response = handle_text_query(query)
+    
     return jsonify(response)
+
+# TODO rename?
+# Intended for website to resolve provided image urls
+@app.route('/get_room_img', methods=['GET'])
+def get_room_img():
+    # we need enought to specify which url image to get
+    # return image to user
+    pass
 
 # Intended for raspi speech query
 @app.route('/speech_query', methods=['POST'])
@@ -43,9 +39,7 @@ def speech_query():
 @app.route('/post_img', methods=['POST'])
 def post_img():
     f = request.files['file']
-
-    f.save("file_uploads/swaglab.jpg")
-    print("file recieved from camera")
+    handle_img(f)
 
     # TODO safe file to database, figure out how it will be structured
     # We have the chatgpt thing to read from database, take inspiration or ask 

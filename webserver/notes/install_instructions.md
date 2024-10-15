@@ -2,6 +2,14 @@
 
 This file contains instructions on how to install the webserver
 
+### IMPORTANT NOTE:
+This project has a .env file which stores the API keys (and possible some other environment variables to be used in the project)\
+As such, make sure that 
+1. **You own a copy of the file**\
+If you do not, obtain a copy through the gc
+2. **You NEVER EVER commit a copy of the file**\
+The git repository still stores old commits even if the current branch is not at that commit.
+
 # To Run Server Locally:
 
 ## Python setup:
