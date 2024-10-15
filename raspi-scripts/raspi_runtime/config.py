@@ -2,7 +2,7 @@
 
 class Config:
   PERF = False  # Turn on performance monitoring
-  URL = "http://localhost" # Else like "http://172.26.13.96"
+  URL = "http://localhost:4000" # Else like "http://172.26.13.96"
 
   SECS_PER_IMG = 3
 

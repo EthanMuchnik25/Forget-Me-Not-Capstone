@@ -3,23 +3,21 @@
 This hopes to document some of the things we probably eventually have to get sorted out
 
 
-### Objective: Get a bunch of useful mocks up and running
-- mock out YOLO so we know what to send to the database
-- Get a dumb website with just a query field and an image response/text field up and running
-- Make a mock raspi for local testing purposes [will likely require some additional web dev knowledge]
-  - image workflow
-  - mic/recieve workflow
-
-
 ### Objective: Get a fully functional system up and running
-- Design decisions cleared up
-  - database remote/local, sql/nosql, 
-- Docker containerize app, we have made modularity a priority
-- Database solidified and implemented
-- Make a website that looks nice
-- Structure our whole website - home page, login, auth, eventually our other webpage
+- [x] Design decisions cleared up
+  - [x] database remote/local, sql/nosql, 
+- [x] Docker containerize app, we have made modularity a priority
+- [ ] Database solidified and implemented
+  - [x] Mock database made
+  - [ ] Real databases implemented
+
+### Further Dockerization
+- [ ] Create Prod vs Debug dockerfile
+  - Prod should just run exactly how we want
+  - Debug should take in curr repository state so we don't have to edit from within the docker container, and so we don't have to keep rebuilding it
 
 ### Website: user flow
+- [ ] Structure our whole website - home page, login, auth, eventually our other webpage
 - How should UI look? 
  - How should we give users the option to query, and display all the info?
  - Do we want to invest time into getting a nice web framework thing to work?
@@ -50,12 +48,14 @@ This hopes to document some of the things we probably eventually have to get sor
 ### Raspi: Get testing
 - Could we literally run the whole system on a raspberry pi?
 
-### Ensure file diagram in README.MD are up to date
-- do it
 
-### Update the things in the top level readme
+### Documentation maintenance
+- [ ] Isolate install instructions from run instructions
+  - Excuse: waiting for design to solidify
+- [ ] Update the things in teh gop level readme
+  - [ ] Ensure file diagram in README.MD are up to date
+  - [ ]do it
 
-### Isolate install instructions from run instructions
 
 
 ## Personal notes dump
@@ -66,5 +66,12 @@ flask quickstart: https://flask.palletsprojects.com/en/3.0.x/quickstart/\
 bottom text
 
 
+## Completed
 
+### Objective: Get a bunch of useful mocks up and running
+- mock out YOLO so we know what to send to the database
+- Get a dumb website with just a query field and an image response/text field up and running
+- Make a mock raspi for local testing purposes [will likely require some additional web dev knowledge]
+  - image workflow
+  - mic/recieve workflow
 
