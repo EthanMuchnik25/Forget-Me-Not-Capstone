@@ -1,5 +1,6 @@
 from app.config import Config
 from app.database.types_db import ImgObject
+from datetime import datetime
 import time
 
 # Import YOLO
@@ -52,8 +53,11 @@ def handle_img(f):
     for line in yolo_output:
         parsed_line = parse_yolo_line(line)
         user = "john_doe" #maybe removed depending on architecture 
-        output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path)
+        output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path, datetime.now())
+        print("Updating the db")
         db_write_line(output_pkt)
+        
+
 
 
 
