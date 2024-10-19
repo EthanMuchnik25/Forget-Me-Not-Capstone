@@ -38,6 +38,30 @@ This hopes to document some of the things we probably eventually have to get sor
 - Unless we are using https, our http requests pass unencrypted over the network. To prevent this, we should use https. To use https, we should configure nginx. To configure nginx, we need an SSL. To get an ssl "for free", we can go to "Let's Encrypt" For more information go to [THIS DOCUMENT](./notes_private/chattyg_response/ssl_encrypt.md)
 - Just to have something working, start using flask-login. I don't know how this interacts with other things, such as proposed gpu queue server.
 
+#### Security dump
+
+TODO: delete everything below this\
+TODO: implement jwt security\
+-> try not to app.config to start off\
+-> create new database for users\
+-> have it so that each user gets a table?\
+-> have it so that all auth can be turned off\
+-> create new login and register pages,\
+ -> figure out how to pages automatically redirect?\
+-> think about how to add authentication for the raspberry pi\
+-> hash passwords appropriately, use hashed passwords appropriately\
+-> appropriately change frontend so that it checks login and redirects if not,change backend to give capability of theck login (401 unauthorized response) However, login on any response of this type, fail on any other failure
+
+
+notes:\
+-> localStorage seems to be cookies, use to store the token in frontend \
+-> document useage of localstorage for swati new frontend \
+-> jwt secret key is seemingly used to hash user entries. Probably reset it upon server restart or in debug mode leave it alone?
+
+
+
+
+
 
 ### Cloud: Get Learnt
 - Is the amazon database accessible the same way from any machine?
@@ -55,6 +79,13 @@ This hopes to document some of the things we probably eventually have to get sor
 - [ ] Update the things in teh gop level readme
   - [ ] Ensure file diagram in README.MD are up to date
   - [ ]do it
+
+
+### Design decisions
+- [ ] Make a stored record for design decisions that happened
+- Current list
+  - jwt over flask-login due to transparency, flask uses things in a funny pythonic way
+  - TODO
 
 
 
