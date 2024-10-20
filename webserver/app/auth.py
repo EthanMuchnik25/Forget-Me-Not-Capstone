@@ -43,12 +43,17 @@ def login_user(uname, pw):
     return True, access_token
 
 
+# TODO untested
 def logout_user(uname, jwt):
     jti = jwt['jti']
     exp = jwt['exp']
     db_add_token_blacklist(jti, exp)
 
-
+# TODO untested
 def check_blocklist(payload):
     jti = payload['jti']
     return db_check_token_blacklist(jti)
+
+# TODO unregister user behavior
+# def unregister_user():
+#     pass

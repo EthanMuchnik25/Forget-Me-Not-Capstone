@@ -23,7 +23,13 @@ from app.config import Config
 
 @app.route('/')
 def hello_world():
-    return render_template('img_search.html')
+    return render_template("index.html")
+
+
+@app.route('/img_search.html')
+@jwt_required()
+def img_search():
+    return render_template("img_search.html")
 
 
 # TODO likely change this for frontend
@@ -49,10 +55,8 @@ def login():
     if not succ:
         return jsonify(msg=msg), 400
     
-    return jsonify(access_token=msg), 200
-    # TODO I can return a redirect link in the format 
-    # "return redirect(url_for('login'))"
-    # but the frontend has to cooperate 
+    # TODO hardcode url bad
+    return jsonify(access_token=msg, redirect_url="/"), 200
 
 
 @app.route('/register', methods=['POST'])
@@ -66,10 +70,11 @@ def register():
     if not register_user(uname, pw):
         return jsonify(msg="User already exists"), 400
     
-    return jsonify(msg="User registered successfully"), 200
+    return jsonify(msg="User registered successfully", redirect_url="/login"), 200
     # TODO Similarly, you could redirect people to the normal webpage
 
 
+# TODO logout untested
 @app.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
@@ -77,7 +82,7 @@ def logout():
     logout_user(jwt)
     return jsonify({"msg": "Logout successful"}), 200
 
-
+# TODO untested
 @jwt.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     return check_blocklist(jwt_payload)
@@ -157,6 +162,7 @@ def post_img():
 
 
 # Demo routes: ==============================================================
+# TODO delete demo routes
 
 # Example for file upload
 @app.route('/upload_test', methods=['GET', 'POST'])

@@ -74,6 +74,8 @@
                 // IMPORTANT!!! This is how we get the token we use to auth reqs
                 localStorage.setItem('token', data.access_token)
                 // Handle successful login (e.g., redirect)
+                console.log(data.redirect_url);
+                window.location.href = data.redirect_url;
             } else {
                 message.textContent = data.message || 'Login failed.';
                 message.style.color = 'red';
