@@ -1,5 +1,23 @@
 # Webserver TODO
 
+## For discussion - hot topics
+- add mic pipeline
+  - see TODO list -> Proof of concept
+- database discussion 
+  - brief, ensure none blocked, implementation feasible
+- Raspi case
+  - get it actually printed
+- Component list
+  - Is there a reason why we haven't ordered?
+  - Might we want anything different?
+- Website flow
+  - see TODO list -> Website: user flow
+- Discuss frontend impl
+- Discuss login behavior
+  - see TODO list -> Website: Increase security -> Security steps
+
+## TODO list
+
 This hopes to document some of the things we probably eventually have to get sorted out
 
 ### Proof of concept
