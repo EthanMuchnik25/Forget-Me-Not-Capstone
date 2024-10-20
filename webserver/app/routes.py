@@ -1,49 +1,128 @@
-from flask import render_template, request, send_file, jsonify
-from myapp import app
+from flask import render_template, request, send_file, jsonify, redirect, \
+    url_for
+
 import urllib
 import json
+from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+
+from myapp import app
+from myapp import jwt
+
 from app.database.types_db import ImgObject
 
 from app.post_img import handle_img
 from app.text_query import handle_text_query
 from app.get_room_img import fs_get_room_img
+from app.auth import register_user, login_user, logout_user, check_blocklist
+from app.config import Config
 
-# For now, don't use blueprints
+
+# ========================== Page Routes ==========================
+
+# TODO For now, don't use blueprints
 
 @app.route('/')
 def hello_world():
     return render_template('img_search.html')
 
-# TODO These are temporary routes. Shore up design later on in accordance with
-#  UI decisions
 
+# TODO likely change this for frontend
+@app.route('/login.html')
+def login_page():
+    return render_template('login.html')
+
+
+# TODO likely change this for frontend
+@app.route('/register.html')
+def register_page():
+    return render_template('register.html')
+
+# ========================== Auth Routes ==========================
+
+@app.route('/login', methods=['POST'])
+def login():
+    uname = request.json.get('username')
+    pw = request.json.get('password')
+
+    succ, msg = login_user(uname, pw)
+
+    if not succ:
+        return jsonify(msg=msg), 400
+    
+    return jsonify(access_token=msg), 200
+    # TODO I can return a redirect link in the format 
+    # "return redirect(url_for('login'))"
+    # but the frontend has to cooperate 
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    # TODO note depending on get or post, could register or render html
+    # TODO might user id be helpful to identify user vs. string?
+
+    uname = request.json.get('username')
+    pw = request.json.get('password')
+
+    if not register_user(uname, pw):
+        return jsonify(msg="User already exists"), 400
+    
+    return jsonify(msg="User registered successfully"), 200
+    # TODO Similarly, you could redirect people to the normal webpage
+
+
+@app.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    jwt = get_jwt()
+    logout_user(jwt)
+    return jsonify({"msg": "Logout successful"}), 200
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_revoked(jwt_header, jwt_payload):
+    return check_blocklist(jwt_payload)
+
+
+# ========================== App Routes ==========================
+
+# TODO add real verification later
 # Intended for website text query
 @app.route('/text_query')
+@jwt_required()
 def text_query():
+    jwt = get_jwt()
+    user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
     query = request.args.get('query')
     index = request.args.get('index')
 
     # Simple way to case on stuff to test database, neg num is how many back
     # In the future, can complicate policies to add stuff like auth/security
-    response = handle_text_query(query, index)
+    response = handle_text_query(user, query, index)
     
     return jsonify(response)
 
 # TODO rename?
 # Intended for website to resolve provided image urls
 @app.route('/get_room_img', methods=['GET'])
+@jwt_required()
 def get_room_img():
+    jwt = get_jwt()
+    user = jwt['sub']
+
     data_arg = request.args.get('data')
     if data_arg == None:
+        # TODO standardize error, msg, etc., whatever
+        # TODO standardize where sanitization will be done
         return {"error": "No data parameter provided"}, 400
     
     try:
         decoded_data = urllib.parse.unquote(data_arg)
         db_line_dict = json.loads(decoded_data)
         db_line_obj = ImgObject(**db_line_dict)
-        img = fs_get_room_img(db_line_obj)
     except Exception as e:
         return {"error": "Invalid URL"}, 400
+    
+    img = fs_get_room_img(user, db_line_obj)
 
     if img == None:
         return {"error": "Image file not found"}, 400
@@ -56,23 +135,19 @@ def get_room_img():
 def speech_query():
     pass
 
+# TODO maybe not code 400? TODO find best?
 @app.route('/post_img', methods=['POST'])
+@jwt_required()
 def post_img():
+    jwt = get_jwt()
+    user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
+    
     f = request.files['file']
-    handle_img(f)
+    
+    if not handle_img(user, f):
+        return {"error": "User not found"}, 400
 
-    # TODO safe file to database, figure out how it will be structured
-    # We have the chatgpt thing to read from database, take inspiration or ask 
-    #  again. Once we have the interface it is easily mockable I think, both in
-    #  case of local database and remote unauthenticated database. 
-
-    # Much discussion must be done regarding authenticating all transactions vs.
-    #  building drastically different architecture for both. 
-    # Architecture may not have to be so drastic, can make in such a way that by
-    #  having certain options, we bypass the real auth checks. However, cloud
-    #  modules require them.
-
-    return '', 400
+    return '', 200
 
 # TODO eventually have some way to securly get images
 # @app.route('/get_img/<str:file>', methods=['GET'])

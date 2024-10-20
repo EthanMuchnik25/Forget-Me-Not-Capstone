@@ -8,6 +8,7 @@ boto3
 psycopg2-binary
 datetime
 python-dotenv
+Flask-JWT-Extended
 # TODO add these for sqlite, however, I can't get them to work on my machine
 # sqlite3
 # json

@@ -80,27 +80,67 @@
       fetchImage(query, currentImageIndex);
     });
 
+    // NOTE: I am not well-versed in the ways of async, maybe this should be 
+    //  async for better speed but synchronous will technically work, this is 
+    //  what GPT generated.
     // Fetch image from the server
-    function fetchImage(query, index) {
-      fetch(`/text_query?query=${query}&index=${index}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            document.getElementById('object-image').src = data.imageUrl;
-            document.getElementById('object-image').style.display = 'block';
-            document.getElementById('message').textContent = '';
-            document.getElementById('navigation-buttons').style.display = 'block';
-          } else {
-            document.getElementById('message').textContent = data.message || 'Object not found{def2}';
-            document.getElementById('object-image').style.display = 'none';
-            document.getElementById('navigation-buttons').style.display = 'none';
+    async function fetchImage(query, index) {
+      const token = localStorage.getItem('token')
+
+      try {
+        const response = await fetch(`/text_query?query=${query}&index=${index}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
           }
         })
-        .catch(error => {
-          console.error('Error fetching image:', error);
-          document.getElementById('message').textContent = 'Server error. Please try again later.';
+
+        const data = await response.json();
+
+        if (data.success) {
+          const blobUrl = await loadImage(data.imageUrl);
+          // TODO: when old URLs are no longer needed, clean them up with 
+          // URL.revokeObjectURL(url) to free memory. RN website is purely 
+          // demo so I don't care but eventually we should
+          document.getElementById('object-image').src = blobUrl;
+          document.getElementById('object-image').style.display = 'block';
+          document.getElementById('message').textContent = '';
+          document.getElementById('navigation-buttons').style.display = 'block';
+        } else {
+          document.getElementById('message').textContent = data.text || 'Object not found{def2}';
           document.getElementById('object-image').style.display = 'none';
+          document.getElementById('navigation-buttons').style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error fetching image:', error);
+        document.getElementById('message').textContent = 'Server error. Please try again later.';
+        document.getElementById('object-image').style.display = 'none';
+      }
+        
+    }
+
+    // Creates blob url for image that needs authentication
+    async function loadImage(imageUrl) {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch(imageUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response}`);
+        }
+        
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        return blobUrl;
+      } catch(error) {
+        console.error("Error loading image: ", error);
+        return null;
+      }
     }
     // NOTE: can either pass things through url parameter or http body: 
     // fetch(url, {

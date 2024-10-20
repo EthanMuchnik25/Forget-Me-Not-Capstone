@@ -41,7 +41,7 @@ def parse_yolo_line(parts):
     return (class_obj, (x1, y1), (x2, y2))
 
 # TODO not great name
-def handle_img(f):
+def handle_img(user, f):
 
     img_time = time.time()
     image_path = str(img_time) + ".jpg"
@@ -49,13 +49,20 @@ def handle_img(f):
     yolo_output = run_yolo(f)
         
     f.seek(0)
-    db_save_image(f, image_path)
+
+    # TODO api is not thought out and rigid with return false/true. Think of 
+    # something better once in a group
+
+    if not db_save_image(user, f, image_path):
+        return False
     for line in yolo_output:
         parsed_line = parse_yolo_line(line)
-        user = "john_doe" #maybe removed depending on architecture 
-        output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path, datetime.now())
-        print("Updating the db")
-        db_write_line(output_pkt)
+        # TODO I don't know if I like this, should user pass datetime?
+        output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path, time.time())
+
+        if not db_write_line(user, output_pkt):
+            return False
+    return True
         
 
 

@@ -11,7 +11,7 @@ class ImgObject:
     p1: Tuple[float]
     p2: Tuple[float]
     img_url: str
-    created_at: datetime
+    time: float
 
     def to_dict(self):
         return vars(self)

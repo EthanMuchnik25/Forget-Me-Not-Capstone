@@ -51,15 +51,40 @@ TODO: implement jwt security\
 -> think about how to add authentication for the raspberry pi\
 -> hash passwords appropriately, use hashed passwords appropriately\
 -> appropriately change frontend so that it checks login and redirects if not,change backend to give capability of theck login (401 unauthorized response) However, login on any response of this type, fail on any other failure
+-> encrypt images
+-> come up with scheme to auth and keep camera authenticated
+ -> no expiry? better return codes?
+ -> should camera auth different to personal? Should logout personal logout camera? 
+-> full debugging! 422 implies login again! see what other errors we can run into
+-> standardize api results to website before poor web dev person has to implement
+ -> jsonify vs not? "error" vs "msg"? error codes?
+
+-> update documentation
+-> should we have a user id field? Faster lookup?
+
+Implementation notes:
+- new login screen
+- need new functionality of the database
+  - to begin password database
+  - associated access with user
+  * add ability to check for user
+  * add ability to create new user
+  * add ability to get hashed password for user
+  - need blacklist for bad tokens
+- essentially just add the tokens to all the route functions
+- isolate implementation into auth file?
+- rename routes if necessary, change params if different interface necessary for actions the website wishes to accomplish
+
+
+#### Misc
+- Do many websites have a robot.txt? do I care?
+- Make sure all http error codes make sense
 
 
 notes:\
 -> localStorage seems to be cookies, use to store the token in frontend \
 -> document useage of localstorage for swati new frontend \
 -> jwt secret key is seemingly used to hash user entries. Probably reset it upon server restart or in debug mode leave it alone?
-
-
-
 
 
 
@@ -106,3 +131,36 @@ bottom text
   - image workflow
   - mic/recieve workflow
 
+
+
+
+## Dump
+
+TODO maybe document jwt...\\
+Has fields like this, look in jwt_claims:
+```
+{
+  "message": "You have access to this protected route!",
+  "current_user": "testuser",
+  "jwt_claims": {
+    "exp": 1634567890,
+    "iat": 1634564290,
+    "jti": "1234567890abcdef",
+    "identity": "testuser",
+    "fresh": false,
+    "type": "access"
+  }
+}
+```
+Claims can be found by doing get_jwt in flask app\
+Tokens in my case can be manually blacklisted until they expire, but afterwards it is useless to keep them alive.
+
+For unapproved response, returns "HTTP Status: 401 Unauthorized
+Response: A JSON object with a message indicating the token has expired."
+
+
+-> verify query works
+-> authenticate sending
+-> verify querying image works
+
+** richard thomson?

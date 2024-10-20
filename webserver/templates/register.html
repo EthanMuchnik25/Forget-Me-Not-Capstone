@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>register Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .register-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .register-container h2 {
+            margin-bottom: 20px;
+        }
+        .register-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .register-container button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .register-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h2>Register</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="register()">register</button>
+    <p id="message"></p>
+    <a href="login.html">Click here to login!</a>
+</div>
+
+<script>
+    async function register() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const message = document.getElementById('message');
+
+        try {
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                message.textContent = 'register successful!';
+                message.style.color = 'green';
+                // Handle successful register (e.g., redirect)
+            } else {
+                message.textContent = data.message || 'register failed.';
+                message.style.color = 'red';
+            }
+        } catch (error) {
+            // message.textContent = 'An error occurred.';
+            message.textContent = error;
+            message.style.color = 'red';
+        }
+    }
+</script>
+
+</body>
+</html>

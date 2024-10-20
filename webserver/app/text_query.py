@@ -20,7 +20,7 @@ def create_img_url(db_ret):
     url_encoded = urllib.parse.quote(json_string)
     return f"/get_room_img?data={url_encoded}"
 
-def handle_text_query(query, index):
+def handle_text_query(user, query, index):
     if query == 'swaglab':
         response = {
             'imageUrl': '/static/swaglab.jpg',
@@ -45,8 +45,8 @@ def handle_text_query(query, index):
             'success': False,
             'message': "Negative photo index"
         }
-    
-    db_ret = db_query_single(query, index)
+
+    db_ret = db_query_single(user, query, index)
     if db_query_single == None:
         return {
             'success': False,
@@ -54,7 +54,7 @@ def handle_text_query(query, index):
         }
         
     # TODO: See what other stuff is necessary in the future 
-
+    
     return {
         'success': True,
         'imageUrl': create_img_url(db_ret)

@@ -44,9 +44,11 @@ def draw_boxes(img_handle, obj):
 
     return img_bytes
 
-def fs_get_room_img(db_ret):
+def fs_get_room_img(user, db_ret):
     # NOTE: May be none
-    img = db_get_image(db_ret.img_url)
+    img = db_get_image(user, db_ret.img_url)
+    if img == None:
+        return None
 
     box_img = draw_boxes(img, db_ret)
 

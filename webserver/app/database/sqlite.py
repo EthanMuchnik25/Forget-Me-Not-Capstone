@@ -7,6 +7,8 @@ from app.database.types_db import ImgObject, ImgObjectQuery
 
 # Setup
 img_ctr = 0
+# TODO this directory should only be for my debug database, feel free to make a 
+#  new one for this. Also I am changing its name.
 temp_imgs_dir = "./app/database/debug_imgs/"
 db_store_file_path = temp_imgs_dir + "object_tracking.db"
 os.makedirs(temp_imgs_dir, exist_ok=True)
