@@ -50,6 +50,9 @@ This hopes to document some of the things we probably eventually have to get sor
   - [ ] mic and speaker
   - [ ] SD card 
 
+### Software Engineering - increase speed of development
+- [ ] Add versions for all the python packages
+
 ### Website: user flow
 How should a user interact with our website?
 
