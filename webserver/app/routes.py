@@ -27,7 +27,7 @@ def hello_world():
 
 
 @app.route('/img_search.html')
-@jwt_required()
+# @jwt_required() # Fuck. The alternative is tragic. See index.html
 def img_search():
     return render_template("img_search.html")
 
@@ -45,6 +45,11 @@ def register_page():
 
 # ========================== Auth Routes ==========================
 
+@app.route("/test_auth")
+@jwt_required()
+def test_auth():
+    return jsonify(msg="Authentication successful"), 200
+
 @app.route('/login', methods=['POST'])
 def login():
     uname = request.json.get('username')
@@ -56,7 +61,9 @@ def login():
         return jsonify(msg=msg), 400
     
     # TODO hardcode url bad
-    return jsonify(access_token=msg, redirect_url="/"), 200
+    # TODO originally brought you back to main page bc img_search.html did not
+    #  exist
+    return jsonify(access_token=msg, redirect_url="/img_search.html"), 200
 
 
 @app.route('/register', methods=['POST'])

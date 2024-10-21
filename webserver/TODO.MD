@@ -20,6 +20,9 @@
 
 This hopes to document some of the things we probably eventually have to get sorted out
 
+### Bug fix
+- [ ] Demo database iterates through images in forwards-time order instead of reverse-time order I think
+
 ### Proof of concept
 (Mostl are done - see Complete)
 - [ ] Mic pipeline
@@ -157,6 +160,8 @@ How should a user interact with our website?
       - tokens, expiring, etc.
     - [ ] For the purposes of FE
       - index.html, id token
+- [ ] Clean up repository
+  - webserver/app/random_scripts?
 
 ### Not mine
 
