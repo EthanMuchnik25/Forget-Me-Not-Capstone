@@ -223,6 +223,11 @@ We need a basic system up and running before we can elaborate on specific improv
 - [x] Refactor old server code to use authentication
 - [x] Refactor old website to use authentication
 
+### Bug fix
+- [x] When send full-quality raspi image, request_entity_too_large error
+  - sends 1.2M images
+  - soln: nginx.conf
+
 
 ## Personal notes dump
 #### Useful sites:
