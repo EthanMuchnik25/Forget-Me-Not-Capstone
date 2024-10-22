@@ -8,12 +8,14 @@ import numpy as np
 # import logging
 # logging.getLogger('ultralytics').setLevel(logging.ERROR)
 
+model = YOLO("./app/model/binaries/yolo11x.pt")
 
 # TODO This seems extremely dubious for performance. Is the model loaded every 
 #  time? Could this only be loaded upon initialization?
+# TODO now it is loaded only upon initialization by moving the line above I 
+#  think. Still more testing to be done.
 def run_yolo(f):
 
-    model = YOLO("./app/model/binaries/yolo11x.pt")
     
     #change the default path to dataset.yaml
     class_names = model.names
