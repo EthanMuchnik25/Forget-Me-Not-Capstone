@@ -75,6 +75,7 @@ def cleanup():
             json.dump(db[key], file, default=types.ImgObject.to_dict)
         os.chmod(db_store_file_path, 0o777)
 
+    os.makedirs(os.path.dirname(creds_file_path), exist_ok=True)
     with open(creds_file_path, "w") as file:
         json.dump(users, file)
     os.chmod(creds_file_path, 0o777)

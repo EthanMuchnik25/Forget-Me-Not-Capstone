@@ -51,7 +51,7 @@ docker run -v $(pwd)/:/webserver -p 4000:80 -it --entrypoint /bin/bash --name my
 Once you are in a shell in the container, you first want to start nginx because the dockerfile is stupid ;-;. Type this in the terminal:
 ```
 nginx
-service status nginx
+service nginx status 
 ```
 This command must be run whenever you restart the container.
 
