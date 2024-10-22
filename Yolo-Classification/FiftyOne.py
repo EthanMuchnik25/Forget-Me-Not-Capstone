@@ -62,23 +62,38 @@ test_folder = ''
 # print(conversionFromJSONToYAML)
 
 def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split, max_samples):
-    
-    name = "coco-2017"
-    settings['datasets_dir'] = initialDataStorageDirectory
-    if max_samples is None:
-        dataset = foz.load_zoo_dataset(name, label_types="detections", split=split)
-    else:
-        dataset = foz.load_zoo_dataset(name, label_types="detections", split=split, max_samples=max_samples)
-    # delete and create
     if os.path.exists(middleDataStorageDirectory):
         shutil.rmtree(middleDataStorageDirectory)
     os.makedirs(middleDataStorageDirectory)
+    if split == "both":
+        split = ["train", "validation"]
+    else:
+        split = [split]
 
-    dataset.export(
-        export_dir= middleDataStorageDirectory,
-        dataset_type=fo.types.YOLOv5Dataset,  # Specify the export format
-        label_field="ground_truth",           # Specify the field containing labels (if applicable)
-    )
+    for split in split:
+        name = "coco-2017"
+        settings['datasets_dir'] = initialDataStorageDirectory
+        if max_samples is None:
+            dataset = foz.load_zoo_dataset(name, label_types="detections", split=split)
+        else:
+            dataset = foz.load_zoo_dataset(name, label_types="detections", split=split, max_samples=max_samples)
+        # delete and create
+        tmp = middleDataStorageDirectory + "/{}/".format(split)
+        dataset.export(
+            export_dir= tmp,
+            dataset_type=fo.types.YOLOv5Dataset,  # Specify the export format
+            label_field="ground_truth",           # Specify the field containing labels (if applicable)
+        )
+    
+    for split in split:
+        os.makedirs(middleDataStorageDirectory + "/{}/images".format(split))
+        os.makedirs(middleDataStorageDirectory + "/{}/labels".format(split))
+
+        for file in os.listdir(middleDataStorageDirectory + "/{}/".format(split)):
+            if file.endswith(".jpg"):
+                shutil.move(middleDataStorageDirectory + "/{}/".format(split) + file, middleDataStorageDirectory + "/{}/images/".format(split) + file)
+            elif file.endswith(".txt"):
+                shutil.move(middleDataStorageDirectory + "/{}/".format(split) + file, middleDataStorageDirectory + "/{}/labels/".format(split) + file)
 
 
 def filterCoco(middleDataStorageDirectory):
@@ -629,13 +644,22 @@ def augmentData(modDirectory, addDirectory):
     print("Augmentation complete!")
 
 
-def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
+def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath, args):
     print("add dataset path is : " + addDatasetPath)
-    testPath = os.path.join(addDatasetPath, "test/{}")
-    trainPath = os.path.join(addDatasetPath, "train/{}")
-    valPath = os.path.join(addDatasetPath, "valid/{}")
 
-    listPaths = [testPath, trainPath, valPath]
+    # Create list of paths for test, train, and valid
+    listPaths = []
+    
+    # for list of dirs in addDatasetPath
+    for d in os.listdir(addDatasetPath):
+        listPaths.append(os.path.join(addDatasetPath, d) + "/{}")
+
+
+    # testPath = os.path.join(addDatasetPath, "test/{}")
+    # trainPath = os.path.join(addDatasetPath, "train/{}")
+    # valPath = os.path.join(addDatasetPath, "valid/{}")
+
+    # listPaths = [testPath, trainPath, valPath]
     
     dataYamlPath = os.path.join(addDatasetPath, "data.yaml")
 
@@ -704,20 +728,39 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
     with open(originalDatasetPath + "/data.yaml", 'w') as f:
         yaml.dump(originalData, f)
 
+    pathsTo = []
+    for i in os.listdir(originalDatasetPath):
+        pathsTo.append(originalDatasetPath + "/{}/")
 
-    train_folder = originalDatasetPath + "/train/{}/"
-    val_folder = originalDatasetPath + "/val/{}/"
-    test_folder = originalDatasetPath + "/test/{}/"
+    # train_folder = originalDatasetPath + "/train/{}/"
+    # val_folder = originalDatasetPath + "/val/{}/"
+    # test_folder = originalDatasetPath + "/test/{}/"
 
     imagesLabels = ["images", "labels"]
-    paths = [testPath, trainPath, valPath]
-    pathsTo = [test_folder, train_folder, val_folder]
+    paths = listPaths
+    # pathsTo = [test_folder, train_folder, val_folder]
     for i in range(len(paths)):
         for imageLabel in imagesLabels:
             imageLabelPath = paths[i].format(imageLabel)
             print(imageLabelPath)
             for file in os.listdir(imageLabelPath):
                 shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i].format(imageLabel), file))
+    
+    # Create a file called trainFileLocations in the -dr directory
+    with open(args.dr + "/trainFileLocations.txt", "w") as f:
+        for file in os.listdir(train_folder.format("images")):
+            f.write(train_folder.format("images") + file + "\n")
+    
+    # Create a file called valFileLocations in the -dr directory
+    with open(args.dr + "/valFileLocations.txt", "w") as f:
+        for file in os.listdir(val_folder.format("images")):
+            f.write(val_folder.format("images") + file + "\n")
+
+    # Create a file called testFileLocations in the -dr directory
+    with open(args.dr + "/testFileLocations.txt", "w") as f:
+        for file in os.listdir(test_folder.format("images")):
+            f.write(test_folder.format("images") + file + "\n")
+
 
 def train(dataStorageDirectory, model = "yolo11n.yaml", epochs = 400, resume = False, batch_size = 32):
 
@@ -748,6 +791,7 @@ if __name__ == "__main__":
     parser.add_argument('-is', '--initialDataStorageDirectory', type =str, default="/app/initial-download")
     parser.add_argument('-ms', '--middleDataStorageDirectory', type =str, default="/app/Intermediary") 
     parser.add_argument('-ds', '--dataStorageDirectory', type =str, default="/app/datasets/Final")
+    parser.add_argument('-dr', '--dataWhileRunningDirectory', type=str, default="/app/runs/detect/lastData")
     parser.add_argument('-modd', '--modDirectory', type=str, default="/app/datasets/Augmentation")
     parser.add_argument('-ad', '--addDatasetPath', type=str, default="/app/datasets/Images/")
     parser.add_argument('-dd', '--dockerDataPath',nargs='?', const=False, default=False)
@@ -768,7 +812,15 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--split',  type =str, nargs='?', const="validation",default="validation")
     parser.add_argument('-e', '--epochs',  type =int, nargs='?', const=400, default=400)
     parser.add_argument('-v', '--validate', action='store_true')
+
+
     args = parser.parse_args()
+
+    # exit and give an error if -ds already exists
+    if os.path.exists(args.dataStorageDirectory):
+        print("Error: -ds already exists")
+        exit()
+
     modDirectory = []
     if args.add == []:
         # remove all directories within args.addDatasetPath
