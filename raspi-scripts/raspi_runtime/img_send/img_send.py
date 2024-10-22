@@ -1,5 +1,7 @@
 # This file periodically takes photos and sends them to the web server
 import requests
+import os
+
 from config import Config
 import time
 if Config.CAMERA_VER == "LAPTOP":
@@ -18,10 +20,14 @@ def read_creds_file():
         uname = file.readline().strip()
         pw = file.readline().strip()
         return (uname, pw)
-    raise Exception("Failed acquiring credentials from file")
+    raise Exception("Failed acquiring credentials from file. Does file exist?")
 
 
 def read_token_file():
+    if not os.path.exists(Config.TOKEN_FILE_PATH):
+        with open(Config.TOKEN_FILE_PATH, "w") as file:
+            file.write("")
+
     with open(Config.TOKEN_FILE_PATH, "r") as file:
         token = file.readline().strip()
         return token
