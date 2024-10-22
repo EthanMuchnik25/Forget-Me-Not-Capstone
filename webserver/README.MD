@@ -10,7 +10,8 @@ To Organize:
 ## Useful Instructions:
 
 1. [How to setup/initialize the webserver component {Start here!}](./notes/install_instructions.md)
-2. Add additional later for components like fakes, etc
+2. [Some useful docker commands](./notes/docker_commands.md)
+3. TODO: add component-wise and architecture documentation once structure solidifies
 
 
 ## Directory Structure:
@@ -24,7 +25,6 @@ To Organize:
 │
 ├── /templates           # Template HTML webpages - sendable with flask fn render_template()
 │
-├── /fakes              # Contains dummy implementations of components
 ├── /notes              # Additional Documentation
 ├── /file_uploads       # Temporary directory to test file uploads
 │

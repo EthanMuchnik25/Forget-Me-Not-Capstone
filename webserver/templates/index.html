@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+
+<script>
+  async function fetchData() {
+    try {
+      const token = localStorage.getItem('token')
+
+      // TODO part of the same problem
+      // const response = await fetch('/img_search.html', {
+      const response = await fetch('/test_auth', {
+
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const responseBody = await response.text();
+        // TODO: I learned the sad way that this does not execute the <script>
+          // code in the loaded doc, and I would need to manually bind all my 
+          // button handlers. For now, I will just load the new webpage until we
+          // have a real frontend. Maybe this is easier to fix once we have a 
+          // nice fully featured beautiful react frontend.
+        // Note: The one disadvantage of this approach is that now an 
+          // unauthenticated user can access the object finder page. The page 
+          // will still be unuseable for them but now they might get confused as
+          // there is no message telling them to try logging in again
+        // document.body.innerHTML = responseBody;
+        window.location.href = "/img_search.html"
+      } else {
+        window.location.href = "/login.html";
+      }
+    } catch (error) {
+      window.location.href = "/login.html";
+    }
+  }
+
+  fetchData()
+  
+</script>
+
+</body>
+
+</html>

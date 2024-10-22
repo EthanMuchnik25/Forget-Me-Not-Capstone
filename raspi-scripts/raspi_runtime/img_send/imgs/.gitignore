@@ -1,0 +1,3 @@
+
+# Our image taking script writes to here every time for some stupid reason
+temp_img.jpg 

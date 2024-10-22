@@ -8,6 +8,9 @@ For information on hardware specs, and hardware installation, go to [./notes/spe
 
 For information regarding what each small script does, go to [./notes/small_scripts.md](./notes/small_scripts.md)
 
+Here is the official documentation on how to set up a raspi for ssh: [https://www.raspberrypi.com/documentation/computers/remote-access.html](https://www.raspberrypi.com/documentation/computers/remote-access.html)\
+Remember to reboot the machine after setting it up I think. 
+
 ## Directory Structure
 ```
 /raspi-scripts

@@ -10,6 +10,63 @@ If you do not, obtain a copy through the gc
 2. **You NEVER EVER commit a copy of the file**\
 The git repository still stores old commits even if the current branch is not at that commit.
 
+
+# To run with Docker container
+
+### Docker for vscode
+If you want to modify files in your docker container in vscode, install the `Remote-Containers` extension and connect to the container with `ctrl+shift+P -> Attach to Running Container`
+
+## Prod Container
+
+### Create Container
+
+cd into this directory (webserver) and type:
+```
+docker build -t myapp .
+```
+my_app is the container name, but you can rename it if you wish
+
+Next, to run the container, type:
+```
+docker run -p 4000:80 myapp
+```
+Note that this commands sets port 80 of the docker container as port 4000 of your computer. In this case, you would have to access the website through [http://localhost:4000](http://localhost:4000). If you don't want to have to specify a port, map port 80 directly to port 80.
+
+
+## Debug Container
+
+With the debug container, you can edit the files in your computer's local directory and the changes will appear in the container. Additionally, this container doesn't automatically run gunicorn, allowing the user to enter the container with a shell, and easily restart gunicorn to keep up with modifications to the source code.
+
+cd into this directory and type:
+```
+docker build -f ./Dockerfile-dbg -t myapp-dbg .
+```
+my_app is the container name, but you can rename it if you wish
+
+Next, to run the container, and enter a shell on it, type:
+```
+docker run -v $(pwd)/:/webserver -p 4000:80 -it --entrypoint /bin/bash --name myapp-dbg myapp-dbg
+```
+
+Once you are in a shell in the container, you first want to start nginx because the dockerfile is stupid ;-;. Type this in the terminal:
+```
+nginx
+service nginx status 
+```
+This command must be run whenever you restart the container.
+
+Next, you will want to run gunicorn to get the server operational. To do this, type: 
+```
+gunicorn --workers 1 --bind 0.0.0.0:8000 myapp:app
+```
+
+If you would like to get back into a shell on the container after leaving, type:
+```
+docker restart myapp-dbg
+docker exec -it myapp-dbg /bin/bash 
+```
+
+
 # To Run Server Locally:
 
 ## Python setup:
@@ -110,6 +167,23 @@ sudo systemctl disable nginx
 #### For additional nginx notes and debugging tips, go [here](./notes/nginx_notes.md)
 
 
-# To Run Server in Docker:
+## Raspi Setup
 
-### The docker version is not complete yet! I still have yet to test it out.
+Nothing special, see [Docker Notes](./docker_commands.md) for instructions on how to install docker on raspberry pi.
+
+Follow instructions online on how to flash your rpi sd card, or enable ssh.
+
+## NVIDIA Jetson
+
+Follow [these instructions](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-2gb-devkit).
+
+Important:
+- Download image from site
+- lsblk
+  - Unmount partition if sd card is auto mounted
+- unzip jetson___.zip
+  - `unzip ~Downloads/jetson-nano-2gb-jp461-sd-card-image.zip`
+- sudo /bin/dd if=~/Downloads/___.img of=/dev/SD_DIRECTORY bs=1M status=progress
+  - `sudo /bin/dd if=~/Downloads/sd-blob.img of=/dev/mmcblk0  bs=1M status=progress`
+- sudo eject /dev/mmcblk0
+

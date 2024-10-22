@@ -1,12 +1,14 @@
 from app.config import Config
 from app.database.types_db import ImgObject
+from datetime import datetime
 import time
 
 # Import YOLO
 if Config.YOLO_VER == "MOCK":
-    from fakes.fake_yolo import run_yolo
+    from app.model.fake_yolo import run_yolo
+elif Config.YOLO_VER == "V11":
+    from app.model.run_yolo import run_yolo
 else:
-    # TODO swap this with the real yolo
     raise NotImplementedError
 
 # Import database
@@ -15,50 +17,54 @@ if Config.DATABASE_VER == "RDS":
 elif Config.DATABASE_VER == "SQLITE":
     raise NotImplementedError
 elif Config.DATABASE_VER == "DEBUG":
-    from app.database.debug_db import db_write_line, db_save_image
+    from app.database.debug_db.debug_db import db_write_line, db_save_image
 else:
     raise NotImplementedError
 
 
-def parse_yolo_line(line):
+# TODO: weird code, vals keep getting casted between float and int... 
+#  check run_yolo()
+def parse_yolo_line(parts):
     # parsing logic
     # yolo output types:
-    # class obj, x_center, y_center, width, height
+    # class obj, x_center, y_center, box width, box height
 
-    #splitting each line into individual coordinates 
-    parts = line.split()
-    class_obj = int(parts[0])
+    class_obj = parts[0]
     x_center = float(parts[1])
     y_center = float(parts[2])
     width = float(parts[3])
     height = float(parts[4])
-    x_coord = x_center + width/2 
-    y_coord = y_center + height/2
-    return (class_obj, (x_coord, y_coord))
+    x1 = x_center - width/2
+    y1 = y_center - height/2
+    x2 = x_center + width/2 
+    y2 = y_center + height/2
+    return (class_obj, (x1, y1), (x2, y2))
 
 # TODO not great name
-def handle_img(f):
+def handle_img(user, f):
 
     img_time = time.time()
     image_path = str(img_time) + ".jpg"
 
-
-    # TODO implement
-    yolo_output_filename = run_yolo(f)
-
-    with open(yolo_output_filename, 'r') as file:
-        data = file.read()
+    yolo_output = run_yolo(f)
         
-        db_save_image(f, image_path)
+    f.seek(0)
 
-        for line in data.strip().split('\n'):
-            parsed_line = parse_yolo_line(line)
+    # TODO api is not thought out and rigid with return false/true. Think of 
+    # something better once in a group
 
-            user = "john_doe" #maybe removed depending on architecture 
+    if not db_save_image(user, f, image_path):
+        return False
+    for line in yolo_output:
+        parsed_line = parse_yolo_line(line)
+        # TODO I don't know if I like this, should user pass datetime?
+        output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path, time.time())
 
+        if not db_write_line(user, output_pkt):
+            return False
+    return True
+        
 
-            output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], image_path)
-            db_write_line(output_pkt)
 
 
 
