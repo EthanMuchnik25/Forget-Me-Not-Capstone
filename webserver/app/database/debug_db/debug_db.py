@@ -85,6 +85,7 @@ def cleanup():
     global blacklist
     blacklist = {key: value for key, value in blacklist.items() if value >= t}
 
+    os.makedirs(os.path.dirname(creds_file_path), exist_ok=True)
     with open(blacklist_file_path, "w") as file:
         json.dump(blacklist, file)
     os.chmod(blacklist_file_path, 0o777)
