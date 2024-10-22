@@ -80,7 +80,7 @@ def send_img_req(img_file):
     img_file.seek(0)
     headers = {'Authorization': f'Bearer {token}'}
     response = requests.post(img_url, headers=headers, files=files)
-    if response.status_code != 400:
+    if response.status_code != 200:
         print(f"Failed to send after reauthentication: {response.status_code}  Response: {response.text}")
 
 

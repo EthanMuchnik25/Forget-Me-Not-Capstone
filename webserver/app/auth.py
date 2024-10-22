@@ -11,7 +11,7 @@ if Config.DATABASE_VER == "RDS":
 elif Config.DATABASE_VER == "SQLITE":
     raise NotImplementedError
 elif Config.DATABASE_VER == "DEBUG":
-    from app.database.debug_db import db_register_user, db_get_user_pw,\
+    from app.database.debug_db.debug_db import db_register_user, db_get_user_pw,\
         db_add_token_blacklist, db_check_token_blacklist
 else:
     raise NotImplementedError

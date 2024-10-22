@@ -167,6 +167,3 @@ sudo systemctl disable nginx
 #### For additional nginx notes and debugging tips, go [here](./notes/nginx_notes.md)
 
 
-# To Run Server in Docker:
-
-### The docker version is not complete yet! I still have yet to test it out.

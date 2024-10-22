@@ -22,6 +22,9 @@ This hopes to document some of the things we probably eventually have to get sor
 
 ### Bug fix
 - [ ] Demo database iterates through images in forwards-time order instead of reverse-time order I think
+- [ ] It seems like YOLO resizes the images to only work on 384x640
+  - Is this intentional?
+  - If so, should we decrease image size?
 
 ### Proof of concept
 (Mostl are done - see Complete)
@@ -51,10 +54,11 @@ This hopes to document some of the things we probably eventually have to get sor
 ### Order necessary components
 - [ ] Make sure we have all components we may need
   - [ ] mic and speaker
-  - [ ] SD card 
+  - [x] SD card 
 
 ### Software Engineering - increase speed of development
 - [ ] Add versions for all the python packages
+- [ ] Refactor database layout - each version gets it's own dir
 
 ### Website: user flow
 How should a user interact with our website?
@@ -63,6 +67,7 @@ How should a user interact with our website?
 - [ ] What pages should our website have?
   - Will we have a top-level website? Must we buy a domain?
   - home page, login, auth, eventually our other webpage
+  - do urls make sense?
 - [ ] How should UI look? 
   - [ ] How should users be able to find what they want?
     - Thumbnails?
@@ -112,6 +117,13 @@ How should a user interact with our website?
 
 ### Performance testing
 
+#### Discovery
+Designing testing methodology for concurrent testing:
+- [ ] How does multithread gunicorn work
+- [ ] How to ensure atomif read-modify-write
+  - to objects?
+  - to files?
+
 #### Performance counters
 - [ ] Discuss what performance counters we want
 - [ ] Design performance counting in a way that won't slow everything down a ton
@@ -139,6 +151,7 @@ How should a user interact with our website?
   - [ ] Build framework to test stress test our systems
     - Spawn many querying users
     - Submit many images from many users to many users
+    - ***** Investigate amazon Selenium!!!  ****
   - [ ] Run tests
     - How many of each thing can we spawn until we saturate machine?
     - How What could be decoupled?
@@ -162,6 +175,7 @@ How should a user interact with our website?
       - index.html, id token
 - [ ] Clean up repository
   - webserver/app/random_scripts?
+- [ ] webserver/app/database/debug_db/convenient_scripts
 
 ### Not mine
 
