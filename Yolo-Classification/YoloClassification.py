@@ -6,7 +6,8 @@ import cv2
 
 def runifmain():
     # Load the YOLOv8 model
-    model = YOLO("C:\\Users\\muchn\\train29\\weights\\best.pt")
+    model = YOLO("C:\\Users\\muchn\\train47\\weights\\best.pt")
+    # model = YOLO("C:\\Users\\muchn\\Documents\\Classes\\18500\\Forget-Me-Not-Capstone\\Yolo-Classification\\YoloTrainingRes\\50epochLargeTrainMinorAugRoboflowBothPencilDatasets-NotBadProbCouldUseNoDefaultPencilDataset\\weights\\best.pt")
     
     #change the default path to dataset.yaml
     
@@ -14,7 +15,8 @@ def runifmain():
     model.to('cpu')
 
     # Perform object detection
-    results = model('C:\\Users\\muchn\\Documents\\Classes\\18500\\Forget-Me-Not-Capstone\\Yolo-Classification\\datasets\\Images\\IMG_1728.jpg')
+    # C:\\Users\\muchn\\Documents\\Classes\\18500\\Forget-Me-Not-Capstone\\Yolo-Classification\\YoloTrainingRes\\50epochLargeTrainMinorAugRoboflowBothPencilDatasets-NotBadProbCouldUseNoDefaultPencilDataset\\weights\\best.pt
+    results = model('C:\\Users\\muchn\\Documents\\Classes\\18500\\Forget-Me-Not-Capstone\\Yolo-Classification\\datasets\\Images\\Detecting-Pencils-2\\test\\images\\Office-44_jpg.rf.e73e6f403da5fb79594d3810831f1873.jpg'    )
     # print(result.boxes.map50)
     # Access the first image result (if you're processing multiple images, iterate over them)
     result = results[0]
