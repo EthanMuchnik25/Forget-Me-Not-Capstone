@@ -167,3 +167,23 @@ sudo systemctl disable nginx
 #### For additional nginx notes and debugging tips, go [here](./notes/nginx_notes.md)
 
 
+## Raspi Setup
+
+Nothing special, see [Docker Notes](./docker_commands.md) for instructions on how to install docker on raspberry pi.
+
+Follow instructions online on how to flash your rpi sd card, or enable ssh.
+
+## NVIDIA Jetson
+
+Follow [these instructions](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-2gb-devkit).
+
+Important:
+- Download image from site
+- lsblk
+  - Unmount partition if sd card is auto mounted
+- unzip jetson___.zip
+  - `unzip ~Downloads/jetson-nano-2gb-jp461-sd-card-image.zip`
+- sudo /bin/dd if=~/Downloads/___.img of=/dev/SD_DIRECTORY bs=1M status=progress
+  - `sudo /bin/dd if=~/Downloads/sd-blob.img of=/dev/mmcblk0  bs=1M status=progress`
+- sudo eject /dev/mmcblk0
+

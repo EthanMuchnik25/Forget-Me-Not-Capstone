@@ -55,6 +55,7 @@ This hopes to document some of the things we probably eventually have to get sor
 - [ ] Make sure we have all components we may need
   - [ ] mic and speaker
   - [x] SD card 
+  - [ ] jetson dongle
 
 ### Software Engineering - increase speed of development
 - [ ] Add versions for all the python packages
@@ -73,6 +74,8 @@ How should a user interact with our website?
     - Thumbnails?
     - Date entry?
     - Dropdown?
+    - Should users be able to pick which cameras to search?
+      - Many policy ideas required to implement this... table join? weird query?
 - [ ] What differences should there be for web vs local versions?
   - How can I implement those differences?
 - [ ] UI sketches
