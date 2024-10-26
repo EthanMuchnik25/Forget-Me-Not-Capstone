@@ -118,7 +118,7 @@ How should a user interact with our website?
 - Unless we are using https, our http requests pass unencrypted over the network. To prevent this, we should use https. To use https, we should configure nginx. To configure nginx, we need an SSL. To get an ssl "for free", we can go to "Let's Encrypt" For more information go to [THIS DOCUMENT](./notes_private/chattyg_response/ssl_encrypt.md)
 
 
-### Performance testing
+### Performance testing: latency
 
 #### Discovery
 Designing testing methodology for concurrent testing:
@@ -158,6 +158,20 @@ Designing testing methodology for concurrent testing:
   - [ ] Run tests
     - How many of each thing can we spawn until we saturate machine?
     - How What could be decoupled?
+
+
+### Performance testing: accuracy
+- ethan ml models, todo figure out testing method closer to real life use case
+
+
+### Performance testing: data
+- [ ] discuss what can be done to optimize data storage
+  - check light levels
+  - only people move things, delete any image where there isn't a person
+  - check image difference (questionable)
+- [ ] test storage over time with each optimization
+
+
 
 
 ### Documentation maintenance
