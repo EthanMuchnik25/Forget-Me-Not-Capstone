@@ -9,10 +9,10 @@ import socket
 # File with drive credentials
 creds_file = "service_account.json"
 # ID of google drive folder -> what shows up in url after /folders/<here>
-drive_folder_id = "10I7K-fN_rdrXimnhK21OqjeOgO4Ymhln"
+drive_folder_id_filename = "drive_folder_id.txt"
 
 # name of file to store in drive
-write_filename = "rpi_a.txt"
+write_filename_filename = "write_filename.txt"
 
 
 def authenticate_google_drive(creds_file):
@@ -70,9 +70,13 @@ def main():
 
     ip_addr = get_private_ip_address()
 
+    with open(write_filename_filename, "r") as file:
+        write_filename = file.readline()
     with open(write_filename, "w") as file:
         file.write(ip_addr)
 
+    with open(drive_folder_id_filename, "r") as file:
+        drive_folder_id = file.readline()
     upload_file_drive(drive_service, drive_folder_id, write_filename)
 
 
