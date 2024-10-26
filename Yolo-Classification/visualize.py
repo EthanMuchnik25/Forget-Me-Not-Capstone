@@ -2,9 +2,9 @@ import os
 import cv2
 
 # Path to your images and labels folders
-images_folder = 'C:\\Users\\muchn\\society17\\Detecting-Pencils-2-LessContrastBrightnessEtc\\train\\images'
-labels_folder = 'C:\\Users\muchn\society17\\Detecting-Pencils-2-LessContrastBrightnessEtc\\train\\labels'
-output_folder = 'C:\\Users\muchn\society17\\'
+images_folder = 'C:\\Users\\muchn\\society20\\train\\images'
+labels_folder = 'C:\\Users\muchn\society20\\train\\labels'
+output_folder = 'C:\\Users\muchn\society20\\'
 
 # Function to draw bounding boxes
 def draw_bounding_boxes(image_path, label_path, output_path):

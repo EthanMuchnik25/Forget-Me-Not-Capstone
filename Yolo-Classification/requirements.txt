@@ -6,6 +6,7 @@ opencv-python-headless
 py-cpuinfo
 mpmath
 sympy
+transformers
 pyyaml
 numpy
 networkx
