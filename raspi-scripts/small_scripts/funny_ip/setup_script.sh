@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "$(dirname "$(readlink -f "$0")")"
+cd "$(dirname "$0")"
 CURRENT_DIR=$(pwd)
 
 python3 -m venv .venv || { echo "Failed to create virtual environment"; exit 1; }
