@@ -25,12 +25,15 @@ def handle_text_query(user, query, index=0):
         response = {
             'imageUrl': '/static/swaglab.jpg',
             'success': True
-        }
+        }   
+        return response
+
     elif query == 'sign':
         response = {
             'imageUrl': 'https://i.redd.it/87xuofmvnlud1.png',
             'success': True
         }
+        return response
 
     try:
         index = int(index)
