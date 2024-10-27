@@ -10,6 +10,7 @@ To Organize:
 ## Useful Instructions:
 
 1. [How to setup/initialize the webserver component {Start here!}](./notes/install_instructions.md)
+2. [API Documentation](./notes/api_useage.md)
 2. [Some useful docker commands](./notes/docker_commands.md)
 3. TODO: add component-wise and architecture documentation once structure solidifies
 

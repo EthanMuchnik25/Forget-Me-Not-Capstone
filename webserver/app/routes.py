@@ -177,9 +177,17 @@ def get_username():
 
     return {"username": user}, 200
 
-# Intended for raspi speech query
+
 @app.route('/speech_query', methods=['POST'])
+@jwt_required()
 def speech_query():
-    pass
+    # NOTE: This is a dummy response. Ethan if you decide to code this up put
+    #  it all in a different file, maybe like speech.py or something
+
+    query = request.args.get('query')
+    if query == None:
+        return {"msg": "You forgot to include query in your body"}, 200
+
+    return {"msg": "Good job champ you will definitely find your thing"}, 200
 
 

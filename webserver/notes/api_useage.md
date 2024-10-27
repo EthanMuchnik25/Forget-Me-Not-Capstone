@@ -7,15 +7,18 @@
 `Type: GET`\
 This is the home page. Querying this endpoint will return `index.html`, which will redirect the user to the appropriate page depending if they are authenticated or not.
 
+
 ### `/img_search.html`
 `Type: GET`
 
 This is the page where the user can search for their images.
 
+
 ### `/login.html`
 `Type: GET`
 
 This is the page where the user logs into their account.
+
 
 ### `/register.html`
 `Type: GET`
@@ -27,6 +30,7 @@ This is the page where the user can register an account.
 ### Note:
 Endpoints that require authentication will return an HTTP code in the 200-range if they are successful, and an error code in the 400-range if they are not
 
+
 ### `/login`
 `Type: POST`
 
@@ -36,6 +40,7 @@ You must have `'username'` and `'password'` fields in the request body, with con
 See example of use in `login.html`.\ 
 For examples in a python script, check the `reauthenticate()` function in `raspi-scripts/raspi_runtime/img_send/img_send.py`
 
+
 ### `/register`
 `Type: POST`
 
@@ -43,6 +48,7 @@ This endpoint is used to register an account.\
 You must have `'username'` and `'password'` fields in the request body, with containing the username and password you wish to login with.
 
 See example of use in `register.html`.
+
 
 ### `/logout`
 `Type: POST`\
@@ -55,6 +61,7 @@ Cameras will still need to store their usernames/passwords in plaintext and be p
 
 See example of use in `img_search.html`
 
+
 ### `/deregister`
 `Type: POST`\
 `@requires authentication`
@@ -62,13 +69,16 @@ See example of use in `img_search.html`
 This endpoint is used to deregister a user.\
 All of the user's data is wiped upon calling this endpoint.
 
+
 ### `/test_auth`
 `Type: GET`\
 `@requires authentication`
 
 This endpoint can be used to test if you are authenticated or not. 
 
+
 ## Image querying
+
 
 ### `/text_query`
 `Type: GET`\
@@ -87,6 +97,7 @@ On success, a field called `imageUrl` contains a url to the image.\
 See example of use in `img_search.html`
 <!-- TODO this currently puts arguments in the url, probably change for consistency -->
 
+
 ### `/get_room_img`
 `Type: GET`\
 `@requires authentication`
@@ -95,6 +106,7 @@ This api is used to get the image from a url provided to the user.\
 You should never manually call this api. The url to the image provided by `/text_query` should point to this endpoint, just make sure to add the appropriate authentication when invoking this URL.
 
 See example of use in `img_search.html`
+
 
 ### `/post_img`
 `Type: POST`\
@@ -106,10 +118,18 @@ This request should contain a file, called `file`.
 See example of use in `raspi-scripts/raspi_runtime/img_send/img_send.py`
 
 
-
 ###  `/get_username`
 `Type: GET`\
 `@requires authentication`
 
 This endpoint simply returns the username associated with a token.\
 The response has a parameter called `username` in its body.
+
+
+###  `/speech_query`
+`Type: POST`\
+`@requires authentication`
+
+This endpoint should get invoked with a speech query from the user, and return the found location of the appropriate item.\
+The request body should be a json with a parameter `query`, containing the text query.\
+The response body should contain a json with a field called `msg`, which contains the text response from the server, which should be played as audio. 

@@ -17,12 +17,13 @@ server_url = "http://localhost:4000"
 img_url = server_url + "/post_img"
 token = ""
 # Credentials of account you want to send to 
-uname = "a"
-pw = "a"
+uname = "c"
+pw = "c"
 # Initially no token, just re-authenticate the first time
 token = ""
 
-img_directory = '../../debug_db_store/prev/old_imgs'
+# img_directory = '../../debug_db_store/prev/old_imgs'
+img_directory = '../../debug_db_store/prev/baby'
 
 
 def reauthenticate():

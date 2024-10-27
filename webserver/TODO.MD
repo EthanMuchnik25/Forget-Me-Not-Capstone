@@ -64,7 +64,7 @@ This hopes to document some of the things we probably eventually have to get sor
 ### Website: user flow
 How should a user interact with our website?
 
-- [ ] Discuss: Should we invest time in a fancy web framework?
+- [x] Discuss: Should we invest time in a fancy web framework?
 - [ ] What pages should our website have?
   - Will we have a top-level website? Must we buy a domain?
   - home page, login, auth, eventually our other webpage
@@ -85,7 +85,8 @@ How should a user interact with our website?
 
 #### Security steps
 
-- [ ] Discuss desired capabilities
+- [x] Discuss desired capabilities
+  * RESULT: KISS for now -> add/delete user, login/logout
   - Implemented login, create account
   - Delete account?
   - Change username?
@@ -94,8 +95,8 @@ How should a user interact with our website?
     - raspi must change creds... Can this be improved?
   - 2fa?
 - [ ] Discuss how login flow should go
-  - [ ] Discuss what should happen when someone deletes their account
-  - [ ] Discuss what should happen when someone logs out
+  - [x] Discuss what should happen when someone deletes their account
+  - [x] Discuss what should happen when someone logs out
     - Should all things log out?
       - Kind of ok. Our scripts re-authenticate
       - I don't want to store 1000 tokens. Can we just store user+last logout for invalidation?
@@ -120,16 +121,9 @@ How should a user interact with our website?
 
 ### Performance testing: latency
 
-#### Discovery
-Designing testing methodology for concurrent testing:
-- [ ] How does multithread gunicorn work
-- [ ] How to ensure atomif read-modify-write
-  - to objects?
-  - to files?
-
 #### Performance counters
-- [ ] Discuss what performance counters we want
-- [ ] Design performance counting in a way that won't slow everything down a ton
+- [x] Discuss what performance counters we want
+- [x] Design performance counting in a way that won't slow everything down a ton
   - real-time?
   - interactive?
 - [ ] Add the discussed performance counters
@@ -161,7 +155,9 @@ Designing testing methodology for concurrent testing:
 
 
 ### Performance testing: accuracy
-- ethan ml models, todo figure out testing method closer to real life use case
+- [ ] Ethan is on it! ?
+  - ethan ml models, can help us make traces... 
+  - [ ] todo figure out testing method closer to real life use case
 
 
 ### Performance testing: data
@@ -170,7 +166,7 @@ Designing testing methodology for concurrent testing:
   - only people move things, delete any image where there isn't a person
   - check image difference (questionable)
 - [ ] test storage over time with each optimization
-
+  - Run trace
 
 
 
@@ -182,7 +178,7 @@ Designing testing methodology for concurrent testing:
 - [ ] Ensure websierver-level readme is up to date
   - [ ] Ensure file diagram in README.MD are up to date
   - [ ] Ensure list of docs are up to date
-- [ ] Document user workflow
+- [x] Document user workflow
   - Good for end users also
 - [ ] Improve documentation for groupmates
   - [ ] Document how authentication is done
@@ -198,8 +194,8 @@ Designing testing methodology for concurrent testing:
 
 #### Presentability
 - [ ] Hardware
-  - [ ] Design raspi case
-  - [ ] Print raspi case
+  - [x] Design raspi case
+  - [x] Print raspi case
   - [ ] Test raspi case
   - [ ] Repeat above steps
 
@@ -258,6 +254,17 @@ We need a basic system up and running before we can elaborate on specific improv
 - [x] When send full-quality raspi image, request_entity_too_large error
   - sends 1.2M images
   - soln: nginx.conf
+
+### Performance Testing: latency
+
+#### Discovery
+Designing testing methodology for concurrent testing:
+- [x] How does multithread gunicorn work
+  - RESULT: each gunicorn is a separate process
+- [x] How to ensure atomif read-modify-write
+  - RESULT: use a database, store all shared state in a database
+  - to objects?
+  - to files?
 
 
 ## Personal notes dump

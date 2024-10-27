@@ -14,7 +14,8 @@ elif Config.CAMERA_VER == "MOCK":
 else:
     raise NotImplementedError
 
-
+# TODO some of this logic seems to be duplicated among different files, namely 
+#  things that keep running on the raspberry pi. Consider making a module for it
 def read_creds_file():
     with open(Config.CREDS_FILE_PATH, "r") as file:
         uname = file.readline().strip()

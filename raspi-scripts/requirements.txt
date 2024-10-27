@@ -1,5 +1,8 @@
 requests
 picamzero
 SpeechRecognition
+pyaudio
+# NOTE: pyaudio may require some other libraries to be installed
+# sudo apt install portaudio19-dev
 pyttsx3
 opencv-python
