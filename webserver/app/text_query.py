@@ -20,7 +20,7 @@ def create_img_url(db_ret):
     url_encoded = urllib.parse.quote(json_string)
     return f"/get_room_img?data={url_encoded}"
 
-def handle_text_query(user, query, index):
+def handle_text_query(user, query, index=0):
     if query == 'swaglab':
         response = {
             'imageUrl': '/static/swaglab.jpg',

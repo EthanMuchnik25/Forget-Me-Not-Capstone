@@ -289,3 +289,20 @@ Claims can be found by doing get_jwt in flask app\
 Tokens in my case can be manually blacklisted until they expire, but afterwards it is useless to keep them alive.
 
 ** richard thomson?
+
+TODO refactor the dump into the points
+TODO Use optimizations to refactor the points?
+
+NOTE: refactor the api responses once the frontend is to be implemented
+
+Discussion points for when frontend is implemented
+-> how exactly should the average api response look?
+ -> What code does what?
+  -> 422 -> no auth?
+  -> 400 -> bad? more specific necessary?
+  -> 200 -> good? more specific necessary?
+   -> differentiate between no error and create successful
+  -> 300 -> exists for some purpose? check...
+
+TODO: model running should be a different process, http pathway should just add to queue
+-> ask chatgpt the best way to do this

@@ -3,6 +3,8 @@ import os
 import atexit
 import json
 import time
+
+import shutil
 if __name__ == '__main__':
     import types_db as types
 else:
@@ -51,14 +53,6 @@ try:
     # Clean up irrelevant values and cast to float
     blacklist = {key: float(value) for key, value in blacklist.items() if float(value) >= t}
 
-
-    # TODO remove old code
-    # # Reload old database
-    # if os.path.exists(db_store_file_path):
-    #     with open(db_store_file_path, "r") as file:
-    #         l = json.load(file)
-    #         for item in l:
-    #             db.append(ImgObject(**item))
 except Exception as e:
     print(f"Reloading databse failed, something probably changed: {e}")
 
@@ -89,10 +83,6 @@ def cleanup():
     with open(blacklist_file_path, "w") as file:
         json.dump(blacklist, file)
     os.chmod(blacklist_file_path, 0o777)
-
-    # TODO remove old code
-    # with open(db_store_file_path, "w") as file:
-    #     json.dump(db, file, default=ImgObject.to_dict)
 
 atexit.register(cleanup)
 
@@ -168,26 +158,26 @@ def db_register_user(uname, pw_hash):
         os.makedirs(user_dir, exist_ok=True)
         os.chmod(user_dir, 0o777)
 
-
         return True
     else:
         return False
 
-def db_delete_user(uname):
-    return users.pop(uname, None)
-# TODO not sure when we will call this atm
-# TODO current behavior is don't delete data. Doesn't matter right now but could
-# have security ramifications in the future. Make sure this is talked about
+def db_delete_user(user):
+    user_dir = os.path.join(temp_imgs_dir, user)
+    shutil.rmtree(user_dir)
+    # TODO check this and continue here
+    db.pop(user, None)
+    return users.pop(user, None)
 
 def db_get_user_pw(uname):
     return users.get(uname)
 
+# NOTE: expiration date is only so we can clean up
 def db_add_token_blacklist(token_id, exp):
     blacklist[token_id] = exp
 
 def db_check_token_blacklist(token_id):
     return token_id in blacklist
-    # return blacklist.get(token_id) # TODO remove/change?
 
 
 
@@ -201,7 +191,6 @@ def clear_dirs():
     blacklist = {}
     users = {}
     db = {}
-    import shutil
     if os.path.exists(temp_imgs_dir):
         shutil.rmtree(temp_imgs_dir)  # Remove the directory and all its contents
         os.makedirs(temp_imgs_dir) 

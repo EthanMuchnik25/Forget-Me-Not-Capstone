@@ -12,7 +12,7 @@ elif Config.DATABASE_VER == "SQLITE":
     raise NotImplementedError
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_register_user, db_get_user_pw,\
-        db_add_token_blacklist, db_check_token_blacklist
+        db_add_token_blacklist, db_check_token_blacklist, db_delete_user
 else:
     raise NotImplementedError
 
@@ -22,8 +22,12 @@ def register_user(uname, pw):
     pw_hash = generate_password_hash(pw, Config.JWT_HASH_FN)
 
     return db_register_user(uname, pw_hash)
-    
 
+def deregister_user(uname):
+    # Wao much useless nesting...
+    # TODO see if we do anything more interesting here
+    db_delete_user(uname)
+    pass
 
 # TODO: we keep issuing tokens if the user is already logged in, we should 
 # disable the old one -> in this case need to store logged-on status, or last 
@@ -42,16 +46,16 @@ def login_user(uname, pw):
     access_token = create_access_token(identity=uname, expires_delta=Config.JWT_ACCESS_TOKEN_EXPIRES)
     return True, access_token
 
-
 # TODO untested
-def logout_user(uname, jwt):
+def logout_user(jwt):
     jti = jwt['jti']
     exp = jwt['exp']
+    # TODO this shoud not be it, we should just update the most recent token we accept
     db_add_token_blacklist(jti, exp)
 
 # TODO untested
-def check_blocklist(payload):
-    jti = payload['jti']
+def check_jwt_not_blocklist(jwt):
+    jti = jwt['jti']
     return db_check_token_blacklist(jti)
 
 # TODO unregister user behavior

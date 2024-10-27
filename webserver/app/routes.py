@@ -13,7 +13,8 @@ from app.database.types_db import ImgObject
 from app.post_img import handle_img
 from app.text_query import handle_text_query
 from app.get_room_img import fs_get_room_img
-from app.auth import register_user, login_user, logout_user, check_blocklist
+from app.auth import register_user, login_user, logout_user, \
+    check_jwt_not_blocklist, deregister_user
 from app.config import Config
 
 
@@ -77,7 +78,7 @@ def register():
     if not register_user(uname, pw):
         return jsonify(msg="User already exists"), 400
     
-    return jsonify(msg="User registered successfully", redirect_url="/login"), 200
+    return jsonify(msg="User registered successfully", redirect_url="/login.html"), 200
     # TODO Similarly, you could redirect people to the normal webpage
 
 
@@ -87,12 +88,24 @@ def register():
 def logout():
     jwt = get_jwt()
     logout_user(jwt)
-    return jsonify({"msg": "Logout successful"}), 200
+    return jsonify(msg="Logout successful"), 200
+
+
+@app.route('/deregister', methods=['POST'])
+@jwt_required()
+def deregister():
+    jwt = get_jwt()
+    uname = jwt['sub']
+    # this should also invalidate tokens
+    deregister_user(uname)
+    return jsonify(msg="Account deleted successruly", redirect_url="/register.html"), 200
+
 
 # TODO untested
+# TODO remove for now
 @jwt.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
-    return check_blocklist(jwt_payload)
+    return check_jwt_not_blocklist(jwt_payload)
 
 
 # ========================== App Routes ==========================
@@ -111,7 +124,7 @@ def text_query():
     # In the future, can complicate policies to add stuff like auth/security
     response = handle_text_query(user, query, index)
     
-    return jsonify(response)
+    return jsonify(response), 200
 
 # TODO rename?
 # Intended for website to resolve provided image urls
@@ -142,11 +155,6 @@ def get_room_img():
     return send_file(img, download_name=db_line_obj.img_url)
         
 
-# Intended for raspi speech query
-@app.route('/speech_query', methods=['POST'])
-def speech_query():
-    pass
-
 # TODO maybe not code 400? TODO find best?
 @app.route('/post_img', methods=['POST'])
 @jwt_required()
@@ -161,58 +169,17 @@ def post_img():
 
     return '', 200
 
-# TODO eventually have some way to securly get images
-# @app.route('/get_img/<str:file>', methods=['GET'])
-# def get_img
+@app.route('/get_username', methods=['GET'])
+@jwt_required()
+def get_username():
+    jwt = get_jwt()
+    user = jwt['sub']
+
+    return {"username": user}, 200
+
+# Intended for raspi speech query
+@app.route('/speech_query', methods=['POST'])
+def speech_query():
+    pass
 
 
-
-
-# Demo routes: ==============================================================
-# TODO delete demo routes
-
-# Example for file upload
-@app.route('/upload_test', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        # NOTE: the 'file' comes from:
-        #  curl -F "file=@requirements.txt" http://localhost/upload
-        f = request.files['file']
-        f.save(f"./file_uploads/{f.filename}")
-        return "file uploaded successfully"
-    else:
-        return "file form website something?"
-
-# Example for file send
-@app.route('/download_test', methods=['GET'])
-def download_file():
-    return send_file("./file_uploads/requirements.txt" , as_attachment=True)
-
-# Example for query argument parsing
-# Query:  fetch(`/search?query=${query}&index=${index}`)
-@app.route('/search', )
-def search():
-    # implicit get function
-    query = request.args.get('query')
-    index = request.args.get('index')
-
-    if query == 'a':
-        response = {
-            'query': query,
-            'index': index if index is not None else 'default_value',
-            'success': True,
-            'imageUrl': 'https://i.redd.it/87xuofmvnlud1.png'
-        }
-    else:
-        response = {
-            'query': query,
-            'success': False,
-            'message': 'go fuck yourself'
-        }
-        return response, 404 # error code example
-    return jsonify(response)
-
-# Example you can pattern match on url type
-@app.route('/file_never_pick_this/<int:file_id>', methods=['GET'])
-def serve_file(file_id):
-    return '', 404

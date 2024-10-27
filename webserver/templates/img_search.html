@@ -1,16 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Object Finder</title>
-  <!-- HTML notes: 
-     # means style applies to html things with id=...
-     . means stype applies to html things with class=...
-    -->
-  <!-- TODO this is nonfinal and arguably not great design. Redo later once
-     more decision have been made -->
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -41,11 +34,18 @@
     }
   </style>
 </head>
-
 <body>
 
   <div class="container">
     <h1>Object Finder</h1>
+    
+    <!-- Welcome Message & Account Buttons -->
+    <div id="welcome-section">
+      <!-- This will dynamically display "Welcome, {user}" -->
+      <h2 id="welcome-message">Welcome, <span id="username"></span>!</h2>
+      <button id="logout-button">Logout</button>
+      <button id="delete-account-button">Delete Account</button>
+    </div>
 
     <!-- Search Form -->
     <form id="search-form">
@@ -69,10 +69,86 @@
   </div>
 
   <script>
+    async function getUsername() {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch('/get_username', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}`}
+        });
+      
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response}`);
+        }
+      
+        const data = await response.json();
+        return data.username;
+      } catch(error) {
+        console.error("Error getting username: ",error);
+        return null;
+      }
+        
+    } 
+    
+    getUsername().then(username => {
+      // Display the username in the welcome message
+      document.getElementById('username').textContent = username || "User";
+    })
+
+
+    // Logout button functionality
+    document.getElementById('logout-button').addEventListener('click', function() {
+      logoutUser();
+    });
+
+    async function logoutUser() {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch('/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`}
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response}`);
+        }
+
+        localStorage.removeItem('token'); // Clear the token from storage
+        window.location.href = '/login.html';  // Redirect to the login page (adjust as needed)
+
+        return;
+      } catch(error) {
+        console.error("Error getting logging out: ",error);
+        return;
+      } 
+    }
+
+    // Delete Account button functionality
+    document.getElementById('delete-account-button').addEventListener('click', async function() {
+      const confirmed = confirm("Are you sure you want to delete your account?");
+      if (confirmed) {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch('/deregister', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (response.ok) {
+            localStorage.removeItem('token');
+            window.location.href = '/register.html';  // Redirect after account deletion
+          } else {
+            alert("Failed to delete account. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error deleting account:", error);
+        }
+      }
+    });
+
+    // Existing JavaScript code for handling search form and image fetching
     let currentImageIndex = 0;
     let query = '';
 
-    // Handle search form submission
     document.getElementById('search-form').addEventListener('submit', function (e) {
       e.preventDefault();
       query = document.getElementById('query').value;
@@ -80,20 +156,14 @@
       fetchImage(query, currentImageIndex);
     });
 
-    // NOTE: I am not well-versed in the ways of async, maybe this should be 
-    //  async for better speed but synchronous will technically work, this is 
-    //  what GPT generated.
-    // Fetch image from the server
     async function fetchImage(query, index) {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem('token');
 
       try {
         const response = await fetch(`/text_query?query=${query}&index=${index}`, {
           method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
 
         const data = await response.json();
 
@@ -116,7 +186,6 @@
         document.getElementById('message').textContent = 'Server error. Please try again later.';
         document.getElementById('object-image').style.display = 'none';
       }
-        
     }
 
     // Creates blob url for image that needs authentication
@@ -125,9 +194,7 @@
       try {
         const response = await fetch(imageUrl, {
           method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (!response.ok) {
@@ -142,17 +209,7 @@
         return null;
       }
     }
-    // NOTE: can either pass things through url parameter or http body: 
-    // fetch(url, {
-    // method: 'POST', // or 'PUT'
-    // headers: {
-    //     'Content-Type': 'application/json' // Specify the content type
-    // },
-    // body: JSON.stringify(data) // Convert the JavaScript object to a JSON string
-      // })
 
-
-    // Handle previous button click
     document.getElementById('previous').addEventListener('click', function () {
       if (currentImageIndex > 0) {
         currentImageIndex--;
@@ -160,7 +217,6 @@
       }
     });
 
-    // Handle next button click
     document.getElementById('next').addEventListener('click', function () {
       currentImageIndex++;
       fetchImage(query, currentImageIndex);
@@ -168,5 +224,4 @@
   </script>
 
 </body>
-
 </html>
