@@ -8,7 +8,8 @@ if Config.DATABASE_VER == "RDS":
     # TODO make all imports import the same fn name
     from app.database.rds import query_db
 elif Config.DATABASE_VER == "SQLITE":
-    raise NotImplementedError
+    from app.database.sqlite import db_query_single, db_get_image
+    # raise NotImplementedError
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_get_image
 else:
@@ -47,6 +48,7 @@ def draw_boxes(img_handle, obj):
 def fs_get_room_img(user, db_ret):
     # NOTE: May be none
     img = db_get_image(user, db_ret.img_url)
+    # print ("img:", user, db_ret.img_url)
     if img == None:
         return None
 

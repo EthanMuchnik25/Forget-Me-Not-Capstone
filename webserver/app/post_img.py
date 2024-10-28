@@ -13,9 +13,10 @@ else:
 
 # Import database
 if Config.DATABASE_VER == "RDS":
-    from app.database.rds import db_write_line
+    from app.database.rds import db_write_line, db_query_single
 elif Config.DATABASE_VER == "SQLITE":
-    raise NotImplementedError
+    # raise NotImplementedError
+    from app.database.sqlite import db_write_line, db_save_image
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_write_line, db_save_image
 else:
@@ -59,10 +60,10 @@ def handle_img(user, f):
         parsed_line = parse_yolo_line(line)
         # TODO I don't know if I like this, should user pass datetime?
         output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path, time.time())
-
         if not db_write_line(user, output_pkt):
             return False
     return True
+
         
 
 

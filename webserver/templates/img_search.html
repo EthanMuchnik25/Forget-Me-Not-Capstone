@@ -166,8 +166,8 @@
         });
 
         const data = await response.json();
-
         if (data.success) {
+          console.log('Image URL:', data.imageUrl);
           const blobUrl = await loadImage(data.imageUrl);
           // TODO: when old URLs are no longer needed, clean them up with 
           // URL.revokeObjectURL(url) to free memory. RN website is purely 

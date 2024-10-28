@@ -138,7 +138,6 @@ def db_get_image(user, name):
     try:
         if not user in db:
             return None
-        
         user_dir = os.path.join(temp_imgs_dir, user)
         return open(os.path.join(user_dir, name), "rb")
     except (FileNotFoundError, PermissionError):
