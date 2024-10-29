@@ -149,6 +149,8 @@ def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObje
         if len(results) > index:
             row = results[index]
             object_name, p1, p2, img_url, created_at = row
+            p1 = tuple(map(float, p1.strip('[]').split(',')))
+            p2 = tuple(map(float, p2.strip('[]').split(',')))
             return ImgObject(user, object_name, (p1), (p2), img_url, created_at)
     
     return None

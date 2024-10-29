@@ -26,20 +26,10 @@ def draw_boxes(img_handle, obj):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     height, width, _ = img.shape
 
-    if isinstance(obj.p1, str):
-        p1 = tuple(map(float, obj.p1.strip('[]').split(',')))
-    else:
-        p1 = obj.p1 
-
-    if isinstance(obj.p2, str):
-        p2 = tuple(map(float, obj.p2.strip('[]').split(',')))
-    else:
-        p2 = obj.p2 
-
-    x1 = int(p1[0] * width)
-    y1 = int(p1[1] * height)
-    x2 = int(p2[0] * width)
-    y2 = int(p2[1] * height)
+    x1 = int(obj.p1[0] * width)
+    y1 = int(obj.p1[1] * height)
+    x2 = int(obj.p2[0] * width)
+    y2 = int(obj.p2[1] * height)
 
     
     cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), rect_line_thickness)
