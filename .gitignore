@@ -1,8 +1,8 @@
 *myenv*
 *bin*
-*/Images/*
-*/images/*
-*/labels/*
-*/Labels/*
+*Images*
+*images*
+*labels*
+*Labels*
 *lib64*
 *pyvenv.cfg*
