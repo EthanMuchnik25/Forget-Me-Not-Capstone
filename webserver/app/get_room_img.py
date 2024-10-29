@@ -2,6 +2,7 @@ from app.config import Config
 import numpy as np
 import cv2
 from io import BytesIO
+import json
 
 # Import database
 if Config.DATABASE_VER == "RDS":
@@ -16,20 +17,27 @@ else:
     raise NotImplementedError
 
 
+
 # TODO should these be config vars?
 font_scale = 1
 font_thickness = 5
 rect_line_thickness = 7
 def draw_boxes(img_handle, obj):
-    nparr = np.frombuffer(img_handle.read(), np.uint8)
+    nparr = np.frombuffer(img_handle, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     height, width, _ = img.shape
 
+    # x1 = int(obj.p1[0] * width)
+    # y1 = int(obj.p1[1] * height)
+    # x2 = int(obj.p2[0] * width)
+    # y2 = int(obj.p2[1] * height)
+
+
+    x1 = int(obj.p1/2 * width)
+    y1 = int(obj.p1/2 * height)
+    x2 = int(obj.p2/2 * width)
+    y2 = int(obj.p2/2 * height)
     
-    x1 = int(obj.p1[0] * width)
-    y1 = int(obj.p1[1] * height)
-    x2 = int(obj.p2[0] * width)
-    y2 = int(obj.p2[1] * height)
     
     cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), rect_line_thickness)
     cv2.putText(img, f'Class: {obj.object_name}', (x1, y1 - 10), 
@@ -48,15 +56,11 @@ def draw_boxes(img_handle, obj):
 def fs_get_room_img(user, db_ret):
     # NOTE: May be none
     img = db_get_image(user, db_ret.img_url)
-    # print ("img:", user, db_ret.img_url)
     if img == None:
         return None
 
     box_img = draw_boxes(img, db_ret)
 
-    img.close()
+    # img.close()
 
     return box_img
-
-    
-    

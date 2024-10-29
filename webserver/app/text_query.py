@@ -9,7 +9,7 @@ if Config.DATABASE_VER == "RDS":
     from app.database.rds import query_db
 elif Config.DATABASE_VER == "SQLITE":
     # raise NotImplementedError
-    from app.database.sqlite import db_query_single, db_get_image, view_all_records
+    from app.database.sqlite import db_query_single, db_get_image, list_all_tables
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_query_single, db_get_image
 else:
@@ -23,9 +23,8 @@ def create_img_url(db_ret):
 
 def handle_text_query(user, query, index=0):
     if query == 'swaglab':
-        print("hi")
         response = {
-            'imageUrl': '/static/swaglab.jpg',
+            'imageUrl': f'/user_images/{user}/swaglab.jpg',
             'success': True
         }   
         return response
@@ -64,7 +63,6 @@ def handle_text_query(user, query, index=0):
     return {
         'success': True,
         'imageUrl': create_img_url(db_ret) 
-        # 'imageUrl' : db_ret.img_url
     }
     
     
