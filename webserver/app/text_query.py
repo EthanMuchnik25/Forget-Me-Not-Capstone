@@ -8,10 +8,9 @@ if Config.DATABASE_VER == "RDS":
     # TODO BAD BAD BAD BAD Make good interface
     from app.database.rds import query_db
 elif Config.DATABASE_VER == "SQLITE":
-    # raise NotImplementedError
-    from app.database.sqlite import db_query_single, db_get_image, list_all_tables
+    from app.database.sqlite import db_query_single
 elif Config.DATABASE_VER == "DEBUG":
-    from app.database.debug_db.debug_db import db_query_single, db_get_image
+    from app.database.debug_db.debug_db import db_query_single
 else:
     raise NotImplementedError
 
@@ -24,7 +23,7 @@ def create_img_url(db_ret):
 def handle_text_query(user, query, index=0):
     if query == 'swaglab':
         response = {
-            'imageUrl': f'/user_images/{user}/swaglab.jpg',
+            'imageUrl': f'/static/swaglab.jpg',
             'success': True
         }   
         return response
@@ -52,14 +51,12 @@ def handle_text_query(user, query, index=0):
 
     db_ret = db_query_single(user, query, index)
     if db_query_single == None:
-        # view_all_records()
         return {
             'success': False,
             'message': "Object not found in database"
         }
         
     # TODO: See what other stuff is necessary in the future 
-    # print("img_url:", create_img_url(db_ret))
     return {
         'success': True,
         'imageUrl': create_img_url(db_ret) 

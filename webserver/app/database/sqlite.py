@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from typing import Optional
 from app.database.types_db import ImgObject
+from io import BytesIO
 
 # Database and image directory setup
 temp_dir = "./app/database/sqlite_db/"
@@ -15,10 +16,9 @@ os.makedirs(temp_dir, exist_ok=True)
 def get_db_connection():
     """Opens a new database connection."""
     conn = sqlite3.connect(db_store_file_path)
-    conn.row_factory = sqlite3.Row  # Use Row factory for column access by name
+    conn.row_factory = sqlite3.Row  
     return conn
 
-# Helper to generate unique table names based on usernames
 def get_table_name_for_user(username: str) -> str:
     """Generate a unique table name for each user."""
     return f"object_tracking_{username}"
@@ -50,14 +50,11 @@ def db_register_user(uname: str, pw_hash: str) -> bool:
         if cur.fetchone() is not None:
             return False  # User already exists
 
-        # Register user in the users table
         cur.execute("INSERT INTO users (uname, pw_hash) VALUES (?, ?)", (uname, pw_hash))
         conn.commit()
 
         # Setup a unique table for the new user
         setup_user_table(uname)
-
-        # Create a directory for the user’s images
         user_dir = os.path.join(temp_imgs_dir, uname)
         os.makedirs(user_dir, exist_ok=True)
         os.chmod(user_dir, 0o777)
@@ -72,16 +69,13 @@ def db_delete_user(uname: str) -> bool:
         if cur.fetchone() is None:
             return False  # User does not exist
 
-        # Delete user from the users table
         cur.execute("DELETE FROM users WHERE uname = ?", (uname,))
         conn.commit()
 
-        # Drop the user's unique table
         table_name = get_table_name_for_user(uname)
         cur.execute(f"DROP TABLE IF EXISTS {table_name}")
         conn.commit()
 
-        # Delete user directory and images
         user_dir = os.path.join(temp_imgs_dir, uname)
         if os.path.isdir(user_dir):
             import shutil
@@ -119,7 +113,6 @@ def db_write_line(user: str, output_pkt: ImgObject) -> bool:
 
 def db_save_image(user: str, f, name: str) -> bool:
     """Save an image and metadata in the user's unique table."""
-    print(user, f, name)
     with get_db_connection() as conn:
         cur = conn.cursor()
         cur.execute("SELECT 1 FROM users WHERE uname = ?", (user,))
@@ -134,16 +127,6 @@ def db_save_image(user: str, f, name: str) -> bool:
         f.save(img_path)
         os.chmod(img_path, 0o777)
 
-        # created_at = datetime.now().isoformat()
-        # img_url = img_path
-        # table_name = get_table_name_for_user(user)
-
-        # # Insert metadata into user's table
-        # cur.execute(f'''
-        #     INSERT INTO {table_name} (object_name, p1, p2, img_url, created_at)
-        #     VALUES (?, ?, ?, ?, ?)
-        # ''', (object_name, p1[0], p1[1], img_url, created_at))
-        # conn.commit()
         return True
 
 def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObject]:
@@ -151,10 +134,7 @@ def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObje
     if index < 0:
         return None
 
-    # Ensure the user's table exists before querying
     create_user_table_if_not_exists(user)
-
-    # Query the correct columns: p1, p2, and filter by user and object_name
     table_name = get_table_name_for_user(user)
     with get_db_connection() as conn:
         cur = conn.cursor()
@@ -181,10 +161,12 @@ def db_get_image(user: str, img_url: str) -> Optional[bytes]:
             table_name = get_table_name_for_user(user)
             cur.execute(f"SELECT img_url FROM {table_name} WHERE img_url = ?", (img_url,))
             if cur.fetchone() is None:
-                return None  # No such image for this user
+                return None  
 
             with open(img_url, "rb") as img_file:
-                return img_file.read()
+                img_data = img_file.read()
+                return BytesIO(img_data)
+            
     except (FileNotFoundError, PermissionError):
         return None
 
@@ -249,7 +231,7 @@ def list_all_tables():
         tables = cur.fetchall()
         for table in tables:
             print(table[0])  # Each table name is in a tuple (name,)
-    return [table[0] for table in tables]  # Returns a list of table names if needed
+    return [table[0] for table in tables] 
 
 
 

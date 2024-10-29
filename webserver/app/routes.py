@@ -18,11 +18,6 @@ from app.auth import register_user, login_user, logout_user, \
     check_jwt_not_blocklist, deregister_user
 from app.config import Config
 
-
-import os
-from flask import Flask, request, send_from_directory, abort
-from werkzeug.utils import secure_filename
-
 # ========================== Page Routes ==========================
 
 # TODO For now, don't use blueprints

@@ -9,7 +9,6 @@ from app.config import Config
 if Config.DATABASE_VER == "RDS":
     from app.database.rds import db_write_line
 elif Config.DATABASE_VER == "SQLITE":
-    # raise NotImplementedError
     from app.database.sqlite import db_register_user, db_get_user_pw,\
         db_add_token_blacklist, db_check_token_blacklist
 elif Config.DATABASE_VER == "DEBUG":

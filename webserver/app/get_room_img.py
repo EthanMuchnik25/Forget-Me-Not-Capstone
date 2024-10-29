@@ -9,8 +9,7 @@ if Config.DATABASE_VER == "RDS":
     # TODO make all imports import the same fn name
     from app.database.rds import query_db
 elif Config.DATABASE_VER == "SQLITE":
-    from app.database.sqlite import db_query_single, db_get_image
-    # raise NotImplementedError
+    from app.database.sqlite import db_get_image
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_get_image
 else:
@@ -23,12 +22,19 @@ font_scale = 1
 font_thickness = 5
 rect_line_thickness = 7
 def draw_boxes(img_handle, obj):
-    nparr = np.frombuffer(img_handle, np.uint8)
+    nparr = np.frombuffer(img_handle.read(), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     height, width, _ = img.shape
 
-    p1 = tuple(map(float, obj.p1.split(',')))  
-    p2 = tuple(map(float, obj.p2.split(',')))
+    if isinstance(obj.p1, str):
+        p1 = tuple(map(float, obj.p1.strip('[]').split(',')))
+    else:
+        p1 = obj.p1 
+
+    if isinstance(obj.p2, str):
+        p2 = tuple(map(float, obj.p2.strip('[]').split(',')))
+    else:
+        p2 = obj.p2 
 
     x1 = int(p1[0] * width)
     y1 = int(p1[1] * height)
@@ -58,6 +64,12 @@ def fs_get_room_img(user, db_ret):
 
     box_img = draw_boxes(img, db_ret)
 
-    # img.close() 
+    img.close() 
 
     return box_img
+
+
+
+
+
+
