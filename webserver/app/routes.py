@@ -1,5 +1,6 @@
 from flask import render_template, request, send_file, jsonify, redirect, \
     url_for
+from flask import request, abort
 
 import urllib
 import json
@@ -17,6 +18,10 @@ from app.auth import register_user, login_user, logout_user, \
     check_jwt_not_blocklist, deregister_user
 from app.config import Config
 
+
+import os
+from flask import Flask, request, send_from_directory, abort
+from werkzeug.utils import secure_filename
 
 # ========================== Page Routes ==========================
 
@@ -135,6 +140,7 @@ def get_room_img():
     user = jwt['sub']
 
     data_arg = request.args.get('data')
+
     if data_arg == None:
         # TODO standardize error, msg, etc., whatever
         # TODO standardize where sanitization will be done
@@ -163,7 +169,7 @@ def post_img():
     user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
     
     f = request.files['file']
-    
+
     if not handle_img(user, f):
         return {"error": "User not found"}, 400
 

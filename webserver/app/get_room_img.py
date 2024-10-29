@@ -27,17 +27,14 @@ def draw_boxes(img_handle, obj):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     height, width, _ = img.shape
 
-    # x1 = int(obj.p1[0] * width)
-    # y1 = int(obj.p1[1] * height)
-    # x2 = int(obj.p2[0] * width)
-    # y2 = int(obj.p2[1] * height)
+    p1 = tuple(map(float, obj.p1.split(',')))  
+    p2 = tuple(map(float, obj.p2.split(',')))
 
+    x1 = int(p1[0] * width)
+    y1 = int(p1[1] * height)
+    x2 = int(p2[0] * width)
+    y2 = int(p2[1] * height)
 
-    x1 = int(obj.p1/2 * width)
-    y1 = int(obj.p1/2 * height)
-    x2 = int(obj.p2/2 * width)
-    y2 = int(obj.p2/2 * height)
-    
     
     cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), rect_line_thickness)
     cv2.putText(img, f'Class: {obj.object_name}', (x1, y1 - 10), 
@@ -61,6 +58,6 @@ def fs_get_room_img(user, db_ret):
 
     box_img = draw_boxes(img, db_ret)
 
-    # img.close()
+    # img.close() 
 
     return box_img
