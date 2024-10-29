@@ -1,10 +1,7 @@
-from flask import render_template, request, send_file, jsonify, redirect, \
-    url_for
-from flask import request, abort
-
+from flask import render_template, request, send_file, jsonify
 import urllib
 import json
-from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt
 
 from myapp import app
 from myapp import jwt

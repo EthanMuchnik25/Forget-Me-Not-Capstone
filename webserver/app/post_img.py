@@ -15,7 +15,6 @@ else:
 if Config.DATABASE_VER == "RDS":
     from app.database.rds import db_write_line
 elif Config.DATABASE_VER == "SQLITE":
-    # raise NotImplementedError
     from app.database.sqlite import db_write_line, db_save_image
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_write_line, db_save_image

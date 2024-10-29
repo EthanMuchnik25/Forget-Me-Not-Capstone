@@ -313,3 +313,11 @@ Discussion points for when frontend is implemented
 
 TODO: model running should be a different process, http pathway should just add to queue
 -> ask chatgpt the best way to do this
+
+Right now raspi requires some manual setup:
+-> pip install libraries
+-> maybe install audio library that python uses
+
+ask ethan quantization?
+-> add to model optimization along with tensorrt
+
