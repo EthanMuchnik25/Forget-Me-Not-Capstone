@@ -1,3 +1,5 @@
 *myenv*
 *bin*
 */images/*
+*lib64*
+*pyenv.cfg*
