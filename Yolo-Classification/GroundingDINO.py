@@ -1,54 +1,96 @@
 import torch
-from transformers import AutoModelForObjectDetection, AutoProcessor
+from groundingdino.util.inference import load_model, load_image, predict, annotate
+from PIL import Image
 import cv2
-import matplotlib.pyplot as plt
+import numpy as np
 
-# Load the Grounding DINO model and processor
-model = AutoModelForObjectDetection.from_pretrained("IDEA-Research/groundingdino")
-processor = AutoProcessor.from_pretrained("IDEA-Research/groundingdino")
+def setup_grounding_dino(model_config_path, model_checkpoint_path):
+    """
+    Setup Grounding DINO model
+    """
+    model = load_model(model_config_path, model_checkpoint_path)
+    return model
 
-# use argparse to get image path
-import argparse
-parser = argparse.ArgumentParser()
+def detect_objects(model, image_path, text_prompt, box_threshold=0.35, text_threshold=0.25):
+    """
+    Detect objects in an image using Grounding DINO
+    """
+    # Load image
+    image_source, image = load_image(image_path)
+    
+    # Run inference
+    boxes, logits, phrases = predict(
+        model=model, 
+        image=image, 
+        caption=text_prompt, 
+        box_threshold=box_threshold,
+        text_threshold=text_threshold
+    )
+    
+    return image_source, boxes, logits, phrases
 
-parser.add_argument('--image_path', type=str, default='/app/datasets/Images//Detecting-Pencils-2\\test\\images\\Office-18_jpg.rf.03c7ac1774f4f21c2212a10e63a8e493.jpg')
-args = parser.parse_args()
+def visualize_detections(image_source, boxes, logits, phrases):
+    """
+    Visualize detection results
+    """
+    # Convert boxes to integer coordinates
+    boxes_int = boxes.round().int().cpu().numpy()
+    
+    # Create annotation image
+    annotated_frame = image_source.copy()
+    
+    # Draw boxes and labels
+    for box, logit, phrase in zip(boxes_int, logits, phrases):
+        x1, y1, x2, y2 = box
+        confidence = logit.item()
+        
+        # Draw rectangle
+        cv2.rectangle(
+            annotated_frame,
+            (x1, y1),
+            (x2, y2),
+            (0, 255, 0),
+            2
+        )
+        
+        # Add text label
+        label = f"{phrase}: {confidence:.2f}"
+        cv2.putText(
+            annotated_frame,
+            label,
+            (x1, y1 - 10),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (0, 255, 0),
+            2
+        )
+    
+    return annotated_frame
 
+def main():
+    # Model paths
+    config_path = "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+    checkpoint_path = "groundingdino_swint_ogc.pth"
+    
+    # Load model
+    model = setup_grounding_dino(config_path, checkpoint_path)
+    
+    # Example usage
+    image_path = "path/to/your/image.jpg"
+    text_prompt = "cat . dog . person"  # Objects to detect, separated by periods
+    
+    # Perform detection
+    image_source, boxes, logits, phrases = detect_objects(
+        model, 
+        image_path, 
+        text_prompt
+    )
+    
+    # Visualize results
+    annotated_image = visualize_detections(image_source, boxes, logits, phrases)
+    
+    # Save or display results
+    cv2.imwrite("output.jpg", annotated_image)
 
-# Load image
-image_path = args.image_path
-image = cv2.imread(image_path)
-rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-# Define the prompt (what object you're grounding)
-prompt = "a pencil"
-
-# Preprocess the image and text prompt
-inputs = processor(images=rgb_image, text=prompt, return_tensors="pt")
-
-# Forward pass (object detection)
-with torch.no_grad():
-    outputs = model(**inputs)
-
-# Post-process detection
-logits = outputs.logits  # logits represent class scores
-boxes = outputs.pred_boxes  # predicted bounding boxes
-
-# Visualize the results
-def visualize_boxes(image, boxes, prompt):
-    fig, ax = plt.subplots(1, 1, figsize=(12, 8))
-    ax.imshow(image)
-    for box in boxes:
-        xmin, ymin, xmax, ymax = box.tolist()
-        rect = plt.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin,
-                             fill=False, edgecolor='red', linewidth=2)
-        ax.add_patch(rect)
-        ax.text(xmin, ymin, prompt, bbox=dict(facecolor='red', alpha=0.5), fontsize=12, color='white')
-    plt.show()
-
-# Convert from normalized coordinates to image coordinates
-image_height, image_width = rgb_image.shape[:2]
-boxes = boxes[0] * torch.tensor([image_width, image_height, image_width, image_height])
-
-# Visualize results
-visualize_boxes(rgb_image, boxes, prompt)
+if __name__ == "__main__":
+    main()

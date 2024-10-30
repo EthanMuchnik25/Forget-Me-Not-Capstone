@@ -13,6 +13,9 @@ import matplotlib.pyplot as plt
 from ultralytics import YOLO
 from ultralytics import settings
 import albumentations as A
+import torch
+print(torch.cuda.is_available())  # Should return True
+
 
 
 
@@ -70,30 +73,56 @@ def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split,
     else:
         split = [split]
 
-    for split in split:
+    print(split)
+    tmpLocs = []
+    for spl in split:
         name = "coco-2017"
         settings['datasets_dir'] = initialDataStorageDirectory
         if max_samples is None:
-            dataset = foz.load_zoo_dataset(name, label_types="detections", split=split)
+            dataset = foz.load_zoo_dataset(name, label_types="detections", split=spl)
         else:
-            dataset = foz.load_zoo_dataset(name, label_types="detections", split=split, max_samples=max_samples)
+            dataset = foz.load_zoo_dataset(name, label_types="detections", split=spl, max_samples=max_samples)
         # delete and create
-        tmp = middleDataStorageDirectory + "/{}/".format(split)
+        tmp = middleDataStorageDirectory + "/{}/".format(spl)
+        tmpLocs.append(tmp)
         dataset.export(
             export_dir= tmp,
             dataset_type=fo.types.YOLOv5Dataset,  # Specify the export format
             label_field="ground_truth",           # Specify the field containing labels (if applicable)
         )
-    
-    for split in split:
-        os.makedirs(middleDataStorageDirectory + "/{}/images".format(split))
-        os.makedirs(middleDataStorageDirectory + "/{}/labels".format(split))
 
-        for file in os.listdir(middleDataStorageDirectory + "/{}/".format(split)):
-            if file.endswith(".jpg"):
-                shutil.move(middleDataStorageDirectory + "/{}/".format(split) + file, middleDataStorageDirectory + "/{}/images/".format(split) + file)
-            elif file.endswith(".txt"):
-                shutil.move(middleDataStorageDirectory + "/{}/".format(split) + file, middleDataStorageDirectory + "/{}/labels/".format(split) + file)
+        # if dataset.yaml exists, move it to data.yaml
+        if os.path.exists(middleDataStorageDirectory + "/{}/dataset.yaml".format(spl)):
+            os.rename(middleDataStorageDirectory + "/{}/dataset.yaml".format(spl), middleDataStorageDirectory + "/{}/data.yaml".format(spl))
+        
+        # load up data.yaml
+        with open(middleDataStorageDirectory + "/{}/data.yaml".format(spl), 'r') as stream:
+            
+            # add nc
+            data = yaml.safe_load(stream)
+            data['nc'] = len(data['names'])
+            with open(middleDataStorageDirectory + "/{}/data.yaml".format(spl), 'w') as outfile:
+                yaml.dump(data, outfile, default_flow_style=False)
+
+    # exit()
+    for spl in tmpLocs[1:]:
+        addDatasetToBiggerDataset(tmpLocs[0], spl, None)
+
+    
+    
+    for spl in [split[0]]:
+        os.makedirs(middleDataStorageDirectory + "/images/val")
+        os.makedirs(middleDataStorageDirectory + "/labels/val")
+
+        # transfer each file in middleDataStorageDirectory/{}/images to middleDataStorageDirectory/images/val
+        for file in os.listdir(middleDataStorageDirectory + "/{}/images/val/".format(spl)):
+            if os.path.exists(middleDataStorageDirectory + "/{}/labels/val/".format(spl) + file.replace(".jpg", ".txt")) and os.path.exists(middleDataStorageDirectory + "/{}/images/val/".format(spl) + file):
+                shutil.move(middleDataStorageDirectory + "/{}/images/val/".format(spl) + file, middleDataStorageDirectory + "/images/val")
+                shutil.move(middleDataStorageDirectory + "/{}/labels/val/".format(spl) + file.replace(".jpg", ".txt"), middleDataStorageDirectory + "/labels/val")
+        
+        
+    # copy over dataset.yaml from split[0] to middleDataStorageDirectory
+    shutil.copyfile(middleDataStorageDirectory + "/{}/data.yaml".format(split[0]), middleDataStorageDirectory + "/data.yaml")
 
 
 def filterCoco(middleDataStorageDirectory):
@@ -121,7 +150,7 @@ def filterCoco(middleDataStorageDirectory):
     labelsList = os.listdir(sourceFolder.format("labels"))
 
         # open up the dataset.yaml file
-    with open(middleDataStorageDirectory + "/dataset.yaml", 'r') as stream:
+    with open(middleDataStorageDirectory + "/data.yaml", 'r') as stream:
         try:
             data = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
@@ -169,7 +198,7 @@ def filterCoco(middleDataStorageDirectory):
     modifyFiles(sourceFolder.format("labels"), conversionDict=conversionDict)
 
     # Open dataset.yaml file
-    with open(middleDataStorageDirectory + "/dataset.yaml", 'r') as stream:
+    with open(middleDataStorageDirectory + "/data.yaml", 'r') as stream:
         try:
             data = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
@@ -179,36 +208,19 @@ def filterCoco(middleDataStorageDirectory):
 
         print("len(data['names']) : " + str(len(data['names'])))
     # Write the new data to the dataset.yaml file
-    with open(middleDataStorageDirectory + "/dataset.yaml", 'w') as f:
+    with open(middleDataStorageDirectory + "/data.yaml", 'w') as f:
         print("dumping")
         yaml.dump(data, f)
 
-def CopyFiles(dataStorageDirectory, middleDataStorageDirectory):
-    # delete and create dataStorageDirectory
-    if os.path.exists(dataStorageDirectory):
-        shutil.rmtree(dataStorageDirectory)
-    os.makedirs(dataStorageDirectory)   
 
-    # Take 70% of files in the "F:\Data\\not-initial\\images\\val" folder and move them to the "F:\Data\\Final\\train\images" folder
-    trainValTestFolders = ["train", "val", "test"]
-    imagesLabels = ["images", "labels"]
-    for folder in trainValTestFolders:
-        for imageLabel in imagesLabels:
-            os.makedirs(os.path.join(dataStorageDirectory, folder, imageLabel), exist_ok=True)
-
-    # Remove all Image files in the "F:\Data\\Intermediary\\images\\val\\"" folder that are also not present in the "F:\Data\\Intermediary\\labels\\val\\" folder
-    sourceFolder = middleDataStorageDirectory + "/{}/val/"
-    labelsList = os.listdir(sourceFolder.format("labels"))
-    imagesList = os.listdir(sourceFolder.format("images"))
-    for imageFile in imagesList:
-        labelFile = imageFile.replace(".jpg", ".txt")
-        if labelFile not in labelsList:
-            os.remove(sourceFolder.format("images") + imageFile)
-
+def allocateTrainValTestRandomly(sourceFolder):
 
     # shuffle files
 
     files = os.listdir(sourceFolder.format("images"))
+
+    # Set a random seed
+    random.seed(42)
 
     random.shuffle(files)
 
@@ -234,6 +246,98 @@ def CopyFiles(dataStorageDirectory, middleDataStorageDirectory):
 
     testFilesLabel = filesLabel[valSplit:]
 
+    return trainFiles, valFiles, testFiles, trainFilesLabel, valFilesLabel, testFilesLabel
+
+def allocateTrainValTestRandomly(sourceFolder):
+
+    # shuffle files
+
+    files = os.listdir(sourceFolder.format("images"))
+
+    # Set a random seed
+    random.seed(42)
+
+    random.shuffle(files)
+
+    filesLabel = files.copy()
+
+    # change each filename in filesLabel to be .txt instead of .jpg
+    for i in range(len(filesLabel)):
+        filesLabel[i] = filesLabel[i].replace(".jpg", ".txt")
+
+    trainSplit = int(len(files) * 0.7)
+
+    valSplit = int(len(files) * 0.90)
+
+    trainFiles = files[:trainSplit]
+
+    valFiles = files[trainSplit:valSplit]
+
+    testFiles = files[valSplit:]
+
+    trainFilesLabel = filesLabel[:trainSplit]
+
+    valFilesLabel = filesLabel[trainSplit:valSplit]
+
+    testFilesLabel = filesLabel[valSplit:]
+
+    return trainFiles, valFiles, testFiles, trainFilesLabel, valFilesLabel, testFilesLabel
+
+def allocateFromDataRepo(dataRepo):
+
+    # Create list of train files from file names in trainFileLocations.txt in dataRepo
+
+    with open(dataRepo + "trainFileLocations.txt", 'r') as f:
+        trainFiles = f.readlines()
+
+    trainFiles = [x.strip() for x in trainFiles]
+
+    trainFilesLabel = [x.replace(".jpg", ".txt") for x in trainFiles]
+
+    with open(dataRepo + "valFileLocations.txt", 'r') as f:
+        valFiles = f.readlines()
+
+    valFiles = [x.strip() for x in valFiles]
+
+    valFilesLabel = [x.replace(".jpg", ".txt") for x in valFiles]
+
+    with open(dataRepo + "testFileLocations.txt", 'r') as f:
+        testFiles = f.readlines()
+
+    testFiles = [x.strip() for x in testFiles]
+
+    testFilesLabel = [x.replace(".jpg", ".txt") for x in testFiles]
+
+    return trainFiles, valFiles, testFiles, trainFilesLabel, valFilesLabel, testFilesLabel
+
+
+def CopyFiles(dataStorageDirectory, middleDataStorageDirectory, args):
+    # delete and create dataStorageDirectory
+    if os.path.exists(dataStorageDirectory):
+        shutil.rmtree(dataStorageDirectory)
+    os.makedirs(dataStorageDirectory)   
+
+    # Take 70% of files in the "F:\Data\\not-initial\\images\\val" folder and move them to the "F:\Data\\Final\\train\images" folder
+    trainValTestFolders = ["train", "val", "test"]
+    imagesLabels = ["images", "labels"]
+    for folder in trainValTestFolders:
+        for imageLabel in imagesLabels:
+            os.makedirs(os.path.join(dataStorageDirectory, folder, imageLabel), exist_ok=True)
+
+    # Remove all Image files in the "F:\Data\\Intermediary\\images\\val\\"" folder that are also not present in the "F:\Data\\Intermediary\\labels\\val\\" folder
+    sourceFolder = middleDataStorageDirectory + "/{}/val/"
+    labelsList = os.listdir(sourceFolder.format("labels"))
+    imagesList = os.listdir(sourceFolder.format("images"))
+    for imageFile in imagesList:
+        labelFile = imageFile.replace(".jpg", ".txt")
+        if labelFile not in labelsList:
+            os.remove(sourceFolder.format("images") + imageFile)
+    if args.certainAlloc == False:
+        trainFiles, valFiles, testFiles, trainFilesLabel, valFilesLabel, testFilesLabel = allocateTrainValTestRandomly(sourceFolder)
+    elif args.certainAlloc != None:
+        caVal = args.certainAlloc
+        trainFiles, valFiles, testFiles, trainFilesLabel, valFilesLabel, testFilesLabel = allocateFromDataRepo(caVal)
+        
 
     # move files to train, val, test folders
     train_folder = dataStorageDirectory + "/train/{}/"
@@ -241,27 +345,46 @@ def CopyFiles(dataStorageDirectory, middleDataStorageDirectory):
     test_folder = dataStorageDirectory + "/test/{}/"
 
     for file in trainFiles:
-        os.rename(sourceFolder.format("images") + file, train_folder.format("images") + file)
+        # check the file is present in source folder
+        if os.path.exists(sourceFolder.format("images") + file):
+            os.rename(sourceFolder.format("images") + file, train_folder.format("images") + file)
+        else:
+            print("File not found: " + sourceFolder.format("images") + file)
 
     print("did the thing")
 
     for file in valFiles:
-        os.rename(sourceFolder.format("images") + file, val_folder.format("images") + file)
+        if os.path.exists(sourceFolder.format("images") + file):
+            os.rename(sourceFolder.format("images") + file, val_folder.format("images") + file)
+        else:
+            print("File not found: " + sourceFolder.format("images") + file)
 
     for file in testFiles:
-        os.rename(sourceFolder.format("images") + file, test_folder.format("images") + file)
+        if os.path.exists(sourceFolder.format("images") + file):
+            os.rename(sourceFolder.format("images") + file, test_folder.format("images") + file)
+        else:
+            print("File not found: " + sourceFolder.format("images") + file)
 
     for file in trainFilesLabel:
-        os.rename(sourceFolder.format("labels") + file, train_folder.format("labels") + file)
+        if os.path.exists(sourceFolder.format("labels") + file):
+            os.rename(sourceFolder.format("labels") + file, train_folder.format("labels") + file)
+        else:
+            print("File not found: " + sourceFolder.format("labels") + file)
 
     for file in valFilesLabel:   
-        os.rename(sourceFolder.format("labels") + file, val_folder.format("labels") + file)
+        if os.path.exists(sourceFolder.format("labels") + file):
+            os.rename(sourceFolder.format("labels") + file, val_folder.format("labels") + file)
+        else:
+            print("File not found: " + sourceFolder.format("labels") + file)
 
     for file in testFilesLabel:
-        os.rename(sourceFolder.format("labels") + file, test_folder.format("labels") + file)
+        if os.path.exists(sourceFolder.format("labels") + file):
+            os.rename(sourceFolder.format("labels") + file, test_folder.format("labels") + file)
+        else:
+            print("File not found: " + sourceFolder.format("labels") + file)
 
     # copy over dataset.yaml file to data.yaml
-    shutil.copy(middleDataStorageDirectory + "/dataset.yaml", dataStorageDirectory + "/data.yaml")
+    shutil.copy(middleDataStorageDirectory + "/data.yaml", dataStorageDirectory + "/data.yaml")
 
     # injest as yaml file
     with open(dataStorageDirectory + "/data.yaml", 'r') as stream:
@@ -644,22 +767,13 @@ def augmentData(modDirectory, addDirectory):
     print("Augmentation complete!")
 
 
-def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath, args):
+def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
     print("add dataset path is : " + addDatasetPath)
+    testPath = os.path.join(addDatasetPath, "test/{}")
+    trainPath = os.path.join(addDatasetPath, "train/{}")
+    valPath = os.path.join(addDatasetPath, "valid/{}")
 
-    # Create list of paths for test, train, and valid
-    listPaths = []
-    
-    # for list of dirs in addDatasetPath
-    for d in os.listdir(addDatasetPath):
-        listPaths.append(os.path.join(addDatasetPath, d) + "/{}")
-
-
-    # testPath = os.path.join(addDatasetPath, "test/{}")
-    # trainPath = os.path.join(addDatasetPath, "train/{}")
-    # valPath = os.path.join(addDatasetPath, "valid/{}")
-
-    # listPaths = [testPath, trainPath, valPath]
+    listPaths = [testPath, trainPath, valPath]
     
     dataYamlPath = os.path.join(addDatasetPath, "data.yaml")
 
@@ -711,9 +825,11 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath, args):
 
         yaml.dump(data, f)
 
-
+    
     for path in listPaths:
+        print("modifying files in " + path.format("labels"))
         modifyFiles(path.format("labels"), conversionDict=conversionDict)
+
 
         #TODO should modify labels in data names. should utilize modify script
 
@@ -728,43 +844,176 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath, args):
     with open(originalDatasetPath + "/data.yaml", 'w') as f:
         yaml.dump(originalData, f)
 
-    pathsTo = []
-    for i in os.listdir(originalDatasetPath):
-        pathsTo.append(originalDatasetPath + "/{}/")
 
-    # train_folder = originalDatasetPath + "/train/{}/"
-    # val_folder = originalDatasetPath + "/val/{}/"
-    # test_folder = originalDatasetPath + "/test/{}/"
+    train_folder = originalDatasetPath + "/train/{}/"
+    val_folder = originalDatasetPath + "/val/{}/"
+    test_folder = originalDatasetPath + "/test/{}/"
 
     imagesLabels = ["images", "labels"]
-    paths = listPaths
-    # pathsTo = [test_folder, train_folder, val_folder]
+    paths = [testPath, trainPath, valPath]
+    pathsTo = [test_folder, train_folder, val_folder]
     for i in range(len(paths)):
         for imageLabel in imagesLabels:
             imageLabelPath = paths[i].format(imageLabel)
             print(imageLabelPath)
             for file in os.listdir(imageLabelPath):
                 shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i].format(imageLabel), file))
+
+# def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath, args):
+#     print("add dataset path is : " + addDatasetPath)
+
+#     # Create list of paths for test, train, and valid
+#     listPaths = []
     
-    # Create a file called trainFileLocations in the -dr directory
-    with open(args.dr + "/trainFileLocations.txt", "w") as f:
+#     # for list of dirs in addDatasetPath
+#     for d in os.listdir(addDatasetPath):
+#         # check if it is a dir
+#         if os.path.isdir(os.path.join(addDatasetPath, d)):
+#             listPaths.append(os.path.join(addDatasetPath, d) + "/")
+#     print("List of paths is : ")
+#     print(listPaths)
+
+
+#     # testPath = os.path.join(addDatasetPath, "test/{}")
+#     # trainPath = os.path.join(addDatasetPath, "train/{}")
+#     # valPath = os.path.join(addDatasetPath, "valid/{}")
+
+#     # listPaths = [testPath, trainPath, valPath]
+
+#     # if os.path.join(addDatasetPath, "dataset.yaml") exists, move it to data.yaml
+#     # if os.path.exists(os.path.join(addDatasetPath, "dataset.yaml")):
+#     #     os.rename(os.path.join(addDatasetPath, "dataset.yaml"), os.path.join(addDatasetPath, "data.yaml"))
+    
+#     # if os.path.exists(os.path.join(originalDatasetPath, "dataset.yaml")):
+#     #     os.rename(os.path.join(originalDatasetPath, "dataset.yaml"), os.path.join(originalDatasetPath, "data.yaml"))
+    
+#     dataYamlPath = os.path.join(addDatasetPath, "data.yaml")
+
+#     # add names in add dataset to original dataset
+#     with open(dataYamlPath, 'r') as stream:
+#         try:
+#             data = yaml.safe_load(stream)
+#         except yaml.YAMLError as exc:
+#             print(exc)
+
+#     with open(originalDatasetPath + "/data.yaml", 'r') as stream:
+#         try:
+#             originalData = yaml.safe_load(stream)
+#         except yaml.YAMLError as exc:
+#             print(exc)
+
+#     ncOriginal = originalData['nc']
+#     print(type(originalData['names']))
+#     print(data)
+#     print("data is : " + str(data))
+#     if type(data['names']) == list:
+#         # get length of originalData['names']
+#         length = len(originalData['names'])
+#         # add length to each element in data['names'] after converting to dict
+#         data['names'] = {i: data['names'][i] for i in range(len(data['names']))}
+#     conversionDict = {}
+#     newLabels = 0
+#     # print(data['names'][i])
+#     for i in data['names']:
+#         print(data['names'][i])
+#         if data['names'][i] in originalData['names'].values():
+#             conversionDict[i] = (next(k for k, v in originalData['names'].items() if v == data['names'][i]))
+#         else:
+#             conversionDict[i] = newLabels + ncOriginal
+#             newLabels += 1
+#     print("the conversion dict is: ")
+#     print(conversionDict)
+
+#     # dump data to data.yaml
+#     with open(dataYamlPath, 'w') as f:
+#         # convert data['names'] via the conversionDict
+#         tempDataNames = {}
+#         for key, value in data['names'].items():
+#             tempDataNames[conversionDict[key]] = value
+
+
+#         data['names'] = tempDataNames
+
+
+#         yaml.dump(data, f)
+
+
+#     for path in listPaths:
+#         print("hello in modify files for loop")
+#         for i in os.listdir(path):
+#             folder = os.path.join(path, i) + "/"
+#             print("the folder in modify files is : " + folder)
+#             print("truthe value of os.path.isdir(i) is : " + str(os.path.isdir(folder)))
+#             print("truth value of 'labels' in folder is : " + str("labels" in folder))
+#             if os.path.isdir(folder) and "labels" in folder:
+#                 print("folder is : " + folder)
+#                 modifyFiles(folder, conversionDict = conversionDict)
+
+#         #TODO should modify labels in data names. should utilize modify script
+
+#     # add key value pairs in data to originalData
+#     for key in data['names']:
+#         originalData['names'][key] = data['names'][key]
+
+#     #update nc in originalData  
+#     originalData['nc'] = len(originalData['names'])
+
+
+#     with open(originalDatasetPath + "/data.yaml", 'w') as f:
+#         yaml.dump(originalData, f)
+
+#     pathsTo = []
+#     for i in os.listdir(originalDatasetPath):
+#         if os.path.isdir(os.path.join(originalDatasetPath, i)):
+#             pathsTo.append(originalDatasetPath + "/" + i )
+#     print("Paths to is : " + str(pathsTo))
+#     # train_folder = originalDatasetPath + "/train/{}/"
+#     # val_folder = originalDatasetPath + "/val/{}/"
+#     # test_folder = originalDatasetPath + "/test/{}/"
+
+#     imagesLabels = [folder for folder in os.listdir(pathsTo[0]) if os.path.isdir(os.path.join(pathsTo[0], folder))]
+#     paths = listPaths
+#     # pathsTo = [test_folder, train_folder, val_folder]
+#     print("the paths are: ")
+#     print(paths)
+#     print(pathsTo)
+
+#     for i in range(len(paths)):
+#         for imageLabel in imagesLabels:
+#             imageLabelPath = os.path.join(paths[i], imageLabel)
+#             print(imageLabelPath)
+#             for file in os.listdir(imageLabelPath):
+#                 shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i], imageLabel, file))
+
+
+
+def train(dataStorageDirectory, model = "yolo11n.yaml", epochs = 400, resume = False, batch_size = 32, args = None):
+
+    settings['datasets_dir'] = dataStorageDirectory
+
+    train_folder = os.path.join(dataStorageDirectory, "train/{}/")
+    val_folder = os.path.join(dataStorageDirectory, "val/{}/")
+    test_folder = os.path.join(dataStorageDirectory, "test/{}")
+
+        # Create a file called trainFileLocations in the -dr directory
+    with open(args.dataWhileRunningDirectory + "/trainFileLocations.txt", "a") as f:
         for file in os.listdir(train_folder.format("images")):
             f.write(train_folder.format("images") + file + "\n")
     
     # Create a file called valFileLocations in the -dr directory
-    with open(args.dr + "/valFileLocations.txt", "w") as f:
+    with open(args.dataWhileRunningDirectory + "/valFileLocations.txt", "a") as f:
         for file in os.listdir(val_folder.format("images")):
             f.write(val_folder.format("images") + file + "\n")
 
     # Create a file called testFileLocations in the -dr directory
-    with open(args.dr + "/testFileLocations.txt", "w") as f:
+    with open(args.dataWhileRunningDirectory + "/testFileLocations.txt", "a") as f:
         for file in os.listdir(test_folder.format("images")):
             f.write(test_folder.format("images") + file + "\n")
 
+    pythonScriptArgs = args
 
-def train(dataStorageDirectory, model = "yolo11n.yaml", epochs = 400, resume = False, batch_size = 32):
-
-    settings['datasets_dir'] = dataStorageDirectory
+    with open(args.dataWhileRunningDirectory + "/pythonScriptArgs.txt", "w") as f:
+        yaml.dump(pythonScriptArgs, f)
 
     # Load the YOLOv11 model
     model = YOLO(model=model, task="detect")
@@ -812,14 +1061,17 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--split',  type =str, nargs='?', const="validation",default="validation")
     parser.add_argument('-e', '--epochs',  type =int, nargs='?', const=400, default=400)
     parser.add_argument('-v', '--validate', action='store_true')
+    parser.add_argument('-ca', '--certainAlloc', type=str, nargs='?', default=False)
 
 
     args = parser.parse_args()
 
     # exit and give an error if -ds already exists
-    if os.path.exists(args.dataStorageDirectory):
-        print("Error: -ds already exists")
+    if os.path.exists(args.dataWhileRunningDirectory):
+        print("Error: --dataWhileRunningDirectory already exists")
         exit()
+    else:
+        os.makedirs(args.dataWhileRunningDirectory)
 
     modDirectory = []
     if args.add == []:
@@ -856,7 +1108,7 @@ if __name__ == "__main__":
         # convertLabelValues()
         filterCoco(args.middleDataStorageDirectory)
     if args.copyFiles:
-        CopyFiles(args.dataStorageDirectory, args.middleDataStorageDirectory)
+        CopyFiles(args.dataStorageDirectory, args.middleDataStorageDirectory, args)
     if args.dockerPrep:
         dockerPrep(args.dockerPrep)
     if args.modData:
@@ -878,4 +1130,4 @@ if __name__ == "__main__":
         elif not args.resume and not args.model:
           model =  "yolo11n.yaml"
         
-        train(args.dataStorageDirectory, model, args.epochs, args.resume, args.batch_size)
+        train(args.dataStorageDirectory, model, args.epochs, args.resume, args.batch_size, args)

@@ -313,3 +313,28 @@ Discussion points for when frontend is implemented
 
 TODO: model running should be a different process, http pathway should just add to queue
 -> ask chatgpt the best way to do this
+ -> chatgpt wants file locks for synchronization
+-> chatgpt says loading model in every process is maybe possibly ok if small
+-> otherwise set up a serparate model server, serves http requests or grpc requests?
+ -> in future, ask how to set up model server
+  -> can serialize over endpoint and single worker lol
+-> for long-running things, "celery" python library exists to allow async-capable operations.
+
+Right now raspi requires some manual setup:
+-> pip install libraries
+-> maybe install audio library that python uses
+
+model optimizations
+-> add quantization to model optimizations
+-> add to model optimization along with tensorrt
+
+
+database refactor:
+-> no multiple tables for each user
+-> don't convert tuples to strings, have a column for each
+-> recommended to have integer user ids in a table
+ -> one table has all per-user information -> 
+  -> for now username id, password
+ -> other has literally all events
+  -> user id, time, box, object, link, etc.
+

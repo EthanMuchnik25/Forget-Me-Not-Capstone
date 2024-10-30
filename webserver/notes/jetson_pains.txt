@@ -1,0 +1,68 @@
+
+
+
+GENERIC PAINS:=====================================================
+The newest version of python on this is 3.8
+
+
+
+NETWORK PAINS:=====================================================
+
+tryna connect the jetson:
+
+on the laptop:
+- network connections-> ethernet->ipv4, set method to "shared to other computers"
+
+on the jetson:
+ip a | grep eth0
+should output something like:
+3: eth0: < BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state up group default qlen 1000 
+inet 10.42.0.193/24 brd 10.42.0.255 scope gloal dynamic noprefixroute eth0
+
+ip route
+should show something relevnt
+
+
+
+
+Enable IP Forwarding on Linux (Laptop)
+Run the following command to enable IP forwarding temporarily:
+
+Check ip forwarding settings on laptop
+sudo sysctl -w net.ipv4.ip_forward=1
+
+To make this change persistent:
+Open /etc/sysctl.conf in a text editor:
+sudo nano /etc/sysctl.conf
+
+Add or uncomment this line:
+net.ipv4.ip_forward=1
+
+Save and apply the changes:
+sudo sysctl -p
+
+2. Set Up NAT (Network Address Translation) on the Laptop
+If you’re on Linux, add a rule in iptables to enable NAT between the Wi-Fi and Ethernet interfaces:
+sudo iptables -t nat -A POSTROUTING -o wlp0s20f3 -j MASQUERADE
+
+
+Verify firewall not applicable to me I think
+
+
+
+NEED TO PUT THIS IN TERMINAL!!!
+sudo iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -j ACCEPT
+sudo iptables -A FORWARD -i wlp0s20f3 -o enp0s31f6 -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+on jetson, run ping 8.8.8.8 If it does not work, run 
+sudo tcpdump -i wlp0s20f3 icmp
+on laptop, it should output stuff 
+
+sudo tcpdump -i enp0s31f6 icmp
+This seemed to output stuff if the laptop and jetson were only just connected
+
+
+
+
+
+
