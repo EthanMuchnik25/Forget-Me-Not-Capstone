@@ -14,7 +14,7 @@ echo "activating virtualenv"
 . ./.venv/bin/activate || { echo "Failed to activate virtual environment"; exit 1; }
 
 echo "installing dependancies"
-pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
+pip install requests google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
 echo "chmod recurring script"
 chmod +x ./recurrent_script.sh
