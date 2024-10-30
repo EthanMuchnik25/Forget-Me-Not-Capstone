@@ -16,9 +16,9 @@ if __name__ == '__main__':
     creds_file_path =     "./debug_db_store/credentials/creds.json"
     blacklist_file_path = "./debug_db_store/expired_tokens/bl.json"
 else:
-    temp_imgs_dir = "./app/database/debug_db_store/users/"
-    creds_file_path = "./app/database/debug_db_store/credentials/creds.json"
-    blacklist_file_path = "./app/database/debug_db_store/expired_tokens/bl.json"
+    temp_imgs_dir = "./app/database/debug_db/debug_db_store/users/"
+    creds_file_path = "./app/database/debug_db/debug_db_store/credentials/creds.json"
+    blacklist_file_path = "./app/database/debug_db/debug_db_store/expired_tokens/bl.json"
 
 os.makedirs(temp_imgs_dir, exist_ok=True)
 
