@@ -22,8 +22,7 @@ pw = "c"
 # Initially no token, just re-authenticate the first time
 token = ""
 
-# img_directory = '../../debug_db_store/prev/old_imgs'
-img_directory = '../../debug_db_store/prev/baby'
+img_directory = '../debug_db_store/prev/baby'
 
 
 def reauthenticate():
