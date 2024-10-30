@@ -12,7 +12,8 @@ import requests
 # NOTE: This is copy pasted from img_send.py, but I am too lazy to make the code
 #  modular. I could make an "auth" module, but this seems painful
 
-server_url = "http://localhost:4000"
+# server_url = "http://localhost:4000"
+
 
 img_url = server_url + "/post_img"
 token = ""
