@@ -152,7 +152,7 @@ def get_room_img():
     if data_arg == None:
         # TODO standardize error, msg, etc., whatever
         # TODO standardize where sanitization will be done
-        ret = {"error": "No data parameter provided"}, 400
+        return {"error": "No data parameter provided"}, 400
     
     try:
         decoded_data = urllib.parse.unquote(data_arg)

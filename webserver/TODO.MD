@@ -355,3 +355,10 @@ Right now raspi requires some manual setup:
 -> maybe install audio library that python uses
 
 
+***document the things that everyone has to use
+-> sending photos
+  -> add in instructions all the way from the base readme... if there is time
+-> functionality that I have added
+  -> logging + analysis script
+-> update locations
+

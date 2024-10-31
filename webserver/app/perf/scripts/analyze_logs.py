@@ -30,8 +30,11 @@ def parse_log_files(directory):    # Dictionary to hold the results
     
     return name_map
 
+# TODO if we keep committing this, it will thrash. Put directory somewhere else
+#  probably?
+
 # Directory containing the log files
-log_directory = "../logs/1"
+log_directory = "../logs/2"
 
 # Parse the logs and print the resulting map
 parsed_data = parse_log_files(log_directory)
