@@ -57,7 +57,7 @@ This command must be run whenever you restart the container.
 
 Next, you will want to run gunicorn to get the server operational. To do this, type: 
 ```
-gunicorn --workers 1 --bind 0.0.0.0:8000 myapp:app
+gunicorn -c gunicorn.conf.py --workers 1 --bind 0.0.0.0:8000 myapp:app
 ```
 
 If you would like to get back into a shell on the container after leaving, type:
@@ -127,7 +127,7 @@ sudo service nginx start
 
 You should run something like:
 ```
-gunicorn --workers 4 --bind 0.0.0.0:8000 myapp:app
+gunicorn -c gunicorn.conf.py --workers 1 --bind 0.0.0.0:8000 myapp:app
 ```
 `myapp` is the name of the python file containing the server stuff, and `app` is the name of the variable bound to `Flask(__name__)` inside the python file.
 
