@@ -16,6 +16,7 @@ from app.get_room_img import fs_get_room_img
 from app.auth import register_user, login_user, logout_user, \
     check_jwt_not_blocklist, deregister_user
 from app.config import Config
+import app.perf.perf as perf
 
 
 # ========================== Page Routes ==========================
@@ -115,6 +116,7 @@ def check_if_token_revoked(jwt_header, jwt_payload):
 @app.route('/text_query')
 @jwt_required()
 def text_query():
+    perf.logger.perf()
     jwt = get_jwt()
     user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
     query = request.args.get('query')
@@ -123,9 +125,12 @@ def text_query():
     # Simple way to case on stuff to test database, neg num is how many back
     # In the future, can complicate policies to add stuff like auth/security
     response = handle_text_query(user, query, index)
-    
+
+    perf.logger.perf()
     return jsonify(response), 200
 
+# TODO logger functionality is shit. Refacror code so we don't have to be so 
+#  careful
 # TODO rename?
 # Intended for website to resolve provided image urls
 @app.route('/get_room_img', methods=['GET'])
@@ -138,20 +143,25 @@ def get_room_img():
     if data_arg == None:
         # TODO standardize error, msg, etc., whatever
         # TODO standardize where sanitization will be done
-        return {"error": "No data parameter provided"}, 400
+        ret = {"error": "No data parameter provided"}, 400
     
     try:
         decoded_data = urllib.parse.unquote(data_arg)
         db_line_dict = json.loads(decoded_data)
         db_line_obj = ImgObject(**db_line_dict)
     except Exception as e:
+        perf.logger.perf()
+
         return {"error": "Invalid URL"}, 400
     
     img = fs_get_room_img(user, db_line_obj)
 
     if img == None:
+        perf.logger.perf()
+
         return {"error": "Image file not found"}, 400
     
+    perf.logger.perf()
     return send_file(img, download_name=db_line_obj.img_url)
         
 

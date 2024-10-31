@@ -16,3 +16,8 @@ class Config:
     JWT_SECRET_KEY = "this can sorta be anything"
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=30) # How long jwt valid for
     JWT_HASH_FN = "pbkdf2"
+
+    # For logging
+    LOGGING = True
+    # Where the logs will be spat out
+    PERF_LOG_DIR = "./app/perf/logs"
