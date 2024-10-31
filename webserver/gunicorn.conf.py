@@ -9,13 +9,15 @@ from app.config import Config
 # Runs once when the master Gunicorn process starts. Useful for setting up 
 #  resources needed across all workers.
 def on_starting(server): 
-    next_dir_number = helpers.get_max_log_dir_num(Config.PERF_LOG_DIR) + 1
+    # Set up folders if we want to log
+    if Config.PERF:
+        next_dir_number = helpers.get_max_log_dir_num(Config.PERF_LOG_DIR) + 1
 
-    new_log_dir = os.path.join(Config.PERF_LOG_DIR, str(next_dir_number))
+        new_log_dir = os.path.join(Config.PERF_LOG_DIR, str(next_dir_number))
 
-    # Create the new log directory
-    os.makedirs(new_log_dir)
-    os.chmod(new_log_dir, 0o777)
+        # Create the new log directory
+        os.makedirs(new_log_dir)
+        os.chmod(new_log_dir, 0o777)
 
 
 # # Runs after each worker is forked. Good for creating per-worker instances of 

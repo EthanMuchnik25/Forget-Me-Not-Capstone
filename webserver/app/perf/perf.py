@@ -3,50 +3,76 @@ import os
 import time
 import app.perf.helpers as helpers
 from app.config import Config
-import inspect
+from functools import wraps
 
 PERF_LEVEL = 5
 perf_pid = os.getpid()
 
-class PerfFormatter(logging.Formatter):
-    def format(self, record):
-        # Add the PID to the log record
-        record.pid = perf_pid
-        record.unix_time = time.time()
-        # TODO: This is awful genuinely atrocious brittle garbage shit
-        record.func = inspect.currentframe().f_back.f_back.f_back.f_back.f_back.f_back.f_back.f_back.f_back.f_code.co_name
 
-        return super().format(record)
+# This is not intended to be called outside time_and_log. It gets something 
+#  specific on the stack frame.
+def perf(self, fn_name, fn_time):
+    if self.isEnabledFor(PERF_LEVEL) and Config.PERF:
+        # NOTE: I am not sure if the behavior of this is documented but it seems
+        #  to work?
+        self._log(PERF_LEVEL, "%d %s %f", (perf_pid, fn_name, fn_time))
 
-def perf(self, *args, **kwargs):
-    if self.isEnabledFor(PERF_LEVEL) and Config.LOGGING:
-        self._log(PERF_LEVEL, "", args, **kwargs)
 
-# NOTE:
-# Log folders, located in webserver/app/perf/logs, contain all logs for a single
-#  run of the server. This function determines the name of the next log folder.
-#  It should be 1 greater than the last log directory.
-# The log folder is made in gunicorn.conf.py, this just finds it
-proc_perf_log_dir = os.path.join(Config.PERF_LOG_DIR, str(helpers.get_max_log_dir_num(Config.PERF_LOG_DIR)))
 
-# The file in which this worker's log should be located will be named by it's 
-#  PID.
-perf_log = os.path.join(proc_perf_log_dir, f"{perf_pid}.log")
+# Set up logger for decorator, if performance monitoring is on:==============
 
-logging.addLevelName(PERF_LEVEL, "PERF")
-logging.Logger.perf = perf
+if Config.PERF:
+    # NOTE:
+    # Log folders, located in webserver/app/perf/logs, contain all logs for a single
+    #  run of the server. This function determines the name of the next log folder.
+    #  It should be 1 greater than the last log directory.
+    # The log folder is made in gunicorn.conf.py, this just finds it
+    proc_perf_log_dir = os.path.join(Config.PERF_LOG_DIR, str(helpers.get_max_log_dir_num(Config.PERF_LOG_DIR)))
 
-logger = logging.getLogger("perf")
-logger.setLevel(PERF_LEVEL)
+    # The file in which this worker's log should be located will be named by it's 
+    #  PID.
+    perf_log = os.path.join(proc_perf_log_dir, f"{perf_pid}.log")
 
-file_handler = logging.FileHandler(perf_log)
-file_handler.setLevel(PERF_LEVEL)
-os.chmod(perf_log, 0o666)
+    logging.addLevelName(PERF_LEVEL, "PERF")
+    logging.Logger.perf = perf
 
-formatter = PerfFormatter('%(pid)d %(func)s %(unix_time)s %(message)s')
-file_handler.setFormatter(formatter)
+    logger = logging.getLogger("perf")
+    logger.setLevel(PERF_LEVEL)
 
-logger.addHandler(file_handler)
+    file_handler = logging.FileHandler(perf_log)
+    file_handler.setLevel(PERF_LEVEL)
+    os.chmod(perf_log, 0o666)
 
-# logger.perf("this is a test message")
+    logger.addHandler(file_handler)
+
+
+# IMPORTANT:: Decorator:=======================
+
+# This is the only thing you should import
+
+# Decorator to calculate duration taken by any function.
+def time_and_log(func):
+
+    if not Config.PERF:
+        return func
+    
+    # added arguments inside the inner1,
+    # if function takes any arguments,
+    # can be added like this.
+    @wraps(func)
+    def inner1(*args, **kwargs):
+
+        # storing time before function execution
+        begin = time.time()
+        
+        result = func(*args, **kwargs)
+
+        # storing time after function execution
+        end = time.time()
+        logger.perf(func.__name__, end-begin)
+
+        return result
+        
+    return inner1
+
 
