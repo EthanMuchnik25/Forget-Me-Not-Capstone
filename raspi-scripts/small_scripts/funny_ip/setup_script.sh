@@ -20,11 +20,14 @@ echo "chmod recurring script"
 chmod +x ./recurrent_script.sh
 
 CRON_SCRIPT="0 * * * * $CURRENT_DIR/recurrent_script.sh"
-# CRON_SCRIPT="* * * * * $CURRENT_DIR/recurrent_script.sh"
+# CRON_SCRIPT_REBOOT="@reboot $CURRENT_DIR/recurrent_script.sh"
+
 
 echo "creating crontab"
 if ! crontab -l | grep -q "$CURRENT_DIR/recurrent_script.sh"; then
     (crontab -l; echo "$CRON_SCRIPT") | crontab - || { echo "Failed to add cron job"; exit 1; }
+    # Needs testing before I commit
+    # (crontab -l; echo "$CRON_SCRIPT_REBOOT") | crontab - || { echo "Failed to add cron job"; exit 1; }
 else
     echo "Cron job already exists."
 fi

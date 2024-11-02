@@ -106,7 +106,7 @@ def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split,
 
     # exit()
     for spl in tmpLocs[1:]:
-        addDatasetToBiggerDataset(tmpLocs[0], spl, None)
+        addDatasetToBiggerDataset(tmpLocs[0], spl)
 
     
     
@@ -767,7 +767,7 @@ def augmentData(modDirectory, addDirectory):
     print("Augmentation complete!")
 
 
-def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
+def addDatasetToBiggerDataseto(originalDatasetPath, addDatasetPath):
     print("add dataset path is : " + addDatasetPath)
     testPath = os.path.join(addDatasetPath, "test/{}")
     trainPath = os.path.join(addDatasetPath, "train/{}")
@@ -776,6 +776,10 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
     listPaths = [testPath, trainPath, valPath]
     
     dataYamlPath = os.path.join(addDatasetPath, "data.yaml")
+
+    print("checkpoint")
+    print(dataYamlPath)
+    print(listPaths)
 
     # add names in add dataset to original dataset
     with open(dataYamlPath, 'r') as stream:
@@ -832,7 +836,7 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
 
 
         #TODO should modify labels in data names. should utilize modify script
-
+# fff
     # add key value pairs in data to originalData
     for key in data['names']:
         originalData['names'][key] = data['names'][key]
@@ -852,6 +856,9 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
     imagesLabels = ["images", "labels"]
     paths = [testPath, trainPath, valPath]
     pathsTo = [test_folder, train_folder, val_folder]
+
+    print("paths are : " + str(paths))  
+    print("paths to are : " + str(pathsTo))
     for i in range(len(paths)):
         for imageLabel in imagesLabels:
             imageLabelPath = paths[i].format(imageLabel)
@@ -859,131 +866,149 @@ def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
             for file in os.listdir(imageLabelPath):
                 shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i].format(imageLabel), file))
 
-# def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath, args):
-#     print("add dataset path is : " + addDatasetPath)
+def addDatasetToBiggerDataset(originalDatasetPath, addDatasetPath):
+    print("add dataset path is : " + addDatasetPath)
 
-#     # Create list of paths for test, train, and valid
-#     listPaths = []
+    # Create list of paths for test, train, and valid
+    listPaths = []
     
-#     # for list of dirs in addDatasetPath
-#     for d in os.listdir(addDatasetPath):
-#         # check if it is a dir
-#         if os.path.isdir(os.path.join(addDatasetPath, d)):
-#             listPaths.append(os.path.join(addDatasetPath, d) + "/")
-#     print("List of paths is : ")
-#     print(listPaths)
+    # for list of dirs in addDatasetPath
+    for d in os.listdir(addDatasetPath):
+        # check if it is a dir
+        if os.path.isdir(os.path.join(addDatasetPath, d)):
+            listPaths.append(os.path.join(addDatasetPath, d) + "/")
+    print("List of paths is : ")
+    print(listPaths)
 
 
-#     # testPath = os.path.join(addDatasetPath, "test/{}")
-#     # trainPath = os.path.join(addDatasetPath, "train/{}")
-#     # valPath = os.path.join(addDatasetPath, "valid/{}")
+    # testPath = os.path.join(addDatasetPath, "test/{}")
+    # trainPath = os.path.join(addDatasetPath, "train/{}")
+    # valPath = os.path.join(addDatasetPath, "valid/{}")
 
-#     # listPaths = [testPath, trainPath, valPath]
+    # listPaths = [testPath, trainPath, valPath]
 
-#     # if os.path.join(addDatasetPath, "dataset.yaml") exists, move it to data.yaml
-#     # if os.path.exists(os.path.join(addDatasetPath, "dataset.yaml")):
-#     #     os.rename(os.path.join(addDatasetPath, "dataset.yaml"), os.path.join(addDatasetPath, "data.yaml"))
+    # if os.path.join(addDatasetPath, "dataset.yaml") exists, move it to data.yaml
+    # if os.path.exists(os.path.join(addDatasetPath, "dataset.yaml")):
+    #     os.rename(os.path.join(addDatasetPath, "dataset.yaml"), os.path.join(addDatasetPath, "data.yaml"))
     
-#     # if os.path.exists(os.path.join(originalDatasetPath, "dataset.yaml")):
-#     #     os.rename(os.path.join(originalDatasetPath, "dataset.yaml"), os.path.join(originalDatasetPath, "data.yaml"))
+    # if os.path.exists(os.path.join(originalDatasetPath, "dataset.yaml")):
+    #     os.rename(os.path.join(originalDatasetPath, "dataset.yaml"), os.path.join(originalDatasetPath, "data.yaml"))
     
-#     dataYamlPath = os.path.join(addDatasetPath, "data.yaml")
 
-#     # add names in add dataset to original dataset
-#     with open(dataYamlPath, 'r') as stream:
-#         try:
-#             data = yaml.safe_load(stream)
-#         except yaml.YAMLError as exc:
-#             print(exc)
+    dataYamlPath = os.path.join(addDatasetPath, "data.yaml")
 
-#     with open(originalDatasetPath + "/data.yaml", 'r') as stream:
-#         try:
-#             originalData = yaml.safe_load(stream)
-#         except yaml.YAMLError as exc:
-#             print(exc)
+    print("checkpoint")
+    print("data yaml path is : " + dataYamlPath)
+    print("listpaths is : " + str(listPaths))
 
-#     ncOriginal = originalData['nc']
-#     print(type(originalData['names']))
-#     print(data)
-#     print("data is : " + str(data))
-#     if type(data['names']) == list:
-#         # get length of originalData['names']
-#         length = len(originalData['names'])
-#         # add length to each element in data['names'] after converting to dict
-#         data['names'] = {i: data['names'][i] for i in range(len(data['names']))}
-#     conversionDict = {}
-#     newLabels = 0
-#     # print(data['names'][i])
-#     for i in data['names']:
-#         print(data['names'][i])
-#         if data['names'][i] in originalData['names'].values():
-#             conversionDict[i] = (next(k for k, v in originalData['names'].items() if v == data['names'][i]))
-#         else:
-#             conversionDict[i] = newLabels + ncOriginal
-#             newLabels += 1
-#     print("the conversion dict is: ")
-#     print(conversionDict)
+    # add names in add dataset to original dataset
+    with open(dataYamlPath, 'r') as stream:
+        try:
+            data = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
 
-#     # dump data to data.yaml
-#     with open(dataYamlPath, 'w') as f:
-#         # convert data['names'] via the conversionDict
-#         tempDataNames = {}
-#         for key, value in data['names'].items():
-#             tempDataNames[conversionDict[key]] = value
+    with open(originalDatasetPath + "/data.yaml", 'r') as stream:
+        try:
+            originalData = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
 
+    ncOriginal = originalData['nc']
+    print(type(originalData['names']))
+    print(data)
+    print("data is : " + str(data))
+    if type(data['names']) == list:
+        # get length of originalData['names']
+        length = len(originalData['names'])
+        # add length to each element in data['names'] after converting to dict
+        data['names'] = {i: data['names'][i] for i in range(len(data['names']))}
+    conversionDict = {}
+    newLabels = 0
+    # print(data['names'][i])
+    for i in data['names']:
+        print(data['names'][i])
+        if data['names'][i] in originalData['names'].values():
+            conversionDict[i] = (next(k for k, v in originalData['names'].items() if v == data['names'][i]))
+        else:
+            conversionDict[i] = newLabels + ncOriginal
+            newLabels += 1
+    print("the conversion dict is: ")
+    print(conversionDict)
 
-#         data['names'] = tempDataNames
-
-
-#         yaml.dump(data, f)
-
-
-#     for path in listPaths:
-#         print("hello in modify files for loop")
-#         for i in os.listdir(path):
-#             folder = os.path.join(path, i) + "/"
-#             print("the folder in modify files is : " + folder)
-#             print("truthe value of os.path.isdir(i) is : " + str(os.path.isdir(folder)))
-#             print("truth value of 'labels' in folder is : " + str("labels" in folder))
-#             if os.path.isdir(folder) and "labels" in folder:
-#                 print("folder is : " + folder)
-#                 modifyFiles(folder, conversionDict = conversionDict)
-
-#         #TODO should modify labels in data names. should utilize modify script
-
-#     # add key value pairs in data to originalData
-#     for key in data['names']:
-#         originalData['names'][key] = data['names'][key]
-
-#     #update nc in originalData  
-#     originalData['nc'] = len(originalData['names'])
+    # dump data to data.yaml
+    with open(dataYamlPath, 'w') as f:
+        # convert data['names'] via the conversionDict
+        tempDataNames = {}
+        for key, value in data['names'].items():
+            tempDataNames[conversionDict[key]] = value
 
 
-#     with open(originalDatasetPath + "/data.yaml", 'w') as f:
-#         yaml.dump(originalData, f)
+        data['names'] = tempDataNames
 
-#     pathsTo = []
-#     for i in os.listdir(originalDatasetPath):
-#         if os.path.isdir(os.path.join(originalDatasetPath, i)):
-#             pathsTo.append(originalDatasetPath + "/" + i )
-#     print("Paths to is : " + str(pathsTo))
-#     # train_folder = originalDatasetPath + "/train/{}/"
-#     # val_folder = originalDatasetPath + "/val/{}/"
-#     # test_folder = originalDatasetPath + "/test/{}/"
 
-#     imagesLabels = [folder for folder in os.listdir(pathsTo[0]) if os.path.isdir(os.path.join(pathsTo[0], folder))]
-#     paths = listPaths
-#     # pathsTo = [test_folder, train_folder, val_folder]
-#     print("the paths are: ")
-#     print(paths)
-#     print(pathsTo)
+        yaml.dump(data, f)
 
-#     for i in range(len(paths)):
-#         for imageLabel in imagesLabels:
-#             imageLabelPath = os.path.join(paths[i], imageLabel)
-#             print(imageLabelPath)
-#             for file in os.listdir(imageLabelPath):
-#                 shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i], imageLabel, file))
+
+    for path in listPaths:
+        print("hello in modify files for loop")
+        for i in os.listdir(path):
+            folder = os.path.join(path, i) + "/"
+            print("the folder in modify files is : " + folder)
+            print("truthe value of os.path.isdir(i) is : " + str(os.path.isdir(folder)))
+            print("truth value of 'labels' in folder is : " + str("labels" in folder))
+            if os.path.isdir(folder) and "labels" in folder:
+                print("modifying files in:" + folder)
+                modifyFiles(folder, conversionDict = conversionDict)
+
+        #TODO should modify labels in data names. should utilize modify script
+
+    # add key value pairs in data to originalData
+    for key in data['names']:
+        originalData['names'][key] = data['names'][key]
+
+    #update nc in originalData  
+    originalData['nc'] = len(originalData['names'])
+
+
+    with open(originalDatasetPath + "/data.yaml", 'w') as f:
+        yaml.dump(originalData, f)
+
+    pathsTo = []
+    for i in os.listdir(originalDatasetPath):
+        if os.path.isdir(os.path.join(originalDatasetPath, i)):
+            pathsTo.append(originalDatasetPath + "/" + i )
+    print("Paths to is : " + str(pathsTo))
+    # train_folder = originalDatasetPath + "/train/{}/"
+    # val_folder = originalDatasetPath + "/val/{}/"
+    # test_folder = originalDatasetPath + "/test/{}/"
+
+    imagesLabels = [folder for folder in os.listdir(pathsTo[0]) if os.path.isdir(os.path.join(pathsTo[0], folder))]
+    paths = listPaths
+    # pathsTo = [test_folder, train_folder, val_folder]
+    print("the paths are: ")
+    print(paths)
+    print("the paths to are: ")
+    print(pathsTo)
+
+    # sort the two lists
+    imagesLabels.sort()
+    paths.sort()
+    pathsTo.sort()
+
+    print("pathsto are:  + " + str(pathsTo))
+    print("paths are:  + " + str(paths))
+
+    print("the images labels are:  + " + str(imagesLabels))
+
+    print("imageLabels are:  + " + str(imagesLabels))
+
+    for i in range(len(paths)):
+        for imageLabel in imagesLabels:
+            imageLabelPath = os.path.join(paths[i], imageLabel)
+            print(imageLabelPath)
+            for file in os.listdir(imageLabelPath):
+                shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i], imageLabel, file))
 
 
 

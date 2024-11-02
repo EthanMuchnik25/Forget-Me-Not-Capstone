@@ -1,5 +1,10 @@
 # Some Random Docker Commands
 
+# Most Important 
+
+All of the commands you will likely need will be listed in the docker section of the [install instructions](./install_instructions.md) document, especially in the section about the debug container.
+
+# Generic Commands
 ## Build and run
 
 ### Build image:
@@ -41,7 +46,7 @@ docker stop <container-id>
 
 ### Remove docker container
 ```
-docker stop <container_id_or_name>
+docker rm <container_id_or_name>
 ```
 
 ### Remove docker image
