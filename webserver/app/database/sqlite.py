@@ -44,6 +44,7 @@ def setup_user_table(username: str):
 # ------------------ User Management Functions ------------------
 def db_register_user(uname: str, pw_hash: str) -> bool:
     """Register a new user and create their unique table."""
+    create_users_table_if_not_exists()
     with get_db_connection() as conn:
         cur = conn.cursor()
         cur.execute("SELECT 1 FROM users WHERE uname = ?", (uname,))
@@ -63,6 +64,7 @@ def db_register_user(uname: str, pw_hash: str) -> bool:
 
 def db_delete_user(uname: str) -> bool:
     """Delete a user and their image directory if it exists."""
+    create_users_table_if_not_exists()
     with get_db_connection() as conn:
         cur = conn.cursor()
         cur.execute("SELECT 1 FROM users WHERE uname = ?", (uname,))
@@ -190,6 +192,31 @@ def create_user_table_if_not_exists(user: str):
         ''')
         conn.commit()
 
+def create_users_table_if_not_exists():
+    """Create the users table if it does not exist."""
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                uname TEXT NOT NULL UNIQUE,
+                pw_hash TEXT NOT NULL
+            )
+        ''')
+        conn.commit()
+
+def create_blacklist_table_if_not_exists():
+    """Create the blacklist table if it does not exist."""
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS blacklist (
+                token_id TEXT PRIMARY KEY,
+                exp INTEGER NOT NULL
+            )
+        ''')
+        conn.commit()
+
 def delete_record(user: str, object_name: str):
     """Delete a specific record from the user's unique table."""
     with get_db_connection() as conn:
@@ -206,6 +233,7 @@ def delete_record(user: str, object_name: str):
 
 def db_add_token_blacklist(token_id: str, exp: int) -> bool:
     """Add a token to the blacklist with its expiration timestamp."""
+    create_blacklist_table_if_not_exists()
     with get_db_connection() as conn:
         cur = conn.cursor()
         try:
@@ -217,6 +245,7 @@ def db_add_token_blacklist(token_id: str, exp: int) -> bool:
 
 def db_check_token_blacklist(token_id: str) -> bool:
     """Check if a token is in the blacklist."""
+    create_blacklist_table_if_not_exists()
     with get_db_connection() as conn:
         cur = conn.cursor()
         cur.execute("SELECT 1 FROM blacklist WHERE token_id = ?", (token_id,))

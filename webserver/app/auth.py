@@ -10,7 +10,7 @@ if Config.DATABASE_VER == "RDS":
     from app.database.rds import db_write_line
 elif Config.DATABASE_VER == "SQLITE":
     from app.database.sqlite import db_register_user, db_get_user_pw,\
-        db_add_token_blacklist, db_check_token_blacklist
+        db_add_token_blacklist, db_check_token_blacklist, db_delete_user
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_register_user, db_get_user_pw,\
         db_add_token_blacklist, db_check_token_blacklist, db_delete_user
