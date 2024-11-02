@@ -4,7 +4,7 @@ from datetime import timedelta
 
 # TODO: Add settings to know which components should be mocked
 class Config:
-    PERF = False # Turn on performance monitoring
+    # TODO find uses
     ENV = 'CLOUD' # else 'APP'
     OPENAI_KEY = 'blah'
 

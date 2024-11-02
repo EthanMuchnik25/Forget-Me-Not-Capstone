@@ -30,4 +30,4 @@ RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
 EXPOSE 80
 
 # Step 10: Start Nginx and Gunicorn
-CMD service nginx start && gunicorn --workers 4 --bind 0.0.0.0:8000 myapp:app
+CMD service nginx start && gunicorn -c gunicorn.conf.py --workers 4 --bind 0.0.0.0:8000 myapp:app

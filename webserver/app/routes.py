@@ -90,7 +90,6 @@ def register():
     # TODO Similarly, you could redirect people to the normal webpage
 
 
-# TODO logout untested
 @app.route('/logout', methods=['POST'])
 @jwt_required()
 @time_and_log
@@ -119,6 +118,11 @@ def check_if_token_revoked(jwt_header, jwt_payload):
 
 
 # ========================== App Routes ==========================
+
+@app.route('/simple')
+@time_and_log
+def simple():
+    return '', 200
 
 # TODO add real verification later
 # Intended for website text query
