@@ -16,6 +16,7 @@ from app.get_room_img import fs_get_room_img
 from app.auth import register_user, login_user, logout_user, \
     check_jwt_not_blocklist, deregister_user
 from app.config import Config
+from app.perf.perf import time_and_log
 
 
 # ========================== Page Routes ==========================
@@ -23,24 +24,28 @@ from app.config import Config
 # TODO For now, don't use blueprints
 
 @app.route('/')
+@time_and_log
 def hello_world():
     return render_template("index.html")
 
 
 @app.route('/img_search.html')
 # @jwt_required() # Fuck. The alternative is tragic. See index.html
+@time_and_log
 def img_search():
     return render_template("img_search.html")
 
 
 # TODO likely change this for frontend
 @app.route('/login.html')
+@time_and_log
 def login_page():
     return render_template('login.html')
 
 
 # TODO likely change this for frontend
 @app.route('/register.html')
+@time_and_log
 def register_page():
     return render_template('register.html')
 
@@ -48,10 +53,12 @@ def register_page():
 
 @app.route("/test_auth")
 @jwt_required()
+@time_and_log
 def test_auth():
     return jsonify(msg="Authentication successful"), 200
 
 @app.route('/login', methods=['POST'])
+@time_and_log
 def login():
     uname = request.json.get('username')
     pw = request.json.get('password')
@@ -68,6 +75,7 @@ def login():
 
 
 @app.route('/register', methods=['POST'])
+@time_and_log
 def register():
     # TODO note depending on get or post, could register or render html
     # TODO might user id be helpful to identify user vs. string?
@@ -82,9 +90,9 @@ def register():
     # TODO Similarly, you could redirect people to the normal webpage
 
 
-# TODO logout untested
 @app.route('/logout', methods=['POST'])
 @jwt_required()
+@time_and_log
 def logout():
     jwt = get_jwt()
     logout_user(jwt)
@@ -93,6 +101,7 @@ def logout():
 
 @app.route('/deregister', methods=['POST'])
 @jwt_required()
+@time_and_log
 def deregister():
     jwt = get_jwt()
     uname = jwt['sub']
@@ -110,10 +119,16 @@ def check_if_token_revoked(jwt_header, jwt_payload):
 
 # ========================== App Routes ==========================
 
+@app.route('/simple')
+@time_and_log
+def simple():
+    return '', 200
+
 # TODO add real verification later
 # Intended for website text query
 @app.route('/text_query')
 @jwt_required()
+@time_and_log
 def text_query():
     jwt = get_jwt()
     user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
@@ -123,13 +138,16 @@ def text_query():
     # Simple way to case on stuff to test database, neg num is how many back
     # In the future, can complicate policies to add stuff like auth/security
     response = handle_text_query(user, query, index)
-    
+
     return jsonify(response), 200
 
+# TODO logger functionality is shit. Refacror code so we don't have to be so 
+#  careful
 # TODO rename?
 # Intended for website to resolve provided image urls
 @app.route('/get_room_img', methods=['GET'])
 @jwt_required()
+@time_and_log
 def get_room_img():
     jwt = get_jwt()
     user = jwt['sub']
@@ -158,6 +176,7 @@ def get_room_img():
 # TODO maybe not code 400? TODO find best?
 @app.route('/post_img', methods=['POST'])
 @jwt_required()
+@time_and_log
 def post_img():
     jwt = get_jwt()
     user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
@@ -171,6 +190,7 @@ def post_img():
 
 @app.route('/get_username', methods=['GET'])
 @jwt_required()
+@time_and_log
 def get_username():
     jwt = get_jwt()
     user = jwt['sub']
@@ -180,6 +200,7 @@ def get_username():
 
 @app.route('/speech_query', methods=['POST'])
 @jwt_required()
+@time_and_log
 def speech_query():
     # NOTE: This is a dummy response. Ethan if you decide to code this up put
     #  it all in a different file, maybe like speech.py or something

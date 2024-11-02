@@ -2,15 +2,6 @@
 
 This file contains instructions on how to install the webserver
 
-### IMPORTANT NOTE:
-This project has a .env file which stores the API keys (and possible some other environment variables to be used in the project)\
-As such, make sure that 
-1. **You own a copy of the file**\
-If you do not, obtain a copy through the gc
-2. **You NEVER EVER commit a copy of the file**\
-The git repository still stores old commits even if the current branch is not at that commit.
-
-
 # To run with Docker container
 
 ### Docker for vscode
@@ -57,7 +48,7 @@ This command must be run whenever you restart the container.
 
 Next, you will want to run gunicorn to get the server operational. To do this, type: 
 ```
-gunicorn --workers 1 --bind 0.0.0.0:8000 myapp:app
+gunicorn -c gunicorn.conf.py --workers 1 --bind 0.0.0.0:8000 myapp:app
 ```
 
 If you would like to get back into a shell on the container after leaving, type:
@@ -127,7 +118,7 @@ sudo service nginx start
 
 You should run something like:
 ```
-gunicorn --workers 4 --bind 0.0.0.0:8000 myapp:app
+gunicorn -c gunicorn.conf.py --workers 1 --bind 0.0.0.0:8000 myapp:app
 ```
 `myapp` is the name of the python file containing the server stuff, and `app` is the name of the variable bound to `Flask(__name__)` inside the python file.
 
