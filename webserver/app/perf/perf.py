@@ -6,7 +6,7 @@ from app.config import Config
 from functools import wraps
 
 PERF_LEVEL = 5
-perf_pid = os.getpid()
+perf_pid = -1
 
 
 # ================== Set up environment for perf monitoring ================
@@ -57,6 +57,8 @@ def init_perf_on_flask_startup():
 
 def init_perf_on_worker_startup():
     global logger
+    global perf_pid 
+    perf_pid = os.getpid()
     # Set up logger for decorator, if performance monitoring is on:
     if Config.PERF:
         proc_perf_log_dir = os.path.join(Config.PERF_LOG_DIR, str(helpers.get_max_log_dir_num(Config.PERF_LOG_DIR)))
