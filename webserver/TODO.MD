@@ -356,26 +356,6 @@ Right now raspi requires some manual setup:
 
 
 ***document the things that everyone has to use
-- sending photos
-  - add in instructions all the way from the base readme... if there is time
-- functionality that I have added
-  - logging (how to user perf)
-  - analysis script
-- update locations
-- new gunicorn command
-  - new gunicorn command modifiers
-- debug database
-  - limitations (1 worker)
-- where to find camera script
-- configs
-  - config.py
-  - nginx
-    - img size
-  - gunicorn
-    - port
-- raspi scripts
-  - yep
-
 
 
 more database dump:
@@ -385,17 +365,6 @@ more database dump:
 - sqlite is sorta aids but at least code is similarly shaped as other relational databases
   - locks entire files
 
-Workloads dump:
-create "workloads"
-own folders
-- performance workloads doesn't matter which images to pick from, just have a pool, and spawn varying amounts of spammers
-- memory workloads should be real traces
- - check model detection differences on nearly identical input images, or a series
-  - ideally try to correlate at what image difference does the model detect more differences
- - use stats to drive eviction policies
-  - maybe have second optimization where if nothing new detected after running model, don't save
-  - test how old images get, image amnt in filesystem, etc.
-
 To code
 - database update (subset)
 - modularize logging init
@@ -404,20 +373,8 @@ To code
   - use fn defaults (a little brittle)
 - workloads (above)
 - take time of processes
+- initialize database code sweep some entries
 
-
-
-
-DUMP:
-logging instructions dump:
-
-    # NOTE:
-    # Log folders, located in webserver/app/perf/logs, contain all logs for a single
-    #  run of the server. This function determines the name of the next log folder.
-    #  It should be 1 greater than the last log directory.
-    # The log folder is made in gunicorn.conf.py, this just finds it
-
-eventually test optimizations
 
 input sanitization
 
@@ -426,3 +383,5 @@ refactor raspi scripts to use std send functions?
 
 make functionality to wipe a database
 
+
+- update perf with more specific metrics like no of images saved vs no of images recieved

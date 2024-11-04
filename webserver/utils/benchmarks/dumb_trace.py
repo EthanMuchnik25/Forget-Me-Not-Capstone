@@ -16,8 +16,8 @@ parser.add_argument('-s', type=str, default="http://localhost:4000", help='Serve
 args = parser.parse_args()
 
 
-uname = 'fquioeyncv lsiuecnfwpercm'
-pw = 'a;pew9ifm pwoeirj,fjarg re'
+uname = 'fquioeyncvlsiuecnfwpercm'
+pw = 'a;pew9ifmpwoeirj,fjargre'
 server_url = args.s
 iters = args.n
 

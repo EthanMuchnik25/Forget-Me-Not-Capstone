@@ -1,0 +1,4 @@
+# NOTE THIS IS DANGEROUS
+# Hopefully swati either never refactors the code or realizes
+sqlite_db/*
+debug_imgs/*

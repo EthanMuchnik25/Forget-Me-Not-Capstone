@@ -2,6 +2,8 @@ import os
 import argparse
 import sys
 sys.path.append('../')
+# TODO see if we can from ..helper.perf_parse, also for the webserver if things
+#  can be accessed relatively that would be good
 from helper.perf_parse import get_run_dir, parse_log_files
 
 
