@@ -166,7 +166,6 @@
         });
 
         const data = await response.json();
-
         if (data.success) {
           const blobUrl = await loadImage(data.imageUrl);
           // TODO: when old URLs are no longer needed, clean them up with 

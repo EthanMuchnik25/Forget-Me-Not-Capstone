@@ -10,7 +10,7 @@ class Config:
 
     # Versions
     YOLO_VER = "V11"
-    DATABASE_VER = "DEBUG"
+    DATABASE_VER = "SQLITE"
 
     # For auth
     JWT_SECRET_KEY = "this can sorta be anything"
