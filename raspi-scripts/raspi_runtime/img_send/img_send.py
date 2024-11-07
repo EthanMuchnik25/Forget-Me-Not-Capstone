@@ -92,7 +92,9 @@ def send_img_req(img_file):
 
 
 img_url = Config.URL + "/post_img"
-token = read_token_file()
+# TODO do we have this in prod? Refactor this accordingly
+# token = read_token_file()
+token = ""
 
 while True:
     start_time = time.time()

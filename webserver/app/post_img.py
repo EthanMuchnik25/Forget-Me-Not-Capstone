@@ -8,6 +8,8 @@ if Config.YOLO_VER == "MOCK":
     from app.model.fake_yolo import run_yolo
 elif Config.YOLO_VER == "V11":
     from app.model.run_yolo import run_yolo
+elif Config.YOLO_VER == "ONNX":
+    from app.model.run_yolo_onnx import run_yolo
 else:
     raise NotImplementedError
 
@@ -15,7 +17,7 @@ else:
 if Config.DATABASE_VER == "RDS":
     from app.database.rds import db_write_line
 elif Config.DATABASE_VER == "SQLITE":
-    raise NotImplementedError
+    from app.database.sqlite import db_write_line, db_save_image
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_write_line, db_save_image
 else:
@@ -59,10 +61,10 @@ def handle_img(user, f):
         parsed_line = parse_yolo_line(line)
         # TODO I don't know if I like this, should user pass datetime?
         output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path, time.time())
-
         if not db_write_line(user, output_pkt):
             return False
     return True
+
         
 
 

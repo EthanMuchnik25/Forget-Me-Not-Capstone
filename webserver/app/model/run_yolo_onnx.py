@@ -2,14 +2,7 @@ import cv2
 from ultralytics import YOLO
 import numpy as np
 
-
-# TODO run_yolo prints something every time it runs. Is there some way to shut it 
-#  up? Would this work?
-# import logging
-# logging.getLogger('ultralytics').setLevel(logging.ERROR)
-
-model = YOLO("./app/model/binaries/yolo11l.pt")
-
+model = YOLO("./app/model/binaries/yolo11l.onnx")
 
 def run_yolo(f):
 
@@ -19,7 +12,7 @@ def run_yolo(f):
     # print(class_names)
 
     # TODO is this right for when we have a gpu?
-    model.to('cpu')
+    # model.to('cpu')
 
     # Perform object detection
     image = cv2.imdecode(np.frombuffer(f.read(), np.uint8), cv2.IMREAD_COLOR)
@@ -60,9 +53,3 @@ def run_yolo(f):
 
     # This code now returns a list of yolo output tuples
     return ret
-
-
-if __name__ == "__main__":
-    with open("./binaries/testimg3.jpg", 'rb') as image_file:
-
-        run_yolo(image_file)
