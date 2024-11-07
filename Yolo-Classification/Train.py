@@ -31,7 +31,7 @@ def train(model = "yolo11n.yaml", saveDirName =None, args = None):
     # model_val.val(data=os.path.join(args.dataStorageDirectory, "data.yaml"), batch=32, imgsz=640, rect=True, half=True, warmup_bias_lr=0.0)
 
     # write metrics to a file called metrics.txt
-    with open(os.path.join(args.model, "metrics.txt"), "w") as f:
+    with open(os.path.join(saveDirName, "metrics.txt"), "w") as f:
         f.write(str(metrics.results_dict))
         f.write("\n")
         for key in metrics.names:
