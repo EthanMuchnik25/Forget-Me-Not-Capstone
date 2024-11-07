@@ -8,7 +8,7 @@ import numpy as np
 # import logging
 # logging.getLogger('ultralytics').setLevel(logging.ERROR)
 
-model = YOLO("./app/model/binaries/yolo11x.pt")
+model = YOLO("./app/model/binaries/yolo11l.pt")
 
 
 def run_yolo(f):

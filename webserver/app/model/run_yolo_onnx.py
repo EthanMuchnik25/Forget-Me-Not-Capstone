@@ -2,7 +2,7 @@ import cv2
 from ultralytics import YOLO
 import numpy as np
 
-model = YOLO("yolo11n.onnx")
+model = YOLO("./app/model/binaries/yolo11l.onnx")
 
 def run_yolo(f):
 
@@ -12,7 +12,7 @@ def run_yolo(f):
     # print(class_names)
 
     # TODO is this right for when we have a gpu?
-    model.to('cpu')
+    # model.to('cpu')
 
     # Perform object detection
     image = cv2.imdecode(np.frombuffer(f.read(), np.uint8), cv2.IMREAD_COLOR)
