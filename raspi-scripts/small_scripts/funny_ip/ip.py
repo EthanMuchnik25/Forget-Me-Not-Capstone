@@ -71,7 +71,7 @@ def main():
     ip_addr = get_private_ip_address()
 
     with open(write_filename_filename, "r") as file:
-        write_filename = file.readline()
+        write_filename = file.readline().strip()
     with open(write_filename, "w") as file:
         file.write(ip_addr)
 
