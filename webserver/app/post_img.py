@@ -8,6 +8,8 @@ if Config.YOLO_VER == "MOCK":
     from app.model.fake_yolo import run_yolo
 elif Config.YOLO_VER == "V11":
     from app.model.run_yolo import run_yolo
+elif Config.YOLO_VER == "ONNX":
+    from app.model.run_yolo_onnx import run_yolo
 else:
     raise NotImplementedError
 
