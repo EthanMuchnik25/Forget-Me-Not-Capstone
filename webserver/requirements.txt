@@ -16,3 +16,4 @@ ultralytics
 matplotlib
 ultralytics-thop
 opencv-python-headless
+onnxruntime
