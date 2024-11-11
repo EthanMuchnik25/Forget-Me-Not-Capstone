@@ -8,7 +8,7 @@ if Config.DATABASE_VER == "RDS":
     # TODO BAD BAD BAD BAD Make good interface
     from app.database.rds import query_db
 elif Config.DATABASE_VER == "SQLITE":
-    from app.database.sqlite import db_query_single
+    from app.database.sqlite import db_query_single, db_query_range
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_query_single
 else:
@@ -50,7 +50,7 @@ def handle_text_query(user, query, index=0):
         }
 
     db_ret = db_query_single(user, query, index)
-    if db_query_single == None:
+    if db_ret == None:
         return {
             'success': False,
             'message': "Object not found in database"
@@ -62,4 +62,26 @@ def handle_text_query(user, query, index=0):
         'imageUrl': create_img_url(db_ret) 
     }
     
+
+def handle_text_range_query(user, query, low=0, high=0):
+    try:
+        low = int(low)
+        high = int(high)
+    except ValueError as e:
+        return {
+            'success': False,
+            'message': f"Index error: {e}"
+        }
+    
+    db_ret = db_query_range(user, query, low, high)
+    if db_ret == None:
+        return {
+            'success': False,
+            'message': "Object not found in database"
+        }
+    
+    return {
+        'success': True,
+        'imageUrls': [create_img_url(line) for line in db_ret]
+    }
     

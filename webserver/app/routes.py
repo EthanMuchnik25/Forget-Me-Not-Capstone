@@ -9,7 +9,7 @@ from myapp import jwt
 from app.database.types_db import ImgObject
 
 from app.post_img import handle_img
-from app.text_query import handle_text_query
+from app.text_query import handle_text_query, handle_text_range_query
 from app.get_room_img import fs_get_room_img
 from app.auth import register_user, login_user, logout_user, \
     check_jwt_not_blocklist, deregister_user
@@ -148,6 +148,25 @@ def text_query():
     response = handle_text_query(user, query, index)
 
     return jsonify(response), 200
+
+# TODO this seems like shitty api design, maybe it would be useful to have a 
+#  "version" field in the old api? 
+@app.route('/text_range_query')
+@jwt_required()
+@time_and_log
+def text_range_query():
+    jwt = get_jwt()
+    user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
+    query = request.args.get('query')
+    low = request.args.get('low', 0)
+    high = request.args.get('high', 0)
+
+    # Simple way to case on stuff to test database, neg num is how many back
+    # In the future, can complicate policies to add stuff like auth/security
+    response = handle_text_range_query(user, query, low, high)
+
+    return jsonify(response), 200
+
 
 # TODO logger functionality is shit. Refacror code so we don't have to be so 
 #  careful

@@ -98,6 +98,19 @@ def send_text_query(server_url, token, query: str, index: int):
     else:
         print('Send text query error: ',response.text)
         return None
+    
+def send_text_range_query(server_url, token, query: str, low: int, high: int):
+    query_url = f"{server_url}/text_range_query?query={query}&low={low}&high={high}"
+    response = requests.get(query_url, headers=token_header(token))
+    if response.ok:
+        ret = response.json()
+        if ret.get('success'):
+            return ret.get('imageUrls')
+        else:
+            print(f"image not found: {ret.get('message')}")
+    else:
+        print('Send text query error: ',response.text)
+        return None
 
 
 def send_get_room_img(server_url, token, img_url):
