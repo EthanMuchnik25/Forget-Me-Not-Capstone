@@ -163,7 +163,7 @@ def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional
 
     ret = [("aa","aa",(12,12),(12,12),"/static/swaglab.jpg",1.5) for _ in range(low,high)]
     return ret
-    # if high< 0:
+    # if high< 0 or low <0 or high<low:
     #     return None
 
     # create_user_table_if_not_exists(user)
@@ -177,15 +177,21 @@ def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional
     #         ORDER BY id DESC
     #     ''', (object_name,))
         
-    #     results = cur.fetchall()
-    #     if len(results) > high:
-    #         row = results[high]
-    #         object_name, p1, p2, img_url, created_at = row
-    #         p1 = tuple(map(float, p1.strip('[]').split(',')))
-    #         p2 = tuple(map(float, p2.strip('[]').split(',')))
-    #         return ImgObject(user, object_name, (p1), (p2), img_url, created_at)
+    results = cur.fetchall()
+
+    if low >= len(results):
+        return None  
+    high = min(high, len(results)) 
+
+    img_objects = []
+    for row in results[low:high]:
+        object_name, p1, p2, img_url, created_at = row
+        p1 = tuple(map(float, p1.strip('[]').split(',')))
+        p2 = tuple(map(float, p2.strip('[]').split(',')))
+        img_object = ImgObject(user, object_name, p1, p2, img_url, created_at)
+        img_objects.append(img_object)
     
-    # return None
+    return img_objects if img_objects else None
 
 def db_get_image(user: str, img_url: str) -> Optional[bytes]:
     """Retrieve an image based on user and image URL from their unique table."""
