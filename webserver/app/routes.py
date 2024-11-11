@@ -16,6 +16,17 @@ from app.auth import register_user, login_user, logout_user, \
 from app.config import Config
 from app.perf.perf import time_and_log
 
+# Import database
+if Config.DATABASE_VER == "RDS":
+    raise NotImplementedError
+elif Config.DATABASE_VER == "SQLITE":
+    from app.database.sqlite import db_get_all_unique_objects
+elif Config.DATABASE_VER == "DEBUG":
+    raise NotImplementedError
+else:
+    raise NotImplementedError
+
+
 # ========================== Page Routes ==========================
 
 # TODO For now, don't use blueprints
@@ -130,7 +141,7 @@ def text_query():
     jwt = get_jwt()
     user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
     query = request.args.get('query')
-    index = request.args.get('index')
+    index = request.args.get('index', 0)
 
     # Simple way to case on stuff to test database, neg num is how many back
     # In the future, can complicate policies to add stuff like auth/security
@@ -209,4 +220,20 @@ def speech_query():
 
     return {"msg": "Good job champ you will definitely find your thing"}, 200
 
+
+@app.route('/get_unique_objects', methods=['GET'])
+@jwt_required()
+@time_and_log
+def get_unique_objects():
+    try:
+        user = get_jwt()['sub']  # Get the user from the JWT token
+        objects = db_get_all_unique_objects(user)  # Get the objects from DB
+        if objects is None:
+            return jsonify([]), 200  # Return empty list if no objects
+        
+        # Serialize the objects if necessary
+        objects_data = [obj.__dict__ for obj in objects]
+        return jsonify(objects_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 422
 

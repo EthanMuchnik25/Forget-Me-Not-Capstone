@@ -3,52 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>register Page</title>
+    <title>Register Page</title>
     <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #e0f7fa;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            color: #333;
         }
+
+
         .register-container {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: #ffffff;
+            padding: 30px;
+            width: 100%;
+            max-width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            animation: fadeIn 1s ease;
         }
+
+       
         .register-container h2 {
+            font-size: 24px;
             margin-bottom: 20px;
+            color: #00796b;
         }
+
+      
         .register-container input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 16px;
         }
+        
+        .register-container input:focus {
+            outline: none;
+            border-color: #00796b;
+            box-shadow: 0 0 5px rgba(0, 121, 107, 0.5);
+        }
+
+ 
         .register-container button {
-            padding: 10px;
-            background-color: #007bff;
+            width: 100%;
+            padding: 12px;
+            background-color: #00796b;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
+
         .register-container button:hover {
-            background-color: #0056b3;
+            background-color: #004d40;
+        }
+
+
+        .register-container a {
+            display: block;
+            margin-top: 15px;
+            color: #00796b;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .register-container a:hover {
+            text-decoration: underline;
+        }
+
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="register-container">
-    <h2>Register</h2>
+    <h2>Create an Account</h2>
     <input type="text" id="username" placeholder="Username" required>
     <input type="password" id="password" placeholder="Password" required>
-    <button onclick="register()">register</button>
+    <button onclick="register()">Register</button>
     <p id="message"></p>
-    <a href="login.html">Click here to login!</a>
+    <a href="login.html">Already have an account? Log in</a>
 </div>
 
 <script>
@@ -69,16 +131,15 @@
             const data = await response.json();
 
             if (response.ok) {
-                message.textContent = 'register successful!';
+                message.textContent = 'Registration successful!';
                 message.style.color = 'green';
-                // Handle successful register (e.g., redirect)
+       
             } else {
-                message.textContent = data.message || 'register failed.';
+                message.textContent = data.message || 'Registration failed.';
                 message.style.color = 'red';
             }
         } catch (error) {
-            // message.textContent = 'An error occurred.';
-            message.textContent = error;
+            message.textContent = 'An error occurred.';
             message.style.color = 'red';
         }
     }

@@ -265,6 +265,32 @@ def list_all_tables():
     return [table[0] for table in tables] 
 
 
+def db_get_all_unique_objects(user: str) -> Optional[list]:
+    """Retrieve all unique objects for a user from the database."""
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f'''
+            SELECT object_name, p1, p2, img_url, created_at
+            FROM {table_name}
+            ORDER BY id DESC
+        ''')
+        
+        results = cur.fetchall()
+        unique_objects = {}
+        
+        for row in results:
+            object_name, p1, p2, img_url, created_at = row
+            p1 = tuple(map(float, p1.strip('[]').split(',')))
+            p2 = tuple(map(float, p2.strip('[]').split(',')))
+            
+            if object_name not in unique_objects:
+                unique_objects[object_name] = ImgObject(user, object_name, p1, p2, img_url, created_at)
+        
+        return list(unique_objects.values()) if unique_objects else None
+
 
 
 # ------------------ DO NOT DELETE ------------------
