@@ -131,7 +131,7 @@ def db_save_image(user: str, f, name: str) -> bool:
 
         return True
 
-def db_query_single(user: str, object_name: str, index: int) -> Optional[list(ImgObject)]:
+def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObject]:
     """Query an object from the database by user name and object name."""
     if index < 0:
         return None
@@ -157,9 +157,9 @@ def db_query_single(user: str, object_name: str, index: int) -> Optional[list(Im
     
     return None
 
-def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional[ImgObject]:
+def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional[list[ImgObject]]:
     """Query an object from the database by user name and object name."""
-    if high< 0:
+    if high< 0 or low <0 or high<low:
         return None
 
     create_user_table_if_not_exists(user)
@@ -174,14 +174,20 @@ def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional
         ''', (object_name,))
         
         results = cur.fetchall()
-        if len(results) > high:
-            row = results[high]
+
+        if low >= len(results):
+            return None  
+        high = min(high, len(results)) 
+
+        img_objects = []
+        for row in results[low:high]:
             object_name, p1, p2, img_url, created_at = row
             p1 = tuple(map(float, p1.strip('[]').split(',')))
             p2 = tuple(map(float, p2.strip('[]').split(',')))
-            return ImgObject(user, object_name, (p1), (p2), img_url, created_at)
-    
-    return None
+            img_object = ImgObject(user, object_name, p1, p2, img_url, created_at)
+            img_objects.append(img_object)
+        
+        return img_objects if img_objects else None
 
 def db_get_image(user: str, img_url: str) -> Optional[bytes]:
     """Retrieve an image based on user and image URL from their unique table."""
