@@ -131,7 +131,7 @@ def db_save_image(user: str, f, name: str) -> bool:
 
         return True
 
-def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObject]:
+def db_query_single(user: str, object_name: str, index: int) -> Optional[list(ImgObject)]:
     """Query an object from the database by user name and object name."""
     if index < 0:
         return None
@@ -157,6 +157,32 @@ def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObje
     
     return None
 
+def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional[ImgObject]:
+    """Query an object from the database by user name and object name."""
+    if high< 0:
+        return None
+
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f'''
+            SELECT object_name, p1, p2, img_url, created_at
+            FROM {table_name}
+            WHERE object_name = ?
+            ORDER BY id DESC
+        ''', (object_name,))
+        
+        results = cur.fetchall()
+        if len(results) > high:
+            row = results[high]
+            object_name, p1, p2, img_url, created_at = row
+            p1 = tuple(map(float, p1.strip('[]').split(',')))
+            p2 = tuple(map(float, p2.strip('[]').split(',')))
+            return ImgObject(user, object_name, (p1), (p2), img_url, created_at)
+    
+    return None
+
 def db_get_image(user: str, img_url: str) -> Optional[bytes]:
     """Retrieve an image based on user and image URL from their unique table."""
     try:
@@ -173,6 +199,8 @@ def db_get_image(user: str, img_url: str) -> Optional[bytes]:
             
     except (FileNotFoundError, PermissionError):
         return None
+    
+
 
 def create_user_table_if_not_exists(user: str):
     """Create a user-specific table if it does not exist."""
