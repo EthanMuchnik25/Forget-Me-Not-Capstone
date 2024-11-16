@@ -110,6 +110,11 @@
     margin: 20px 0; 
     }
 
+    #object-image {
+      width: 100%;   
+      height: auto;  
+    }
+
     #search-form {
       margin: 20px 0;
       display: flex;
@@ -137,8 +142,8 @@
     }
 
     img {
-      width: 80%;
-      max-width: 400px;
+      width: 100%;
+      max-width: 700px;
       border: 2px solid #00796b;
       margin: 20px 0;
     }
@@ -161,6 +166,32 @@
       justify-content: center; 
       align-items: center; 
     }
+
+    #thumbnail-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .thumbnail {
+    width: 100%;
+    max-width: 100px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .thumbnail:hover {
+    border-color: #00796b;
+  }
+
+  #message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  text-align: center;
+  } 
   
   </style>
 </head>
@@ -249,6 +280,7 @@
         <button id="next">See Next</button>
       </div>
     </div>
+    
 
     <!-- Right panel for image list
     <div id="image-panel">
@@ -257,6 +289,28 @@
       <div id="thumbnail-container"></div> 
     </div>
   </div> -->
+
+  <div id="container" style="display: flex;">
+
+    <!-- Left panel for thumbnails -->
+    <div id="sidebar" style="width: 300px; position: fixed; top: 10; right: 0; height: 100vh; background-color: #f0f0f0; padding: 10px;">
+      <div id="thumbnail-panel" style="overflow-y: auto; max-height: 80vh;">
+        <!-- Thumbnails will be dynamically inserted here -->
+      </div>
+    </div>
+  
+    <!-- Main content area -->
+    <div id="main-content" style="margin-left: 300px; padding: 10px;">
+      <div id="image-container">
+        <img id="object-image" src="" alt="Object not found" style="display: none; width: 100%; max-width: 100%; height: auto;">
+      </div>
+      <div id="message" style="display: none; font-size: 24px; text-align: center; color: #777;">
+      <div id="previous-next-container" style="display: none;">
+        <button id="previous">See Previous</button>
+        <button id="next">See Next</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     async function getUsername() {
@@ -388,6 +442,54 @@
       currentImageIndex++;
       fetchImage(query, currentImageIndex);
     });
+
+
+    document.getElementById('search-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const query = document.getElementById('query').value;
+  fetchImages(query);
+});
+
+      // Example array of image URLs (replace with actual URLs)
+    const imageUrls = [
+      'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU',
+      'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU',
+      'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU'
+    ];
+
+    // Function to create and insert image thumbnails
+    function loadThumbnails() {
+      const thumbnailPanel = document.getElementById('thumbnail-panel');
+      imageUrls.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Thumbnail';
+        img.style.width = '350px';  
+        img.style.height = '150px';
+        img.style.margin = '10px'; 
+        // img.style.objectFit = 'cover';
+        img.addEventListener('click', () => showImage(url)); 
+        thumbnailPanel.appendChild(img);
+      });
+    }
+
+    const mainImage = document.querySelector('#object-image');
+    mainImage.style.width = '100%'; 
+    mainImage.style.height = '400px';
+
+    function hideExtraElements() {
+    document.getElementById("message").style.display = "none";  
+    document.getElementById("previous-next-container").style.display = "none";  
+}
+    function showImage(url) {
+      hideExtraElements();
+      const objectImage = document.getElementById('object-image');
+      objectImage.src = url;
+      objectImage.style.display = 'block';
+      
+    }
+
+    loadThumbnails();
   </script>
 
 </body>
