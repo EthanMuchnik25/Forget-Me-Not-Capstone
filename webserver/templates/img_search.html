@@ -515,8 +515,9 @@
                 const img = document.createElement('img');
                 img.src = blobUrl;
                 img.alt = 'Thumbnail';
-                img.style.width = '350px';
+                img.style.width = '250px';
                 img.style.height = '150px';
+                img.style.objectFit = 'cover';
                 img.style.margin = '10px';
                 img.addEventListener('click', () => {
                     objectImage.src = blobUrl;
@@ -556,8 +557,6 @@ document.getElementById('search-form').addEventListener('submit', function (even
 
     const queryInput = document.getElementById('query').value.trim(); // Get input value
     console.log(`Searching for: ${queryInput}`);
-
-    // Call loadImages with the user's query
     loadImages(queryInput, 0, 10);
 });
   
