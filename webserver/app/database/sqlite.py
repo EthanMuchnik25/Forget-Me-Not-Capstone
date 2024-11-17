@@ -161,21 +161,19 @@ def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObje
 def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional[list[ImgObject]]:
     """Query an object from the database by user name and object name."""
 
-    ret = [("aa","aa",(12,12),(12,12),"/static/swaglab.jpg",1.5) for _ in range(low,high)]
-    return ret
-    # if high< 0 or low <0 or high<low:
-    #     return None
+    if high< 0 or low <0 or high<low:
+        return None
 
-    # create_user_table_if_not_exists(user)
-    # table_name = get_table_name_for_user(user)
-    # with get_db_connection() as conn:
-    #     cur = conn.cursor()
-    #     cur.execute(f'''
-    #         SELECT object_name, p1, p2, img_url, created_at
-    #         FROM {table_name}
-    #         WHERE object_name = ?
-    #         ORDER BY id DESC
-    #     ''', (object_name,))
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f'''
+            SELECT object_name, p1, p2, img_url, created_at
+            FROM {table_name}
+            WHERE object_name = ?
+            ORDER BY id DESC
+        ''', (object_name,))
         
     results = cur.fetchall()
 
