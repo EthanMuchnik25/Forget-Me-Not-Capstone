@@ -448,11 +448,6 @@
     fetchImage(query);
   });
 
-  // const imageUrls = [
-  //       'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU',
-  //       'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU',
-  //       'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU'
-  //     ];
 
   async function fetchImageUrls(query, low = 0, high = 10) {
       const token = localStorage.getItem('token');
@@ -465,7 +460,7 @@
       });
       const result = await response.json();
       if (response.ok && result.success) {
-        return result.imageUrls; // List of URLs returned from backend
+        return result.imageUrls;
       } else {
         console.error("Error fetching image URLs:", result.message);
         return [];
@@ -483,7 +478,6 @@
     const objectImage = document.getElementById('object-image');
     const token = localStorage.getItem('token');
 
-    // Clear existing thumbnails and messages
     thumbnailPanel.innerHTML = '';
     objectImage.style.display = 'none';
     message.innerText = '';
@@ -508,7 +502,6 @@
             return;
         }
 
-        // Populate thumbnails
         for (const url of data.imageUrls) {
             const blobUrl = await loadImage(url);
             if (blobUrl) {
@@ -532,7 +525,6 @@
     }
 }
 
-// Reusing the loadImage function
 async function loadImage(imageUrl) {
     const token = localStorage.getItem('token');
     try {
@@ -551,19 +543,14 @@ async function loadImage(imageUrl) {
     }
 }
 
-// Event listener for search form submission
-document.getElementById('search-form').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent form submission refresh
 
-    const queryInput = document.getElementById('query').value.trim(); // Get input value
+document.getElementById('search-form').addEventListener('submit', function (event) {
+    event.preventDefault(); 
+
+    const queryInput = document.getElementById('query').value.trim(); 
     console.log(`Searching for: ${queryInput}`);
     loadImages(queryInput, 0, 10);
 });
-  
-
-
-
-
 
   </script>
 

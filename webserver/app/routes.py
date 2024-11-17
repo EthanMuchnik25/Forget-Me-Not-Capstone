@@ -33,8 +33,8 @@ else:
 
 @app.route('/')
 @time_and_log
-def hello_world():
-    return render_template("index.html")
+def front_page():
+    return render_template('front_page.html')
 
 
 @app.route('/img_search.html')
