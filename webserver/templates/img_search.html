@@ -477,18 +477,19 @@
     const message = document.getElementById('message');
     const objectImage = document.getElementById('object-image');
     const token = localStorage.getItem('token');
+    const sidebar = document.getElementById('sidebar');
 
     thumbnailPanel.innerHTML = '';
     objectImage.style.display = 'none';
     message.innerText = '';
 
+    sidebar.style.display = 'none';
     if (!query) {
         message.innerText = 'Please enter a valid search query.';
         return;
     }
 
     try {
-        // Perform the API request
         const response = await fetch(`/text_range_query?query=${query}&low=${low}&high=${high}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -512,6 +513,7 @@
                 img.style.height = '150px';
                 img.style.objectFit = 'cover';
                 img.style.margin = '10px';
+                sidebar.style.display = 'block';
                 img.addEventListener('click', () => {
                     objectImage.src = blobUrl;
                     objectImage.style.display = 'block';
