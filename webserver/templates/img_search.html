@@ -166,7 +166,7 @@
       justify-content: center; 
       align-items: center; 
     }
-
+  
     #thumbnail-panel {
     display: flex;
     flex-direction: column;
@@ -189,10 +189,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
+  /* height: 100vh; Full viewport height */
   text-align: center;
   } 
-  
+
   </style>
 </head>
 <body>
@@ -280,7 +280,6 @@
         <button id="next">See Next</button>
       </div>
     </div>
-    
 
     <!-- Right panel for image list
     <div id="image-panel">
@@ -443,53 +442,130 @@
       fetchImage(query, currentImageIndex);
     });
 
+  document.getElementById('search-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const query = document.getElementById('query').value;
+    fetchImage(query);
+  });
 
-    document.getElementById('search-form').addEventListener('submit', function (e) {
-  e.preventDefault();
-  const query = document.getElementById('query').value;
-  fetchImages(query);
-});
+  // const imageUrls = [
+  //       'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU',
+  //       'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU',
+  //       'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU'
+  //     ];
 
-      // Example array of image URLs (replace with actual URLs)
-    const imageUrls = [
-      'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU',
-      'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU',
-      'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU'
-    ];
-
-    // Function to create and insert image thumbnails
-    function loadThumbnails() {
-      const thumbnailPanel = document.getElementById('thumbnail-panel');
-      imageUrls.forEach(url => {
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = 'Thumbnail';
-        img.style.width = '350px';  
-        img.style.height = '150px';
-        img.style.margin = '10px'; 
-        // img.style.objectFit = 'cover';
-        img.addEventListener('click', () => showImage(url)); 
-        thumbnailPanel.appendChild(img);
+  async function fetchImageUrls(query, low = 0, high = 10) {
+      const token = localStorage.getItem('token');
+      try {
+      const response = await fetch(`/text_range_query?query=${query}&low=${low}&high=${high}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+        },
       });
+      const result = await response.json();
+      if (response.ok && result.success) {
+        return result.imageUrls; // List of URLs returned from backend
+      } else {
+        console.error("Error fetching image URLs:", result.message);
+        return [];
+      }
+    } catch (error) {
+      console.error("Network or server error:", error);
+      return [];
+    }
+  }
+
+
+  async function loadImages(query, low = 0, high = 10) {
+    const thumbnailPanel = document.getElementById('thumbnail-panel');
+    const message = document.getElementById('message');
+    const objectImage = document.getElementById('object-image');
+    const token = localStorage.getItem('token');
+
+    // Clear existing thumbnails and messages
+    thumbnailPanel.innerHTML = '';
+    objectImage.style.display = 'none';
+    message.innerText = '';
+
+    if (!query) {
+        message.innerText = 'Please enter a valid search query.';
+        return;
     }
 
-    const mainImage = document.querySelector('#object-image');
-    mainImage.style.width = '100%'; 
-    mainImage.style.height = '400px';
+    try {
+        // Perform the API request
+        const response = await fetch(`/text_range_query?query=${query}&low=${low}&high=${high}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-    function hideExtraElements() {
-    document.getElementById("message").style.display = "none";  
-    document.getElementById("previous-next-container").style.display = "none";  
+        const data = await response.json();
+
+        if (!data.success || !data.imageUrls || data.imageUrls.length === 0) {
+            message.innerText = data.message || 'No images found for the search query.';
+            return;
+        }
+
+        // Populate thumbnails
+        for (const url of data.imageUrls) {
+            const blobUrl = await loadImage(url);
+            if (blobUrl) {
+                const img = document.createElement('img');
+                img.src = blobUrl;
+                img.alt = 'Thumbnail';
+                img.style.width = '350px';
+                img.style.height = '150px';
+                img.style.margin = '10px';
+                img.addEventListener('click', () => {
+                    objectImage.src = blobUrl;
+                    objectImage.style.display = 'block';
+                });
+                thumbnailPanel.appendChild(img);
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        message.innerText = 'An error occurred while processing your request.';
+    }
 }
-    function showImage(url) {
-      hideExtraElements();
-      const objectImage = document.getElementById('object-image');
-      objectImage.src = url;
-      objectImage.style.display = 'block';
-      
-    }
 
-    loadThumbnails();
+// Reusing the loadImage function
+async function loadImage(imageUrl) {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(imageUrl, {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response}`);
+        }
+        const blob = await response.blob();
+        return URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('Error loading image:', error);
+        return null;
+    }
+}
+
+// Event listener for search form submission
+document.getElementById('search-form').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent form submission refresh
+
+    const queryInput = document.getElementById('query').value.trim(); // Get input value
+    console.log(`Searching for: ${queryInput}`);
+
+    // Call loadImages with the user's query
+    loadImages(queryInput, 0, 10);
+});
+  
+
+
+
+
+
   </script>
 
 </body>
