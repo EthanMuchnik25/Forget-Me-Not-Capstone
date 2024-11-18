@@ -16,3 +16,5 @@ ultralytics
 matplotlib
 ultralytics-thop
 opencv-python-headless
+onnxruntime
+pybind11
