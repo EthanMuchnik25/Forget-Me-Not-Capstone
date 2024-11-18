@@ -106,6 +106,7 @@ if __name__ == "__main__":
         filterCoco(args.middleDataStorageDirectory, args)
     if args.copyFiles:
         CopyFiles(args.dataStorageDirectory, args.middleDataStorageDirectory, args)
+    saveDirName = saveRelevantData(args)
     if args.add:
         addPotentiallyAugmented(args.dataStorageDirectory, args.addDatasetPath, args)
     if args.validate:
@@ -116,7 +117,6 @@ if __name__ == "__main__":
 
         validate(args.dataStorageDirectory, model = model)
 
-    saveDirName = saveRelevantData(args)
     if args.train:
         if args.resume and args.model:
             model = "/app/{}/{}/weights/best.pt".format(args.model,args.name)

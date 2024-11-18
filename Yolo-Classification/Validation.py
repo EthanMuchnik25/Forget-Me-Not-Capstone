@@ -15,21 +15,21 @@ from ultralytics import settings
 import albumentations as A
 import torch
 
-from PreprocessData import downLoadData, filterCoco, CopyFiles, addDataset, addPotentiallyAugmented, saveRelevantData
+from PreprocessData import downLoadData, filterCoco, CopyFiles, addDataset, addPotentiallyAugmented, saveRelevantData, loadArgparse
 
 def validate(model = "yolo11n.yaml", args = None):
 
-        # Load the YOLOv11 model
+    # Load the YOLOv11 model
     print("model is: ", model)
     model = YOLO(model=model, task="detect")
     # Perform object detection
     metrics = model.val(data=os.path.join(args.dataStorageDirectory, "data.yaml"), batch=32, imgsz=640, rect=True, half=True, warmup_bias_lr=0.0, project=args.model, name=args.saveFolderName)
     
     # output the map50 for each class
-    print(metrics)
-    print(metrics.results_dict)
-    print(metrics.maps)
-    print(metrics.names)
+    # print(metrics)
+    # print(metrics.results_dict)
+    # print(metrics.maps)
+    # print(metrics.names)
 
     # write metrics to a file called metrics.txt
     with open(os.path.join(args.model, "metrics.txt"), "w") as f:
@@ -68,7 +68,16 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--name', type =str, nargs='?', const="OfficialSaveFolder", default="OfficialSaveFolder")
     parser.add_argument('-svn', '--saveFolderName', type =str, nargs='?', const="OfficialValFolder", default="OfficialValFolder")
 
-    args = parser.parse_args()
+    newRoundArgs = parser.parse_args()
+    args = loadArgparse(newRoundArgs)
+    args.model = newRoundArgs.model
+    args.certainAlloc = True
+    args.validate = True
+    args.name = args.saveFolderName
+    args.saveFolderName = newRoundArgs.saveFolderName
+
+    print(args)
+    print(args.downloadData)
     if args.downloadData:
         downLoadData(args.initialDataStorageDirectory, args.middleDataStorageDirectory, args.split, args.maxSamples, args)
     if args.filterCoco:
@@ -76,8 +85,10 @@ if __name__ == "__main__":
         filterCoco(args.middleDataStorageDirectory, args)
     if args.copyFiles:
         CopyFiles(args.dataStorageDirectory, args.middleDataStorageDirectory, args)
+
     if args.add:
         addPotentiallyAugmented(args.dataStorageDirectory, args.addDatasetPath, args)
+    
     if args.validate:
         if args.model == False:
             model = "yolo11l.pt"

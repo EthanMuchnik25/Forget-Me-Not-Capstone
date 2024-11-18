@@ -14,8 +14,8 @@ def main(
         export_dataset: bool = False,
         view_dataset: bool = False,
         export_annotated_images: bool = True,
-        weights_path : str = "groundingdino_swint_ogc.pth",
-        config_path: str = "../../GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py",
+        weights_path : str = "weights/groundingdino_swint_ogc.pth",
+        config_path: str = "./GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py",
         subsample: int = None,
     ):
 

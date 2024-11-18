@@ -17,6 +17,10 @@ from ultralytics import YOLO
 from ultralytics import settings
 import albumentations as A
 import torch
+import json
+import argparse
+
+
 
 def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split, max_samples, args):
     if os.path.exists(middleDataStorageDirectory):
@@ -47,7 +51,7 @@ def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split,
         tmpLocs.append(tmp)
         dataset.export(
             export_dir= tmp,
-            dataset_type=fo.types.YOLOv5Dataset,  # Specify the export format
+            dataset_type=fo.types.COCODetectionDataset,  # Specify the export format
             label_field="ground_truth",           # Specify the field containing labels (if applicable)
         )
 
@@ -843,8 +847,9 @@ def saveRelevantData(args):
     folderString = "_".join(allFoldersToBeAdded) + "_" if allFoldersToBeAdded else ""
 
     certainAlloc = "True" if args.certainAlloc else "False"
+    print("split is : " + str(args.split))
     if args.dataWhileRunningDirectory == None:
-        saveDirName = "" + args.model + "_epochs_" + str(args.epochs) + "_batch_" + str(args.batch_size) + "_resume_" + str(args.resume) + "_use_coco_" + str(args.useCOCO) + "_reduced_images_" + str(args.reducedImages) + "_split_" + str(args.split) + "_certain_alloc_" + str(certainAlloc) + "_add_folders_" + folderString + "_aug_ammount_" + str(args.augAmmount) + "_mxs_" + str(args.maxSamples)
+        saveDirName = "" + str(args.model) + "_epochs_" + str(args.epochs) + "_batch_" + str(args.batch_size) + "_resume_" + str(args.resume) + "_use_coco_" + str(args.useCOCO) + "_reduced_images_" + str(args.reducedImages) + "_split_" + args.split + "_certain_alloc_" + str(certainAlloc) + "_add_folders_" + folderString + "_aug_ammount_" + str(args.augAmmount) + "_mxs_" + str(args.maxSamples)
     else:
         saveDirName = args.dataWhileRunningDirectory
 
@@ -856,21 +861,33 @@ def saveRelevantData(args):
         os.makedirs(saveDirName)
 
     # Create a file called trainFileLocations in the -dr directory
-    with open(os.path.join(saveDirName, "trainFileLocations.txt"), "w") as f:
-        for file in os.listdir(train_folder.format("images")):
-            f.write(os.path.join(train_folder.format("images"), file) + "\n")
+    if  os.path.exists(train_folder.format("images")):
+        with open(os.path.join(saveDirName, "trainFileLocations.txt"), "w") as f:
+            for file in os.listdir(train_folder.format("images")):
+                f.write(os.path.join(train_folder.format("images"), file) + "\n")
     
     # Create a file called valFileLocations in the -dr directory
-    with open(os.path.join(saveDirName, "valFileLocations.txt"), "w") as f:
-        for file in os.listdir(val_folder.format("images")):
-            f.write(os.path.join(val_folder.format("images"), file) + "\n")
+    if os.path.exists(val_folder.format("images")):
+        with open(os.path.join(saveDirName, "valFileLocations.txt"), "w") as f:
+            for file in os.listdir(val_folder.format("images")):
+                f.write(os.path.join(val_folder.format("images"), file) + "\n")
 
     # Create a file called testFileLocations in the -dr directory
-    with open(os.path.join(saveDirName, "testFileLocations.txt"), "w") as f:
-        for file in os.listdir(test_folder.format("images")):
-            f.write(os.path.join(test_folder.format("images"), file) + "\n")
+    if os.path.exists(test_folder.format("images")):
+        with open(os.path.join(saveDirName, "testFileLocations.txt"), "w") as f:
+            for file in os.listdir(test_folder.format("images")):
+                f.write(os.path.join(test_folder.format("images"), file) + "\n")
 
     with open(saveDirName + "/pythonScriptArgs.txt", "w") as f:
-        yaml.dump(args, f)
+        yaml.dump(vars(args), f)
     
     return saveDirName
+
+def loadArgparse(args):
+    folder = args.model
+    file = os.path.join(folder, "pythonScriptArgs.txt")
+
+    with open(file, 'r') as f:
+        args = yaml.safe_load(f)
+
+    return argparse.Namespace(**args)
