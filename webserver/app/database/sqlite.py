@@ -297,6 +297,34 @@ def delete_row(user: str, object_name: str) -> bool:
         conn.commit()
         return True
     
+    
+    
+def delete_row_by_weight_and_name(user: str, object_name: str, weight: float) -> bool:
+    """
+    Delete a row in the user's table based on the object_name and weight.
+    """
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        # Check if a row with the specified object_name and weight exists
+        cur.execute(
+            f"SELECT 1 FROM {table_name} WHERE object_name = ? AND weights = ?",
+            (object_name, weight)
+        )
+        if cur.fetchone() is None:
+            return False 
+        
+        # Delete the row with the specified object_name and weight
+        cur.execute(
+            f"DELETE FROM {table_name} WHERE object_name = ? AND weights = ?",
+            (object_name, weight)
+        )
+        conn.commit()
+        return True
+    
+
 def find_lowest_weight_object(user: str) -> Optional[ImgObject]:
     """Finds the object with the lowest weight in the user's table."""
     create_user_table_if_not_exists(user)
