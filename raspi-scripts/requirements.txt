@@ -6,3 +6,7 @@ pyaudio
 # sudo apt install portaudio19-dev
 pyttsx3
 opencv-python
+# NOTE: Need to 'brew install ffpmeg' first 
+openai-whisper
+nltk
+fuzzywuzzy
