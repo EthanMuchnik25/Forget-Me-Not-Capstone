@@ -36,6 +36,7 @@ def setup_user_table(username: str):
                 p1 REAL NOT NULL,
                 p2 REAL NOT NULL,
                 img_url TEXT NOT NULL,
+                weights REAL DEFAULT 0.0,
                 created_at TEXT NOT NULL
             )
         ''')
@@ -92,6 +93,33 @@ def db_get_user_pw(uname: str) -> Optional[str]:
         cur.execute("SELECT pw_hash FROM users WHERE uname = ?", (uname,))
         result = cur.fetchone()
         return result["pw_hash"] if result else None
+    
+def update_record(user: str, object_name: str, new_p1: Optional[tuple] = None, new_p2: Optional[tuple] = None, new_img_url: Optional[str] = None):
+    """Update specific fields of a record in the user's table."""
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        table_name = get_table_name_for_user(user)
+        update_fields = []
+        params = []
+
+        if new_p1:
+            update_fields.append("p1 = ?")
+            params.append(f"{new_p1[0]},{new_p1[1]}")
+        if new_p2:
+            update_fields.append("p2 = ?")
+            params.append(f"{new_p2[0]},{new_p2[1]}")
+        if new_img_url:
+            update_fields.append("img_url = ?")
+            params.append(new_img_url)
+
+        params.append(object_name)
+        query = f'''
+            UPDATE {table_name}
+            SET {", ".join(update_fields)}
+            WHERE object_name = ?
+        '''
+        cur.execute(query, tuple(params))
+        conn.commit()
 
 # ------------------ Image Storage and Retrieval Functions ------------------
 
@@ -107,9 +135,9 @@ def db_write_line(user: str, output_pkt: ImgObject) -> bool:
 
         # Insert the new object record into the user's table
         cur.execute(f'''
-            INSERT INTO {table_name} (object_name, p1, p2, img_url, created_at)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (output_pkt.object_name, p1_str, p2_str, img_url, created_at))
+            INSERT INTO {table_name} (object_name, p1, p2, img_url, weights, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (output_pkt.object_name, p1_str, p2_str, img_url, output_pkt.weight, created_at))
 
         conn.commit()
         return True
@@ -142,19 +170,18 @@ def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObje
     with get_db_connection() as conn:
         cur = conn.cursor()
         cur.execute(f'''
-            SELECT object_name, p1, p2, img_url, created_at
+            SELECT object_name, p1, p2, img_url, weights, created_at
             FROM {table_name}
             WHERE object_name = ?
             ORDER BY id DESC
         ''', (object_name,))
-        
         results = cur.fetchall()
         if len(results) > index:
             row = results[index]
-            object_name, p1, p2, img_url, created_at = row
+            object_name, p1, p2, img_url, weight, created_at = row
             p1 = tuple(map(float, p1.strip('[]').split(',')))
             p2 = tuple(map(float, p2.strip('[]').split(',')))
-            return ImgObject(user, object_name, (p1), (p2), img_url, created_at)
+            return ImgObject(user, object_name, (p1), (p2), img_url, weight, created_at)
     
     return None
 
@@ -169,7 +196,7 @@ def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional
     with get_db_connection() as conn:
         cur = conn.cursor()
         cur.execute(f'''
-            SELECT object_name, p1, p2, img_url, created_at
+            SELECT object_name, p1, p2, img_url, weights, created_at
             FROM {table_name}
             WHERE object_name = ?
             ORDER BY id DESC
@@ -183,10 +210,10 @@ def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional
 
     img_objects = []
     for row in results[low:high]:
-        object_name, p1, p2, img_url, created_at = row
+        object_name, p1, p2, img_url, weight, created_at = row
         p1 = tuple(map(float, p1.strip('[]').split(',')))
         p2 = tuple(map(float, p2.strip('[]').split(',')))
-        img_object = ImgObject(user, object_name, p1, p2, img_url, created_at)
+        img_object = ImgObject(user, object_name, p1, p2, img_url, weight, created_at)
         img_objects.append(img_object)
     
     return img_objects if img_objects else None
@@ -207,9 +234,120 @@ def db_get_image(user: str, img_url: str) -> Optional[bytes]:
             
     except (FileNotFoundError, PermissionError):
         return None
+
+# ------------------ Further Functionality ------------------
+def purge_old_records(user: str, cutoff_date: datetime):
+    """Delete records older than a specified cutoff date."""
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        table_name = get_table_name_for_user(user)
+        cutoff_date_str = cutoff_date.isoformat()
+        cur.execute(f'''
+            DELETE FROM {table_name}
+            WHERE created_at < ?
+        ''', (cutoff_date_str,))
+        conn.commit()
+
+
+def modify_row(user: str, object_name: str, **updates) -> bool:
+    """
+    Modify a row in the user's unique table.
+    """
+    if not updates:
+        return False  
     
+    #TODO: @Giancarlo: do you want this to create a new table and add entry if it doesnt exist? Or return false?
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+
+    set_clause = ", ".join([f"{key} = ?" for key in updates.keys()])
+    values = list(updates.values()) + [object_name]
+
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+      
+        cur.execute(f"SELECT 1 FROM {table_name} WHERE object_name = ?", (object_name,))
+        if cur.fetchone() is None:
+            return False  
+        
+     
+        cur.execute(f'''
+            UPDATE {table_name}
+            SET {set_clause}
+            WHERE object_name = ?
+        ''', values)
+        conn.commit()
+        return True
+    
+def delete_row(user: str, object_name: str) -> bool:
+    """
+    Delete a row in the user's table based on the object_name.
+    """
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f"SELECT 1 FROM {table_name} WHERE object_name = ?", (object_name,))
+        if cur.fetchone() is None:
+            return False 
+        
+        # Delete the row
+        cur.execute(f"DELETE FROM {table_name} WHERE object_name = ?", (object_name,))
+        conn.commit()
+        return True
+    
+def find_lowest_weight_object(user: str) -> Optional[ImgObject]:
+    """Finds the object with the lowest weight in the user's table."""
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+    
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f'''
+            SELECT object_name, p1, p2, img_url, weights, created_at
+            FROM {table_name}
+            ORDER BY weights ASC
+            LIMIT 1
+        ''')
+        
+        row = cur.fetchone()
+        if row:
+            object_name, p1, p2, img_url, weight, created_at = row
+            p1 = tuple(map(float, p1.strip('[]').split(',')))
+            p2 = tuple(map(float, p2.strip('[]').split(',')))
+            return ImgObject(user, object_name, p1, p2, img_url, weight, created_at)
+    
+    print(f"No entries found for user '{user}'.")
+    return None
 
 
+def get_lowest_weight_for_object(user: str, object_name: str) -> Optional[ImgObject]:
+    """
+    Returns the entry with the lowest weight for a specific user and object.
+    """
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+    
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f'''
+            SELECT object_name, p1, p2, img_url, weights, created_at
+            FROM {table_name}
+            WHERE object_name = ?
+            ORDER BY weights ASC
+            LIMIT 1
+        ''', (object_name,))
+        
+        row = cur.fetchone()
+        if row:
+            object_name, p1, p2, img_url, weight, created_at = row
+            p1 = tuple(map(float, p1.strip('[]').split(',')))
+            p2 = tuple(map(float, p2.strip('[]').split(',')))
+            return ImgObject(user, object_name, p1, p2, img_url, weight, created_at)
+        else:
+            return None
+# ------------------ Other Functions ------------------
 def create_user_table_if_not_exists(user: str):
     """Create a user-specific table if it does not exist."""
     table_name = get_table_name_for_user(user)
@@ -223,6 +361,7 @@ def create_user_table_if_not_exists(user: str):
                 p1 REAL NOT NULL,
                 p2 REAL NOT NULL,
                 img_url TEXT NOT NULL,
+                weights REAL DEFAULT 0.0,
                 created_at TEXT NOT NULL
             )
         ''')
@@ -309,7 +448,7 @@ def db_get_all_unique_objects(user: str) -> Optional[list]:
     with get_db_connection() as conn:
         cur = conn.cursor()
         cur.execute(f'''
-            SELECT object_name, p1, p2, img_url, created_at
+            SELECT object_name, p1, p2, img_url, weights, created_at
             FROM {table_name}
             ORDER BY id DESC
         ''')
@@ -318,274 +457,34 @@ def db_get_all_unique_objects(user: str) -> Optional[list]:
         unique_objects = {}
         
         for row in results:
-            object_name, p1, p2, img_url, created_at = row
+            object_name, p1, p2, img_url, weight, created_at = row
             p1 = tuple(map(float, p1.strip('[]').split(',')))
             p2 = tuple(map(float, p2.strip('[]').split(',')))
             
             if object_name not in unique_objects:
-                unique_objects[object_name] = ImgObject(user, object_name, p1, p2, img_url, created_at)
+                unique_objects[object_name] = ImgObject(user, object_name, p1, p2, img_url, weight, created_at)
         
         return list(unique_objects.values()) if unique_objects else None
 
-
-
-# ------------------ DO NOT DELETE ------------------
-# Has implementation of extra functionality that i want to include
-
-# import sqlite3
-# from typing import Optional
-# import os
-# import atexit
-# from datetime import datetime
-# from app.database.types_db import ImgObject, ImgObjectQuery
-
-# # Directory for storing database and images
-# temp_dir = "./app/database/sqlite_db/"
-# temp_imgs_dir = "./app/database/sqlite_db/"
-# db_store_file_path = os.path.join(temp_dir, "object_tracking.db")
-# os.makedirs(temp_dir, exist_ok=True)
-
-# # Connect to SQLite database
-# conn = sqlite3.connect(db_store_file_path)
-# cur = conn.cursor()
-
-# # Create tables if they don't exist
-# cur.execute('''
-#     CREATE TABLE IF NOT EXISTS object_tracking (
-#         id INTEGER PRIMARY KEY AUTOINCREMENT,
-#         user TEXT NOT NULL,
-#         object_name TEXT NOT NULL,
-#         p1 REAL NOT NULL,
-#         p2 REAL NOT NULL,
-#         img_url TEXT NOT NULL,
-#         created_at TEXT NOT NULL
-#     )
-# ''')
-
-# cur.execute('''
-#     CREATE TABLE IF NOT EXISTS users (
-#         id INTEGER PRIMARY KEY AUTOINCREMENT,
-#         uname TEXT UNIQUE NOT NULL,
-#         pw_hash TEXT NOT NULL
-#     )
-# ''')
-
-# cur.execute('''
-#     CREATE TABLE IF NOT EXISTS blacklist (
-#         token_id TEXT PRIMARY KEY,
-#         exp INTEGER NOT NULL
-#     )
-# ''')
-
-# conn.commit()
-
-# # Cleanup function to ensure database connection is closed properly
-# def cleanup():
-#     conn.commit()
-#     cur.close()
-#     conn.close()
-
-# atexit.register(cleanup)
-
-# # =================== Database Interaction Functions ======================
-
-
-# # ------------------ Image Storage Function ------------------
-# def db_write_line(line: ImgObject):
-#     """Write an image object line to the database."""
-#     cur.execute('''
-#         INSERT INTO object_tracking (user, object_name, p1, p2, img_url, created_at)
-#         VALUES (?, ?, ?, ?, ?, ?)
-#     ''', (line.user, line.object_name, line.p1[0], line.p1[1], line.img_url, line.created_at))
-#     conn.commit()
-
-# def db_save_image(user: str, f, name: str, object_name: str, p1: tuple, p2: tuple) -> bool:
-#     """Save an image object photo and store its metadata in the SQLite database."""
-#     cur.execute("SELECT 1 FROM users WHERE uname = ?", (user,))
-#     if cur.fetchone() is None:
-#         return False  # User not found
-    
-#     user_dir = os.path.join(temp_imgs_dir, user)
-#     os.makedirs(user_dir, exist_ok=True)
-#     os.chmod(user_dir, 0o777)
-    
-#     img_path = os.path.join(user_dir, name)
-#     f.save(img_path)
-#     os.chmod(img_path, 0o777)
-    
-#     #TODO: Change but i dont think just the time is good enough for querying 
-#     created_at = datetime.now().isoformat() 
-#     img_url = img_path
-    
-#     cur.execute('''
-#         INSERT INTO object_tracking (user, object_name, p1, p2, img_url, created_at)
-#         VALUES (?, ?, ?, ?, ?, ?)
-#     ''', (user, object_name, p1[0], p1[1], img_url, created_at))
-#     conn.commit()
-#     return True
-
-
-# # ------------------ Image Retrieval Functions ------------------
-
-# def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObject]:
-#     """Query an object from the database by user name and object name"""
-#     if index < 0:
-#         return None
-    
-#     # Query the correct columns: p1, p2, and filter by user and object_name
-#     cur.execute('''
-#         SELECT user, object_name, p1, p2, img_url, created_at
-#         FROM object_tracking
-#         WHERE user = ? AND object_name = ?
-#         ORDER BY id DESC
-#     ''', (user, object_name))
-    
-#     results = cur.fetchall()
-#     print("query: ", user, object_name, results)
-#     view_all_records()
-
-#     if len(results) > index:
-#         row = results[index]
-#         user, object_name, p1, p2, img_url, created_at = row
-#         # TODO: store as bounding box coordinates
-#         return ImgObject(user, object_name, p1, p2, img_url, created_at)
-    
-#     return None
-
-
-
-# def db_get_image(user: str, img_url: str) -> Optional[bytes]:
-#     """Retrieve an image based on user and image URL."""
-#     try:
-#         # Check if the user exists in the database
-#         cur.execute("SELECT img_url FROM object_tracking WHERE user = ? AND img_url = ?", (user, img_url))
-#         result = cur.fetchone()
-#         # print ("get_image:", user, img_url, result)
-#         if result is None:
-#             return None  # No such image for this user
+def print_user_table(user: str):
+    """Prints the entire table for a given user."""
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f'SELECT * FROM {table_name}')
+        rows = cur.fetchall()
         
-#         # Attempt to open the image file using the URL provided
-#         with open(img_url, "rb") as img_file:
-#             return img_file.read()  # Return the image data as bytes
-#     except (FileNotFoundError, PermissionError):
-#         return None
-    
-
-
-# def view_all_records():
-#     """Fetch and display all records from the object_tracking table."""
-#     cur.execute('SELECT * FROM object_tracking')
-#     rows = cur.fetchall()
-    
-#     if rows:
-#         for row in rows:
-#             print(row)
-#     else:
-#         print("No records found in the table.")
-
-
-# def delete_record(user_name: str, object_name: str):
-#     """Delete a specific record from the object_tracking table."""
-#     cur.execute('''
-#         DELETE FROM object_tracking 
-#         WHERE user = ? AND object_name = ?
-#     ''', (user_name, object_name))
-#     conn.commit()
-#     print(f"Record(s) deleted for user: {user_name}, object: {object_name}")
+        if not rows:
+            print(f"No entries found in table for user '{user}'.")
+            return
+        
+        print(f"Table for user '{user}':")
+        for row in rows:
+            print(row)
 
 
 
-# # User Authentication Functions
-
-# def db_register_user(uname: str, pw_hash: str) -> bool:
-#     """Register a new user and create their directory if they don't already exist."""
-#     # Check if the username already exists
-#     cur.execute("SELECT 1 FROM users WHERE uname = ?", (uname,))
-#     user_exists = cur.fetchone()  # Save the result to a variable
-
-#     if user_exists is not None:
-#         print(f"User {uname} already exists.")
-#         return False
-    
-#     # Insert the new user
-#     cur.execute("INSERT INTO users (uname, pw_hash) VALUES (?, ?)", (uname, pw_hash))
-#     conn.commit()
-
-#     # Create a directory for the user’s images
-#     user_dir = os.path.join(temp_imgs_dir, uname)
-#     os.makedirs(user_dir, exist_ok=True)
-#     os.chmod(user_dir, 0o777)
-#     print(f"User {uname} registered successfully.")
-    
-#     return True
-
-# def db_delete_user(uname: str) -> bool:
-#     """Delete a user from the database and remove their image directory if it exists."""
-#     cur.execute("SELECT 1 FROM users WHERE uname = ?", (uname,))
-#     if cur.fetchone() is None:
-#         return False
-    
-#     cur.execute("DELETE FROM users WHERE uname = ?", (uname,))
-#     conn.commit()
-    
-#     user_dir = os.path.join(temp_imgs_dir, uname)
-#     if os.path.isdir(user_dir):
-#         try:
-#             os.rmdir(user_dir)
-#         except OSError:
-#             import shutil
-#             shutil.rmtree(user_dir)
-    
-#     return True
-
-# def db_get_user_pw(uname: str) -> Optional[str]:
-#     """Retrieve the password hash for a specified user from the database."""
-#     cur.execute("SELECT pw_hash FROM users WHERE uname = ?", (uname,))
-#     result = cur.fetchone()
-#     return result[0] if result else None
-
-# # Token Blacklist Functions
-
-# def db_add_token_blacklist(token_id: str, exp: int) -> bool:
-#     """Add a token to the blacklist with its expiration timestamp."""
-#     try:
-#         cur.execute("INSERT INTO blacklist (token_id, exp) VALUES (?, ?)", (token_id, exp))
-#         conn.commit()
-#         return True
-#     except sqlite3.IntegrityError:
-#         return False
-    
-# def db_check_token_blacklist(token_id: str) -> bool:
-#     """Check if a token is in the blacklist."""
-#     cur.execute("SELECT 1 FROM blacklist WHERE token_id = ?", (token_id,))
-#     return cur.fetchone() is not None
-
-
-
-
-# # TODO: Querying based on username and object name 
-# # def db_query_single(input_pkt, index) -> Optional[ImgObject]:
-# #     """Query an object from the database by user name and object name"""
-# #     if index < 0:
-# #         return None
-
-# #     # Query the correct columns: p1, p2
-# #     cur.execute('''
-# #         SELECT user, object_name, p1, p2, img_url, created_at
-# #         FROM object_tracking
-# #         WHERE user = ? AND object_name = ?
-# #         ORDER BY id DESC
-# #     ''', (input_pkt.user, input_pkt.object_name))
-    
-# #     results = cur.fetchall()
-
-# #     if len(results) > index:
-# #         row = results[index]
-# #         user, object_name, p1, p2, img_url, created_at = row
-# #         # TODO: store as bounding box corrdinates 
-# #         return ImgObject(user, object_name, (p1), (p2), img_url, created_at)
-    
-# #     return None
 
 # ###########################  Unit Testing  ####################################
 # # # Setup sample data

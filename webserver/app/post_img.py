@@ -58,7 +58,9 @@ def handle_img(user, f):
     for line in yolo_output:
         parsed_line = parse_yolo_line(line)
         # TODO I don't know if I like this, should user pass datetime?
-        output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path, time.time())
+        #TODO: update with weight logic 
+        weight = 0.0
+        output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path, weight, time.time())
         if not db_write_line(user, output_pkt):
             return False
     return True

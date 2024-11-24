@@ -11,6 +11,7 @@ class ImgObject:
     p1: Tuple[float]
     p2: Tuple[float]
     img_url: str
+    weight: float
     time: float
 
     def to_dict(self):
