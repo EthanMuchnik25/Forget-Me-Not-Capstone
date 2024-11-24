@@ -297,31 +297,42 @@ def delete_row(user: str, object_name: str) -> bool:
         conn.commit()
         return True
     
-    
-    
+
+
 def delete_row_by_weight_and_name(user: str, object_name: str, weight: float) -> bool:
     """
-    Delete a row in the user's table based on the object_name and weight.
+    Delete a row in the user's table based on the object_name and weight, 
+    and delete the image file at the img_url.
     """
     create_user_table_if_not_exists(user)
     table_name = get_table_name_for_user(user)
 
     with get_db_connection() as conn:
         cur = conn.cursor()
-        # Check if a row with the specified object_name and weight exists
+        # Get the img_url of the object to delete the image later
         cur.execute(
-            f"SELECT 1 FROM {table_name} WHERE object_name = ? AND weights = ?",
+            f"SELECT img_url FROM {table_name} WHERE object_name = ? AND weights = ?",
             (object_name, weight)
         )
-        if cur.fetchone() is None:
-            return False 
+        row = cur.fetchone()
+        if row is None:
+            return False
         
-        # Delete the row with the specified object_name and weight
+        img_url = row[0]
+
         cur.execute(
             f"DELETE FROM {table_name} WHERE object_name = ? AND weights = ?",
             (object_name, weight)
         )
         conn.commit()
+
+        if img_url and os.path.exists(img_url):
+            try:
+                os.remove(img_url)
+                print(f"Image at {img_url} deleted successfully.")
+            except Exception as e:
+                print(f"Error deleting image at {img_url}: {e}")
+        
         return True
     
 
