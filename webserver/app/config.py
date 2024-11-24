@@ -9,7 +9,7 @@ class Config:
     OPENAI_KEY = 'blah'
 
     # Versions
-    YOLO_VER = "V11" # V11, ONNX_YOLO, ONNX_PY
+    YOLO_VER = "DINO" # V11, ONNX_YOLO, ONNX_PY, MOCK, DINO
     DATABASE_VER = "SQLITE"
 
     # For auth

@@ -48,7 +48,7 @@ This command must be run whenever you restart the container.
 
 Next, you will want to run gunicorn to get the server operational. To do this, type: 
 ```
-gunicorn -c gunicorn.conf.py --workers 1 --bind 0.0.0.0:8000 myapp:app
+gunicorn -c gunicorn.conf.py --workers 2 --bind 0.0.0.0:8000 myapp:app
 ```
 
 If you would like to get back into a shell on the container after leaving, type:

@@ -211,8 +211,9 @@ def post_img():
     
     f = request.files['file']
 
-    if not handle_img(user, f):
-        return {"error": "User not found"}, 400
+    succ, msg = handle_img(user, f)
+    if not succ:
+        return {"error": msg}, 400
 
     return '', 200
 
