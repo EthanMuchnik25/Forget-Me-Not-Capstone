@@ -242,13 +242,15 @@
                           itemCard.textContent = item.object_name;
 
                           itemCard.addEventListener('click', function() {
-                              event.preventDefault(); // Prevent any default behavior
+                              event.preventDefault(); 
                               event.stopPropagation();
                               const searchInput = document.getElementById('query');
                               const searchForm = document.getElementById('search-form');
                               
                               searchInput.value = item.object_name;
-                              searchForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                              loadImage(item.object_name);
+                              loadImages(item.object_name, 0, 10); 
+                              // searchForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
                           });
 
                           listElement.appendChild(itemCard);
@@ -518,9 +520,14 @@
                 img.addEventListener('click', () => {
                     objectImage.src = blobUrl;
                     objectImage.style.display = 'block';
+                    message.style.display = 'none';
                 });
                 thumbnailPanel.appendChild(img);
             }
+        }
+        if (thumbnailPanel.children.length > 0) {
+            const firstThumbnail = thumbnailPanel.children[0];
+            firstThumbnail.click();
         }
     } catch (error) {
         console.error('Error fetching data:', error);
