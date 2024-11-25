@@ -242,6 +242,8 @@
                           itemCard.textContent = item.object_name;
 
                           itemCard.addEventListener('click', function() {
+                              event.preventDefault(); // Prevent any default behavior
+                              event.stopPropagation();
                               const searchInput = document.getElementById('query');
                               const searchForm = document.getElementById('search-form');
                               
@@ -483,12 +485,11 @@
     objectImage.style.display = 'none';
     message.innerText = '';
 
-    sidebar.style.display = 'none';
     if (!query) {
         message.innerText = 'Please enter a valid search query.';
         return;
     }
-
+    sidebar.style.display = 'block';
     try {
         const response = await fetch(`/text_range_query?query=${query}&low=${low}&high=${high}`, {
             headers: {
@@ -550,7 +551,17 @@ document.getElementById('search-form').addEventListener('submit', function (even
     event.preventDefault(); 
 
     const queryInput = document.getElementById('query').value.trim(); 
+    const sidebar = document.getElementById('sidebar');
+    const thumbnailPanel = document.getElementById('thumbnail-panel');
+    const message = document.getElementById('message');
     console.log(`Searching for: ${queryInput}`);
+    if (!queryInput) {
+        message.innerText = 'Please enter a valid search query.';
+        return;
+    }
+
+    sidebar.style.display = 'block';
+    thumbnailPanel.innerHTML = ''; 
     loadImages(queryInput, 0, 10);
 });
 
