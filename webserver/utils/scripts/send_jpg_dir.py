@@ -62,10 +62,10 @@ def main():
     interval = args.i
 
     # Too lazy for robust soln, pick something no one will pick
-    uname = "asdlkjhfvnoieaufcynoiqwuefhmiawehm"
-    pw = ";dvoj;ljvl;kjvc;lzkjxcv;lzcx mv;lzkjxcvml;z"
+    uname = "society"
+    pw = "society"
 
-    dir = "../imgs"
+    dir = "../../../Images"
 
     token = register_and_login(server_url, uname, pw)
     
