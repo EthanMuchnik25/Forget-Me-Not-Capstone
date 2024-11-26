@@ -1,53 +1,63 @@
 import openai
+import os
+from PIL import Image
 
-# Need to setup our OpenAI API key
-openai.api_key = "your_openai_api_key"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def query_vision_model(image_path, query):
-    """
-    Query OpenAI's vision model for object location.
-    """
+def convert_to_png(image_path):
+    with Image.open(image_path) as img:
+        new_image_path = image_path.rsplit('.', 1)[0] + '.png'
+        img.save(new_image_path, 'PNG')
+    return new_image_path
+
+def resize_image(image_path, max_size=(1024, 1024)):
+    with Image.open(image_path) as img:
+        img.thumbnail(max_size)
+        new_image_path = image_path.rsplit('.', 1)[0] + '_resized.png'
+        img.save(new_image_path, 'PNG')
+    return new_image_path
+
+def check_image(image_path):
+    if not image_path.lower().endswith('.png'):
+        raise ValueError("Uploaded image must be a PNG format.")
+    if os.path.getsize(image_path) > 4 * 1024 * 1024:
+        raise ValueError("Uploaded image must be less than 4 MB.")
+    return True
+
+def query_openai_vision_model(image_path, object_name):
     try:
+        # Ensure the image is in PNG format and under 4 MB
+        # check_image(image_path)
+        # print("check", check_image)
+        
+        if os.path.getsize(image_path) > 4 * 1024 * 1024:
+            image_path = resize_image(image_path)
+        # If not in PNG format, convert it
+        if not image_path.lower().endswith('.png'):
+            image_path = convert_to_png(image_path)
+        
+        # Open the image file
         with open(image_path, "rb") as image_file:
             response = openai.Image.create_edit(
                 image=image_file,
-                instructions=query
+                prompt=f"Where is the {object_name} located in this image?",
+                n=1,  
+                size="1024x1024",  
             )
-        return response
+        print("API Response:", response)
+
+        
+        if 'choices' in response and len(response['choices']) > 0:
+            location_info = response['choices'][0].get("text", "").strip()
+            return location_info if location_info else "No location information provided."
+        else:
+            return "No valid response from the API."
+
     except Exception as e:
-        print(f"Error querying OpenAI vision model: {e}")
-        return None
-    
-
-def get_relationships(objects):
-    relationships = []
-    for obj1 in objects:
-        for obj2 in objects:
-            if obj1 == obj2:
-                continue
-            
-            # TODO: replace with ImgObject class information 
-            obj1_bottom = obj1['box'][1] + obj1['box'][3] 
-            obj2_top = obj2['box'][1]  
-            obj1_center_x = obj1['box'][0] + obj1['box'][2] // 2
-            obj2_center_x = obj2['box'][0] + obj2['box'][2] // 2
-            
-            if abs(obj1_bottom - obj2_top) < 20 and abs(obj1_center_x - obj2_center_x) < 50:
-                relationships.append(f"{obj1['label']} is on the {obj2['label']}")
-
-            # "Near" relationship
-            distance_x = abs(obj1_center_x - obj2_center_x)
-            distance_y = abs(obj1['box'][1] - obj2['box'][1])
-            if distance_x < 100 and distance_y < 50:
-                relationships.append(f"{obj1['label']} is near the {obj2['label']}")
-
-    return relationships
+        return f"An error occurred: {str(e)}"
 
 if __name__ == "__main__":
-    image_path = "path_to_your_image.jpg"
-    query = "Find the location of the object labeled 'x'"
-    response = query_vision_model(image_path, query)
-    if response:
-        print("Model Response:", response)
-
-
+    image_path = "/Users/swatianshu/Documents/Fall 2024/18500/Forget-Me-Not-Capstone/Audio/testimgs/study.png"  
+    object_name = "keyboard"  
+    location_description = query_openai_vision_model(image_path, object_name)
+    print(f"Location of the '{object_name}': {location_description}")
