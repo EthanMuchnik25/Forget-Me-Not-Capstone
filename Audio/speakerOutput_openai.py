@@ -32,11 +32,9 @@ def query_openai_vision_model(image_path, object_name):
         
         if os.path.getsize(image_path) > 4 * 1024 * 1024:
             image_path = resize_image(image_path)
-        # If not in PNG format, convert it
         if not image_path.lower().endswith('.png'):
             image_path = convert_to_png(image_path)
         
-        # Open the image file
         with open(image_path, "rb") as image_file:
             response = openai.Image.create_edit(
                 image=image_file,
@@ -46,7 +44,7 @@ def query_openai_vision_model(image_path, object_name):
             )
         print("API Response:", response)
 
-        
+
         if 'choices' in response and len(response['choices']) > 0:
             location_info = response['choices'][0].get("text", "").strip()
             return location_info if location_info else "No location information provided."
