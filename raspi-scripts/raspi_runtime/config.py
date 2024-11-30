@@ -2,7 +2,7 @@
 
 class Config:
     PERF = False  # Turn on performance monitoring
-    URL = "http://localhost:4000" # Else like "http://172.26.13.96"
+    URL = "http://172.24.156.5:4000" # Else like "http://172.26.13.96"
 
     CREDS_FILE_PATH = "./creds.txt"
     TOKEN_FILE_PATH = "./token.txt"
