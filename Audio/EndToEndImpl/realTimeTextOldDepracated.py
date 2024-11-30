@@ -24,7 +24,6 @@ def read_creds_file():
         return (uname, pw)
     raise Exception("Failed acquiring credentials from file. Does file exist?")
 
-
 def read_token_file():
     if not os.path.exists(Config.TOKEN_FILE_PATH):
         with open(Config.TOKEN_FILE_PATH, "w") as file:
@@ -34,7 +33,6 @@ def read_token_file():
         token = file.readline().strip()
         return token
     raise Exception("Failed acquiring token from file")
-
 
 def write_token_file(new_token):
     with open(Config.TOKEN_FILE_PATH, "w") as file:

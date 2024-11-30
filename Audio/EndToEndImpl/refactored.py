@@ -9,7 +9,11 @@ from config import Config
 import os
 from PIL import Image
 from io import BytesIO
-from macSpeaker import speak
+if Config.SPEECH_ENGINE == "MAC":
+    from macSpeaker import speak
+elif Config.SPEECH_ENGINE == "GOOGLE":
+    from googlespeak import speak_text as speak
+# from googlespeak import speak_text as speak
 
 class State(Enum):
     INTAKING_QUERY = 1
@@ -98,6 +102,7 @@ def reauthenticate():
     return False
 
 def send_mic_query(query_text, token, mic_url):
+    speak("Sure, let me check that for you.")
     headers = {'Authorization': f'Bearer {token}'}
     body = {'query': query_text}
     # print('mic_url', mic_url)
@@ -109,17 +114,20 @@ def send_mic_query(query_text, token, mic_url):
     response = requests.post(mic_url, headers=headers, json=body)
     if response.status_code != 200:
         print(f"Error sending request: {response.status_code}  Response: {response.text}")
+        if not reauthenticate():
+            raise Exception("Failed to reauthenticate")
     
-    if not reauthenticate():
-        raise Exception("Failed to reauthenticate")
+        token = read_token_file()
+        
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.post(mic_url, headers=headers, json=body)
+        if response.status_code != 200:
+            print(f"Error sending request: {response.status_code}  Response: {response.text}")
+            return None
+    # elif response.status_code == 200:
+    #     return
     
-    token = read_token_file()
-    
-    headers = {'Authorization': f'Bearer {token}'}
-    response = requests.post(mic_url, headers=headers, json=body)
-    if response.status_code != 200:
-        print(f"Error sending request: {response.status_code}  Response: {response.text}")
-        return None
+
     data = response.json()
     if data['success']:
         theResponse = data['wordResponse']
