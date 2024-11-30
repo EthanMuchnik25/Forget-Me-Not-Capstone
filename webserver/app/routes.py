@@ -9,7 +9,7 @@ from myapp import jwt
 from app.database.types_db import ImgObject
 
 from app.post_img import handle_img
-from app.text_query import handle_text_query, handle_text_range_query
+from app.text_query import handle_text_query, handle_text_range_query, handle_sentence_query
 from app.get_room_img import fs_get_room_img
 from app.auth import register_user, login_user, logout_user, \
     check_jwt_not_blocklist, deregister_user
@@ -143,9 +143,33 @@ def text_query():
     query = request.args.get('query')
     index = request.args.get('index', 0)
 
+    print(f"User: {user}, Query: {query}, Index: {index}")
+
     # Simple way to case on stuff to test database, neg num is how many back
     # In the future, can complicate policies to add stuff like auth/security
     response = handle_text_query(user, query, index)
+
+    return jsonify(response), 200
+
+@app.route('/voice_query', methods=['POST'])
+@jwt_required()
+@time_and_log
+def voice_query():
+    jwt = get_jwt()
+    user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
+    data = request.get_json()
+    query = data.get('query')
+    index = data.get('index', 0)
+    token = request.headers.get('Authorization', None)
+    print(f"Token: {token}")
+
+
+    print(f"User: {user}, Query: {query}, Index: {index}")
+    print("in voice query")
+
+    # Simple way to case on stuff to test database, neg num is how many back
+    # In the future, can complicate policies to add stuff like auth/security
+    response = handle_sentence_query(user, query, index, token) 
 
     return jsonify(response), 200
 
@@ -180,6 +204,7 @@ def get_room_img():
     user = jwt['sub']
 
     data_arg = request.args.get('data')
+    print("data arg is: ", data_arg)
 
     if data_arg == None:
         # TODO standardize error, msg, etc., whatever

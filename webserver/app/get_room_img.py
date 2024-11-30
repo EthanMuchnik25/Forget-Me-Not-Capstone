@@ -48,6 +48,7 @@ def draw_box(img_handle, obj):
 
 def fs_get_room_img(user, db_ret):
     # NOTE: May be none
+    print("db_ret.img_url: ", db_ret.img_url)
     img = db_get_image(user, db_ret.img_url)
     if img == None:
         return None

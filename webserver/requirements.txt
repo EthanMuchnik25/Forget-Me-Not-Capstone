@@ -18,3 +18,8 @@ ultralytics-thop
 opencv-python-headless
 onnxruntime
 pybind11
+langchain_openai
+langchain_core
+langchain_community
+langchain
+openai
