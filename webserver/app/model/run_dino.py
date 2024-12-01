@@ -6,7 +6,7 @@ import requests
 
 
 dino_server_ip = '172.24.156.5'
-dino_inf_endpoint = f'http://{dino_server_ip}:4000/ask_abadi'
+dino_inf_endpoint = f'http://{dino_server_ip}:3999/ask_abadi'
 
 dino_confidence_threshold = 0.30
 
@@ -121,37 +121,9 @@ dino_confidence_threshold = 0.30
 #  words in its 'noun_phrases'
 # Be careful when changing this!!!
 dino_obj_list = ['person', 
-                 'bench',
-                 'hat',
-                 'backpack',
-                 'umbrella',
-                 'shoe',
-                 'eye glasses',
-                 'handbag',
-                 'suitcase',
-                 'bottle',
-                 'plate',
-                 'cup',
-                 'fork',
-                 'knife',
-                 'spoon',
-                 'bowl',
-                 'chair',
-                 'bed',
-                 'mirror',
-                 'dining table',
-                 'window',
-                 'desk',
-                 'door',
-                 'tv',
-                 'laptop',
-                 'mouse',
-                 'remote',
-                 'keyboard',
-                 'cell phone',
-                 'book',
-                 'clock',
-                 'hair brush']
+                 'pencil',
+                 'pen',
+                 'snake',]
 
 def format_texts_lists(texts_lists):
     texts = ""

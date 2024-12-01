@@ -23,3 +23,5 @@ langchain_core
 langchain_community
 langchain
 openai
+sentence_transformers
+xformers

@@ -138,7 +138,61 @@
             "-m": "yolo11l.pt",
             "-red": true,
             "-s": "both",
+            "-aa": 4,
+            "-t": true,
+            "-uc": true
+        }
+    },
+    {
+        "trainVal": "Train.py",
+        "args": {
+            "-d": true,
+            "-f": true,
+            "-c": true,
+            "-a": true,
+            "-md": true,
+            "-e": 50,
+            "-b": 16,
+            "-m": "yolo11l.pt",
+            "-red": true,
+            "-s": "both",
             "-aa": 5,
+            "-t": true,
+            "-uc": true
+        }
+    },
+    {
+        "trainVal": "Train.py",
+        "args": {
+            "-d": true,
+            "-f": true,
+            "-c": true,
+            "-a": true,
+            "-md": true,
+            "-e": 50,
+            "-b": 16,
+            "-m": "yolo11l.pt",
+            "-red": true,
+            "-s": "both",
+            "-aa": 0,
+            "-t": true,
+            "-uc": true
+        }
+    },
+    {
+        "trainVal": "Train.py",
+        "args": {
+            "-d": true,
+            "-f": true,
+            "-c": true,
+            "-a": true,
+            "-md": true,
+            "-e": 50,
+            "-b": 16,
+            "-m": "yolo11l.pt",
+            "-red": true,
+            "-s": "both",
+            "-aa": 1,
             "-t": true,
             "-uc": true
         }

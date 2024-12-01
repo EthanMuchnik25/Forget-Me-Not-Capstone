@@ -138,7 +138,6 @@ def simple():
 @jwt_required()
 @time_and_log
 def text_query():
-    print("text_query got called")
     jwt = get_jwt()
     user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
     query = request.args.get('query')
@@ -160,7 +159,7 @@ def voice_query():
     user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
     data = request.get_json()
     query = data.get('query')
-    index = data.get('index', 0)
+    index = data.get('index', 0) 
     token = request.headers.get('Authorization', None)
     print(f"Token: {token}")
 

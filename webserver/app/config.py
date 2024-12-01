@@ -9,8 +9,11 @@ class Config:
     OPENAI_KEY = 'blah'
 
     # Versions
-    YOLO_VER = "V11" # V11, ONNX_YOLO, ONNX_PY, MOCK, DINO
+    YOLO_VER = "DINO" # V11, ONNX_YOLO, ONNX_PY, MOCK, DINO, BOTH
     DATABASE_VER = "SQLITE"
+
+    VECTOR_COSINE = "LIGHT-COMPUTE" # HEAVY-COMPUTE, LIGHT-COMPUTE, DOESNT-RUN, would recc LIGHT-COMPUTE for local
+    SIMILARITY_THRESHOLD = 0.70 # 0.75 is good for HEAVY-COMPUTE but 0.7 is probably better for LIGHT-COMPUTE
 
     # For auth
     JWT_SECRET_KEY = "this can sorta be anything"

@@ -36,7 +36,7 @@ my_app is the container name, but you can rename it if you wish
 
 Next, to run the container, and enter a shell on it, type:
 ```
-docker run -v $(pwd)/:/webserver -p 4000:80 -it --entrypoint /bin/bash --name myapp-dbg myapp-dbg
+docker run --gpus all --shm-size=16g -v $(pwd)/:/webserver -p 4000:80 -it --entrypoint /bin/bash --name myapp-dbg myapp-dbg
 ```
 
 Once you are in a shell in the container, you first want to start nginx because the dockerfile is stupid ;-;. Type this in the terminal:

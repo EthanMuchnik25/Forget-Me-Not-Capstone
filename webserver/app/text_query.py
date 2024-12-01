@@ -7,11 +7,11 @@ from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from openai import OpenAI
 import base64
-import magic
 from PIL import Image, ImageDraw, ImageFont
 import mimetypes
 from app.get_room_img import fs_get_room_img
-from app.database.sqlite import db_get_image
+from app.database.sqlite import db_get_image, db_get_all_unique_objects
+from app.vectorstuffs import getMostSimilar
 
 
 # import langchain
@@ -41,6 +41,7 @@ def openAIImage(path, object):
     # Getting the base64 string
     base64_image = encode_image(image_path)
 
+    print("the object is: ", object)
     response = client.chat.completions.create(
     model="gpt-4o",
     messages=[
@@ -49,7 +50,7 @@ def openAIImage(path, object):
         "content": [
             {
             "type": "text",
-            "text": f"Can you describe near where the {object} is in this image. Do not mention the bounding box or all the background surrounding. Just mention the location of the pencil and what it is on/suspended by.",
+            "text": f"Can you describe near where the {object} is in this image. Do not mention the bounding box or all the background surrounding. Just mention the location of the {object} and what it is on/suspended by.",
             },
             {
             "type": "image_url",
@@ -101,7 +102,7 @@ def downloadImgFromUrl(user, db_ret, query):
     # convert the application.json to img.jpg
 
 
-    responseQuery = openAIImage(imgOutput, object)
+    responseQuery = openAIImage(imgOutput, query)
     #delete img.jpg
     os.remove(imgOutput)
     return responseQuery 
@@ -149,8 +150,8 @@ def handle_text_query(user, query, index=0):
         }
         
     # TODO: See what other stuff is necessary in the future 
-    imgUrl = create_img_url(db_ret) 
-    response = openAIImage(imgUrl)
+    # imgUrl = create_img_url(db_ret) 
+    # response = openAIImage(imgUrl)
     return {
         'success': True,
         'imageUrl': create_img_url(db_ret) 
@@ -190,6 +191,9 @@ def openAIGetWord(query):
     print("and the word is", word)
     return word
 
+# def findClosestWordEmbedding(word):
+
+
 
 def handle_sentence_query(user, query, index=0, token=None):
     
@@ -210,20 +214,38 @@ def handle_sentence_query(user, query, index=0, token=None):
     query = openAIGetWord(query)
 
     db_ret = db_query_single(user, query, index)
-    
-    
+    vectorUsed = False
     if db_ret == None:
         print("object not found in database")
-        return {
-            'success': False,
-            'message': "Object not found in database"
-        }
+        getAllClasses = db_get_all_unique_objects(user)
+        extractClasses = [i.object_name for i in getAllClasses]
+        print("all classes: ", extractClasses)
+        mostSimilar = getMostSimilar(query, extractClasses) 
+        if mostSimilar == "None":
+            return {
+                'success': False,
+                'message': "Object not found in database. Blyat Blyat Cyka. You Americans Will Meet Your Creator"
+            }
+        else:
+            vectorUsed = True
+            print("most similar: ", mostSimilar)
+            db_ret = db_query_single(user, mostSimilar, index)
+            if db_ret == None:
+
+
+                return {
+                    'success': False,
+                    'message': "Object not found in database but very weird"
+                }
     else:
         print("object found in database")
     response = downloadImgFromUrl(user, db_ret, query)
     print(response.message.content)
 
     response = response.message.content
+    if vectorUsed:
+        response = f"Object not found in database. However, the closest object to a {query} is a {mostSimilar}. {response}"
+
 
         
     # TODO: See what other stuff is necessary in the future 

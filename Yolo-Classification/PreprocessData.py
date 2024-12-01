@@ -805,7 +805,7 @@ def addDataset(originalDatasetPath,specificAddDatasetPath, args, modified = True
                 # if "val" in pathsTo[i]:
                 #     print("val in pathsTo[i]")
                 # and args.dataStorageDirectory not in pathsTo[i]
-                thePath = pathsTo[i] if not modified or ("val" not in pathsTo[i] and args.dataStorageDirectory not in pathsTo[i] )  else pathsTo[i].replace("val", "train")
+                thePath = pathsTo[i] if not modified or ("val" not in pathsTo[i] and args.dataStorageDirectory not in pathsTo[i] )  else pathsTo[i].replace("val", "test")
                 shutil.copy(os.path.join(imageLabelPath, file), os.path.join(thePath, imageLabel, file))
 
 
