@@ -29,5 +29,7 @@ RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
 # Step 9: Expose port 80 to the outside world
 EXPOSE 80
 
+COPY /home/ethanm/.cache/huggingface/hub/models--dunzhang--stella_en_1.5B_v5 /root/.cache/huggingface/hub/models--dunzhang--stella_en_1.5B_v5
+
 # Step 10: Start Nginx and Gunicorn
 CMD service nginx start && gunicorn -c gunicorn.conf.py --workers 4 --bind 0.0.0.0:8000 myapp:app

@@ -9,12 +9,23 @@ from myapp import jwt
 from app.database.types_db import ImgObject
 
 from app.post_img import handle_img
-from app.text_query import handle_text_query
+from app.text_query import handle_text_query, handle_text_range_query, handle_sentence_query
 from app.get_room_img import fs_get_room_img
 from app.auth import register_user, login_user, logout_user, \
     check_jwt_not_blocklist, deregister_user
 from app.config import Config
 from app.perf.perf import time_and_log
+
+# Import database
+if Config.DATABASE_VER == "RDS":
+    raise NotImplementedError
+elif Config.DATABASE_VER == "SQLITE":
+    from app.database.sqlite import db_get_all_unique_objects
+elif Config.DATABASE_VER == "DEBUG":
+    raise NotImplementedError
+else:
+    raise NotImplementedError
+
 
 # ========================== Page Routes ==========================
 
@@ -22,8 +33,8 @@ from app.perf.perf import time_and_log
 
 @app.route('/')
 @time_and_log
-def hello_world():
-    return render_template("index.html")
+def front_page():
+    return render_template('front_page.html')
 
 
 @app.route('/img_search.html')
@@ -130,13 +141,56 @@ def text_query():
     jwt = get_jwt()
     user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
     query = request.args.get('query')
-    index = request.args.get('index')
+    index = request.args.get('index', 0)
+
+    print(f"User: {user}, Query: {query}, Index: {index}")
 
     # Simple way to case on stuff to test database, neg num is how many back
     # In the future, can complicate policies to add stuff like auth/security
     response = handle_text_query(user, query, index)
 
     return jsonify(response), 200
+
+@app.route('/voice_query', methods=['POST'])
+@jwt_required()
+@time_and_log
+def voice_query():
+    jwt = get_jwt()
+    user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
+    data = request.get_json()
+    query = data.get('query')
+    index = data.get('index', 0) 
+    token = request.headers.get('Authorization', None)
+    print(f"Token: {token}")
+
+
+    print(f"User: {user}, Query: {query}, Index: {index}")
+    print("in voice query")
+
+    # Simple way to case on stuff to test database, neg num is how many back
+    # In the future, can complicate policies to add stuff like auth/security
+    response = handle_sentence_query(user, query, index, token) 
+
+    return jsonify(response), 200
+
+# TODO this seems like shitty api design, maybe it would be useful to have a 
+#  "version" field in the old api? 
+@app.route('/text_range_query')
+@jwt_required()
+@time_and_log
+def text_range_query():
+    jwt = get_jwt()
+    user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
+    query = request.args.get('query')
+    low = request.args.get('low', 0)
+    high = request.args.get('high', 0)
+
+    # Simple way to case on stuff to test database, neg num is how many back
+    # In the future, can complicate policies to add stuff like auth/security
+    response = handle_text_range_query(user, query, low, high)
+
+    return jsonify(response), 200
+
 
 # TODO logger functionality is shit. Refacror code so we don't have to be so 
 #  careful
@@ -150,6 +204,7 @@ def get_room_img():
     user = jwt['sub']
 
     data_arg = request.args.get('data')
+    print("data arg is: ", data_arg)
 
     if data_arg == None:
         # TODO standardize error, msg, etc., whatever
@@ -181,8 +236,9 @@ def post_img():
     
     f = request.files['file']
 
-    if not handle_img(user, f):
-        return {"error": "User not found"}, 400
+    succ, msg = handle_img(user, f)
+    if not succ:
+        return {"error": msg}, 400
 
     return '', 200
 
@@ -209,4 +265,20 @@ def speech_query():
 
     return {"msg": "Good job champ you will definitely find your thing"}, 200
 
+
+@app.route('/get_unique_objects', methods=['GET'])
+@jwt_required()
+@time_and_log
+def get_unique_objects():
+    try:
+        user = get_jwt()['sub']  # Get the user from the JWT token
+        objects = db_get_all_unique_objects(user)  # Get the objects from DB
+        if objects is None:
+            return jsonify([]), 200  # Return empty list if no objects
+        
+        # Serialize the objects if necessary
+        objects_data = [obj.__dict__ for obj in objects]
+        return jsonify(objects_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 422
 

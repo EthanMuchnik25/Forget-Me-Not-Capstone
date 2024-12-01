@@ -14,13 +14,13 @@ def send_all_jpgs_from_dir(server_url, token, directory, interval):
         for file in files:
             if file.lower().endswith('.jpg'):
                 file_path = os.path.join(root, file)
-                with open(file_path, "rb") as file:
+                with open(file_path, "rb") as f:
                     start_time = time.time()
-                    if not send_post_img(server_url, token, file):
+                    if not send_post_img(server_url, token, f):
                         raise Exception("Error sending image from directory")
 
                     count += 1
-                    print(f"Send successful: {count}")
+                    print(f"Send successful: {count} {file}")
                     elapsed_time = time.time() - start_time
                     time.sleep(max(0,interval - elapsed_time))
 
@@ -33,16 +33,16 @@ def send_jpgs_from_dir(server_url, token, directory, count, interval):
             for file in files:
                 if file.lower().endswith('.jpg'):
                     file_path = os.path.join(root, file)
-                    with open(file_path, "rb") as file:
+                    with open(file_path, "rb") as f:
                         if curr == count:
                             return
                         
                         start_time = time.time()
-                        if not send_post_img(server_url, token, file):
+                        if not send_post_img(server_url, token, f):
                             raise Exception("Error sending image from directory")
                         
                         curr += 1
-                        print(f"Send successful: {curr}")
+                        print(f"Send successful: {curr} {file}")
                         elapsed_time = time.time() - start_time
                         time.sleep(max(0,interval - elapsed_time))
 
@@ -62,8 +62,13 @@ def main():
     interval = args.i
 
     # Too lazy for robust soln, pick something no one will pick
+<<<<<<< HEAD
     uname = "society"
     pw = "society"
+=======
+    uname = "asdlkjhfvnoieaufcynoiqwuefhmiawehmallaa"
+    pw = "dvojljvlkjvclzkjxcvlzcxmvlzkjxcvmlz"
+>>>>>>> dino
 
     dir = "../../../Images"
 

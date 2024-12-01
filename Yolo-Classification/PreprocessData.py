@@ -4,6 +4,7 @@ import yaml
 import fiftyone as fo
 import fiftyone.zoo as foz
 import random
+import argparse
 
 import os
 import random
@@ -72,7 +73,7 @@ def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split,
     for spl in tmpLocs[1:]:
         print("spl is : " + str(spl))
         print("tmpLocs[0] is : " + str(tmpLocs[0]))
-        addDataset(tmpLocs[0], spl, args)
+        addDataset(tmpLocs[0], spl, args, False)
 
     
     
@@ -86,6 +87,9 @@ def downLoadData(initialDataStorageDirectory, middleDataStorageDirectory, split,
                 shutil.move(middleDataStorageDirectory + "/{}/images/val/".format(spl) + file, middleDataStorageDirectory + "/images/val")
                 shutil.move(middleDataStorageDirectory + "/{}/labels/val/".format(spl) + file.replace(".jpg", ".txt"), middleDataStorageDirectory + "/labels/val")
         
+    # remove the empty folders
+    # for spl in split:
+    #     shutil.rmtree(middleDataStorageDirectory + "/{}/".format(spl))
         
     # copy over dataset.yaml from split[0] to middleDataStorageDirectory
     shutil.copyfile(middleDataStorageDirectory + "/{}/data.yaml".format(split[0]), middleDataStorageDirectory + "/data.yaml")
@@ -306,7 +310,9 @@ def CopyFiles(dataStorageDirectory, middleDataStorageDirectory, args):
     if args.certainAlloc == False:
         trainFiles, valFiles, testFiles, trainFilesLabel, valFilesLabel, testFilesLabel = allocateTrainValTestRandomly(sourceFolder)
     elif args.certainAlloc == True:
-        caVal = args.model
+        caVal = os.path.join(args.model, args.name)
+        # caVal = args.model
+        print("caVal is : " + caVal)
         trainFiles, valFiles, testFiles, trainFilesLabel, valFilesLabel, testFilesLabel = allocateFromDataRepo(caVal)
     
 
@@ -317,7 +323,7 @@ def CopyFiles(dataStorageDirectory, middleDataStorageDirectory, args):
     val_folder = dataStorageDirectory + "/val/{}/"
     test_folder = dataStorageDirectory + "/test/{}/"
 
-    print("file0 is : " + trainFiles[0])
+    # print("file0 is : " + trainFiles[0])
 
     for file in trainFiles:
         file = os.path.basename(file)
@@ -674,7 +680,7 @@ def augmentData(modDirectory, addDirectory, args):
 
     print("Augmentation complete!")
 
-def addDataset(originalDatasetPath,specificAddDatasetPath, args):
+def addDataset(originalDatasetPath,specificAddDatasetPath, args, modified = True):
     # Create list of paths for test, train, and valid
     listPaths = []
     
@@ -800,7 +806,11 @@ def addDataset(originalDatasetPath,specificAddDatasetPath, args):
             imageLabelPath = os.path.join(paths[i], imageLabel)
             print(imageLabelPath)
             for file in os.listdir(imageLabelPath):
-                shutil.copy(os.path.join(imageLabelPath, file), os.path.join(pathsTo[i], imageLabel, file))
+                # if "val" in pathsTo[i]:
+                #     print("val in pathsTo[i]")
+                # and args.dataStorageDirectory not in pathsTo[i]
+                thePath = pathsTo[i] if not modified or ("val" not in pathsTo[i] and args.dataStorageDirectory not in pathsTo[i] )  else pathsTo[i].replace("val", "test")
+                shutil.copy(os.path.join(imageLabelPath, file), os.path.join(thePath, imageLabel, file))
 
 
 def addPotentiallyAugmented(originalDatasetPath, addDatasetPath, args):
@@ -831,15 +841,17 @@ def addPotentiallyAugmented(originalDatasetPath, addDatasetPath, args):
         augmentData( modDirectory, addDirectory, args)
         for i in modDirectory:
             print("addDirectory is : " + str(addDirectory))
-            addDataset(originalDatasetPath, i, args)
+            addDataset(originalDatasetPath, i, args, True)
+        for i in addDirectory:
+            print("addDirectory is : " + str(addDirectory))
+            addDataset(originalDatasetPath, i, args, False)
     else:
         for i in addDirectory:
             print("addDirectory is : " + str(addDirectory))
-            addDataset(originalDatasetPath, i, args)
+            addDataset(originalDatasetPath, i, args, False )
 
 
-
-def saveRelevantData(args):
+def getSaveDirName(args):
     settings['datasets_dir'] = args.dataStorageDirectory
 
     allFoldersToBeAdded = [ folder for folder in os.listdir(args.addDatasetPath) if os.path.isdir(os.path.join(args.addDatasetPath, folder)) and args.add ]
@@ -853,6 +865,11 @@ def saveRelevantData(args):
     else:
         saveDirName = args.dataWhileRunningDirectory
 
+    saveDirName = os.path.join("modelRuns", saveDirName)
+    return saveDirName
+
+def saveRelevantData(args, saveDirName):
+
     train_folder = os.path.join(args.dataStorageDirectory, "train/{}/")
     val_folder = os.path.join(args.dataStorageDirectory, "val/{}/")
     test_folder = os.path.join(args.dataStorageDirectory, "test/{}")
@@ -861,7 +878,7 @@ def saveRelevantData(args):
         os.makedirs(saveDirName)
 
     # Create a file called trainFileLocations in the -dr directory
-    if  os.path.exists(train_folder.format("images")):
+    if os.path.exists(train_folder.format("images")):
         with open(os.path.join(saveDirName, "trainFileLocations.txt"), "w") as f:
             for file in os.listdir(train_folder.format("images")):
                 f.write(os.path.join(train_folder.format("images"), file) + "\n")
@@ -877,15 +894,12 @@ def saveRelevantData(args):
         with open(os.path.join(saveDirName, "testFileLocations.txt"), "w") as f:
             for file in os.listdir(test_folder.format("images")):
                 f.write(os.path.join(test_folder.format("images"), file) + "\n")
-
-    with open(saveDirName + "/pythonScriptArgs.txt", "w") as f:
-        yaml.dump(vars(args), f)
     
     return saveDirName
 
 def loadArgparse(args):
     folder = args.model
-    file = os.path.join(folder, "pythonScriptArgs.txt")
+    file = os.path.join(folder, args.name, "pythonScriptArgs.txt")
 
     with open(file, 'r') as f:
         args = yaml.safe_load(f)

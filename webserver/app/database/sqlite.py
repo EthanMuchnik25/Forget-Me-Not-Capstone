@@ -59,7 +59,8 @@ def db_register_user(uname: str, pw_hash: str) -> bool:
         user_dir = os.path.join(temp_imgs_dir, uname)
         os.makedirs(user_dir, exist_ok=True)
         os.chmod(user_dir, 0o777)
-        print(f"User {uname} registered successfully.")
+        # TODO clean up
+        # print(f"User {uname} registered successfully.")
         return True
 
 def db_delete_user(uname: str) -> bool:
@@ -157,6 +158,39 @@ def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObje
     
     return None
 
+def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional[list[ImgObject]]:
+    """Query an object from the database by user name and object name."""
+
+    if high< 0 or low <0 or high<low:
+        return None
+
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f'''
+            SELECT object_name, p1, p2, img_url, created_at
+            FROM {table_name}
+            WHERE object_name = ?
+            ORDER BY id DESC
+        ''', (object_name,))
+        
+    results = cur.fetchall()
+
+    if low >= len(results):
+        return None  
+    high = min(high, len(results)) 
+
+    img_objects = []
+    for row in results[low:high]:
+        object_name, p1, p2, img_url, created_at = row
+        p1 = tuple(map(float, p1.strip('[]').split(',')))
+        p2 = tuple(map(float, p2.strip('[]').split(',')))
+        img_object = ImgObject(user, object_name, p1, p2, img_url, created_at)
+        img_objects.append(img_object)
+    
+    return img_objects if img_objects else None
+
 def db_get_image(user: str, img_url: str) -> Optional[bytes]:
     """Retrieve an image based on user and image URL from their unique table."""
     try:
@@ -173,6 +207,8 @@ def db_get_image(user: str, img_url: str) -> Optional[bytes]:
             
     except (FileNotFoundError, PermissionError):
         return None
+    
+
 
 def create_user_table_if_not_exists(user: str):
     """Create a user-specific table if it does not exist."""
@@ -264,6 +300,32 @@ def list_all_tables():
             print(table[0])  # Each table name is in a tuple (name,)
     return [table[0] for table in tables] 
 
+
+def db_get_all_unique_objects(user: str) -> Optional[list]:
+    """Retrieve all unique objects for a user from the database."""
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f'''
+            SELECT object_name, p1, p2, img_url, created_at
+            FROM {table_name}
+            ORDER BY id DESC
+        ''')
+        
+        results = cur.fetchall()
+        unique_objects = {}
+        
+        for row in results:
+            object_name, p1, p2, img_url, created_at = row
+            p1 = tuple(map(float, p1.strip('[]').split(',')))
+            p2 = tuple(map(float, p2.strip('[]').split(',')))
+            
+            if object_name not in unique_objects:
+                unique_objects[object_name] = ImgObject(user, object_name, p1, p2, img_url, created_at)
+        
+        return list(unique_objects.values()) if unique_objects else None
 
 
 

@@ -16,7 +16,7 @@ import albumentations as A
 import torch
 print(torch.cuda.is_available())  # Should return True
 
-from PreprocessData import downLoadData, filterCoco, CopyFiles, addDataset, addPotentiallyAugmented, saveRelevantData
+from PreprocessData import downLoadData, filterCoco, CopyFiles, addDataset, addPotentiallyAugmented, saveRelevantData, getSaveDirName
 
 
 def train(model = "yolo11n.yaml", saveDirName =None, args = None):
@@ -31,11 +31,48 @@ def train(model = "yolo11n.yaml", saveDirName =None, args = None):
     # model_val.val(data=os.path.join(args.dataStorageDirectory, "data.yaml"), batch=32, imgsz=640, rect=True, half=True, warmup_bias_lr=0.0)
 
     # write metrics to a file called metrics.txt
-    with open(os.path.join(saveDirName, "metrics.txt"), "w") as f:
+    with open(os.path.join(saveDirName, str(metrics.save_dir.name), "metrics.txt"), "w") as f:
         f.write(str(metrics.results_dict))
         f.write("\n")
         for key in metrics.names:
             f.write(str(metrics.names[key]) + " : " + str(metrics.maps[key]) + "\n")
+    
+
+    if not os.path.exists(saveDirName):
+        os.makedirs(saveDirName)
+
+    # move everything in os.path.join(saveDirName, "trainFileLocations.txt") to os.path.join(saveDirName, str(metrics.save_dir.name), "trainFileLocations.txt")
+    if os.path.exists(os.path.join(saveDirName, "trainFileLocations.txt")):
+        shutil.move(os.path.join(saveDirName, "trainFileLocations.txt"), os.path.join(saveDirName, str(metrics.save_dir.name), "trainFileLocations.txt"))
+    if os.path.exists(os.path.join(saveDirName, "valFileLocations.txt")):
+        shutil.move(os.path.join(saveDirName, "valFileLocations.txt"), os.path.join(saveDirName, str(metrics.save_dir.name), "valFileLocations.txt"))
+    if os.path.exists(os.path.join(saveDirName, "testFileLocations.txt")):
+        shutil.move(os.path.join(saveDirName, "testFileLocations.txt"), os.path.join(saveDirName, str(metrics.save_dir.name), "testFileLocations.txt"))
+    
+    with open(os.path.join(saveDirName, str(metrics.save_dir.name), "AlreadyCompleted"), "w") as f:
+        f.write("")
+
+    
+
+    # if os.path.exists(train_folder.format("images")):
+    #     with open(os.path.join(saveDirName, str(metrics.save_dir.name), "trainFileLocations.txt"), "w") as f:
+    #         for file in os.listdir(train_folder.format("images")):
+    #             f.write(os.path.join(train_folder.format("images"), file) + "\n")
+    
+    # # Create a file called valFileLocations in the -dr directory
+    # if os.path.exists(val_folder.format("images")):
+    #     with open(os.path.join(saveDirName, str(metrics.save_dir.name), "valFileLocations.txt"), "w") as f:
+    #         for file in os.listdir(val_folder.format("images")):
+    #             f.write(os.path.join(val_folder.format("images"), file) + "\n")
+
+    # # Create a file called testFileLocations in the -dr directory
+    # if os.path.exists(test_folder.format("images")):
+    #     with open(os.path.join(saveDirName, str(metrics.save_dir.name), "testFileLocations.txt"), "w") as f:
+    #         for file in os.listdir(test_folder.format("images")):
+    #             f.write(os.path.join(test_folder.format("images"), file) + "\n")
+
+    with open(os.path.join(saveDirName, str(metrics.save_dir.name), "pythonScriptArgs.txt"), "w") as f:
+        yaml.dump(vars(args), f)
 
 def validate(dataStorageDirectory, model = "yolo11n.yaml"):
     
@@ -99,6 +136,13 @@ if __name__ == "__main__":
     
     augmentFinalFolder = args.modDirectory if args.modData else args.addDatasetPath
 
+    saveDirName = getSaveDirName(args)
+
+    #Check if AlreadyCompleted exists
+    if os.path.exists(os.path.join(saveDirName,args.saveFolderName, "AlreadyCompleted")):
+        print("AlreadyCompleted exists, exiting")
+        exit()
+
     if args.downloadData:
         downLoadData(args.initialDataStorageDirectory, args.middleDataStorageDirectory, args.split, args.maxSamples, args)
     if args.filterCoco:
@@ -106,8 +150,10 @@ if __name__ == "__main__":
         filterCoco(args.middleDataStorageDirectory, args)
     if args.copyFiles:
         CopyFiles(args.dataStorageDirectory, args.middleDataStorageDirectory, args)
-    saveDirName = saveRelevantData(args)
+        saveDirName = saveRelevantData(args, saveDirName)
+
     if args.add:
+        print("potentiall adding")
         addPotentiallyAugmented(args.dataStorageDirectory, args.addDatasetPath, args)
     if args.validate:
         if args.model == False:
