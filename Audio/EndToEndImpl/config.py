@@ -15,7 +15,13 @@ class Config:
     MOCK_SPEAKER = False
     CAMERA_VER = "LAPTOP"
 
+<<<<<<< HEAD
     NAME_OF_VOICE_ASSISTANT = "Frank"
+=======
+    NAME_OF_VOICE_ASSISTANT = "Kira"
+    SPEECH_ENGINE = "GOOGLE" # GOOGLE, MAC
+
+>>>>>>> ccbb3579298f9701f119b948cdd104aa2efc9120
 
 
     # NOTE: Can switch to string if we want like "MOCK", "LAPTOP", and "RPI" 

@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 sos
+=======
+soos
+>>>>>>> ccbb3579298f9701f119b948cdd104aa2efc9120
 ciety
