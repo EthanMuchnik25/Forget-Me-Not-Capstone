@@ -23,18 +23,13 @@ RUN rm /etc/apt/sources.list.d/cuda.list \
 
 # Install the required packages
 RUN apt-get update \
-    && apt-get install -y ffmpeg libsm6 libxext6 git ninja-build libglib2.0-0 libsm6 libxrender-dev libxext6 \
+    && apt-get install -y ffmpeg libsm6 libxext6 git ninja-build libglib2.0-0 libsm6 libxrender-dev libxext6 wget \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install MMEngine and MMCV
-RUN pip install openmim && \
+RUN pip install openmim transformers nltk && \
     mim install "mmengine>=0.7.1" "mmcv==2.1.0"
-
-# pip install fairscale
-RUN pip install fairscale
-
-# pip install transformers
 
 # Install MMDetection
 RUN conda clean --all \
@@ -43,3 +38,15 @@ RUN conda clean --all \
     && pip install --no-cache-dir -e .
 
 WORKDIR /mmdetection
+
+
+COPY inf_server/import_nltk.py .
+
+RUN python3 import_nltk.py
+
+# pip install fairscale
+RUN pip install fairscale
+
+# pip install transformers
+RUN wget https://download.openmmlab.com/mmdetection/v3.0/grounding_dino/groundingdino_swint_ogc_mmdet-822d7e9d.pth
+RUN wget https://download.openmmlab.com/mmdetection/v3.0/mm_grounding_dino/grounding_dino_swin-t_pretrain_obj365_goldg_grit9m_v3det/grounding_dino_swin-t_pretrain_obj365_goldg_grit9m_v3det_20231204_095047-b448804b.pth

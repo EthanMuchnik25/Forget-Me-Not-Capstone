@@ -32,7 +32,7 @@ def find_noun_phrases(caption: str) -> list:
     except ImportError:
         raise RuntimeError('nltk is not installed, please install it by: '
                            'pip install nltk.')
-
+    print("in find_noun_phrases")
     caption = caption.lower()
     tokens = nltk.word_tokenize(caption)
     pos_tags = nltk.pos_tag(tokens)

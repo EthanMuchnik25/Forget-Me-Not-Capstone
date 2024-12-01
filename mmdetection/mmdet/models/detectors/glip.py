@@ -33,9 +33,19 @@ def find_noun_phrases(caption: str) -> list:
         raise RuntimeError('nltk is not installed, please install it by: '
                            'pip install nltk.')
 
+    print("in the other find_noun_phrases")
     caption = caption.lower()
+    print('caption:', caption)
     tokens = nltk.word_tokenize(caption)
+    print("type of tokens", type(tokens))
+    print('tokens:', tokens)
+    # Anything labelled with VB is now NN
     pos_tags = nltk.pos_tag(tokens)
+    print('pos_tags:', pos_tags)
+
+
+    # pos_tags = [(t[0],'NN') if t[1] == 'VB' else t for t in pos_tags]
+    print('pos_tags:', pos_tags)
 
     grammar = 'NP: {<DT>?<JJ.*>*<NN.*>+}'
     cp = nltk.RegexpParser(grammar)
@@ -45,7 +55,7 @@ def find_noun_phrases(caption: str) -> list:
     for subtree in result.subtrees():
         if subtree.label() == 'NP':
             noun_phrases.append(' '.join(t[0] for t in subtree.leaves()))
-
+    print('noun_phrases:', noun_phrases)
     return noun_phrases
 
 
@@ -581,6 +591,7 @@ class GLIP(SingleStageDetector):
                             'named entity recognition. You can try '
                             'setting custom_entities=True and running '
                             'again to see if it helps.')
+                        print("here")
                         label_names.append('unobject')
                     else:
                         label_names.append(entity[labels])
