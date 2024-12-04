@@ -62,13 +62,8 @@ def main():
     interval = args.i
 
     # Too lazy for robust soln, pick something no one will pick
-<<<<<<< HEAD
-    uname = "society"
-    pw = "society"
-=======
     uname = "asdlkjhfvnoieaufcynoiqwuefhmiawehmallaa"
     pw = "dvojljvlkjvclzkjxcvlzcxmvlzkjxcvmlz"
->>>>>>> dino
 
     dir = "../../../Images"
 

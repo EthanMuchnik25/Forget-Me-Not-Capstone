@@ -93,8 +93,8 @@ pathname = f"img_file{os.getpid()}.jpg"
 # Coco config:
 init_args, call_args = parse_args(
     inputs=pathname,
-    model='../../mmdetection/configs/mm_grounding_dino/grounding_dino_swin-t_pretrain_obj365.py',
-    weights='../../mmdetection/grounding_dino_swin-t_pretrain_obj365_goldg_grit9m_v3det_20231204_095047-b448804b.pth',
+    model='../../mmdetection/configs/mm_grounding_dino/coco/grounding_dino_detecting-pencils.py',
+    weights='../../mmdetection/best_coco_bbox_mAP_epoch_12.pth',
     texts='$: coco',
     # no_save_pred=False,
     # no_save_vis=False)

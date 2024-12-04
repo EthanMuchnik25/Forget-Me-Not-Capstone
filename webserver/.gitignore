@@ -1,9 +1,9 @@
 # ! means un-ignore expression
 
 # Ignore all top level things that aren't '.' files or directories
-*
-!*.*
-!*/
+# *
+# !*.*
+# !*/
 
 notes_private/
 __pycache__/

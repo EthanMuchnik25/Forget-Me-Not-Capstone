@@ -148,6 +148,7 @@ def text_query():
     # Simple way to case on stuff to test database, neg num is how many back
     # In the future, can complicate policies to add stuff like auth/security
     response = handle_text_query(user, query, index)
+    print("response: ", response)
 
     return jsonify(response), 200
 

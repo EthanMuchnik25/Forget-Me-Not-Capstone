@@ -12,6 +12,7 @@ import mimetypes
 from app.get_room_img import fs_get_room_img
 from app.database.sqlite import db_get_image, db_get_all_unique_objects
 from app.vectorstuffs import getMostSimilar
+import time
 
 
 # import langchain
@@ -78,7 +79,7 @@ elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_query_single
 else:
     raise NotImplementedError
-def downloadImgFromUrl(user, db_ret, query):
+def getResponseFromGPT(user, db_ret, query):
     import requests
     import shutil
     import os
@@ -116,6 +117,7 @@ def create_img_url(db_ret):
 def handle_text_query(user, query, index=0):
     if query == 'swaglab':
         response = {
+            'imgPath': f'/static/swaglab.jpg',
             'imageUrl': f'/static/swaglab.jpg',
             'success': True
         }   
@@ -123,6 +125,7 @@ def handle_text_query(user, query, index=0):
 
     elif query == 'sign':
         response = {
+            'imgPath': f'/87xuofmvnlud1.png',
             'imageUrl': 'https://i.redd.it/87xuofmvnlud1.png',
             'success': True
         }
@@ -154,7 +157,8 @@ def handle_text_query(user, query, index=0):
     # response = openAIImage(imgUrl)
     return {
         'success': True,
-        'imageUrl': create_img_url(db_ret) 
+        'imageUrl': create_img_url(db_ret),
+        'imagePath': db_ret.img_url
     }
 
 
@@ -196,7 +200,8 @@ def openAIGetWord(query):
 
 
 def handle_sentence_query(user, query, index=0, token=None):
-    
+    print("system time before sentence query")
+    print("time: ", time.time()*1000)
     try:
         index = int(index)
     except ValueError as e:
@@ -210,8 +215,11 @@ def handle_sentence_query(user, query, index=0, token=None):
             'success': False,
             'message': "Negative photo index"
         }
-    
+    print("system time at sentence query")
+    print("time: ", time.time()*1000)
     query = openAIGetWord(query)
+    print("system time after sentence query")
+    print("time: ", time.time()*1000)
 
     db_ret = db_query_single(user, query, index)
     vectorUsed = False
@@ -220,18 +228,25 @@ def handle_sentence_query(user, query, index=0, token=None):
         getAllClasses = db_get_all_unique_objects(user)
         extractClasses = [i.object_name for i in getAllClasses]
         print("all classes: ", extractClasses)
+        print("System time before getMostSimilar")
+        print("time: ", time.time()*1000)
         mostSimilar = getMostSimilar(query, extractClasses) 
+        print("System time after getMostSimilar")
+        print("time: ", time.time()*1000)
+        print("most similar: ", mostSimilar)
         if mostSimilar == "None":
+            print("System time after object not found")
+            print("time: ", time.time()*1000)
             return {
                 'success': False,
-                'message': "Object not found in database. Blyat Blyat Cyka. You Americans Will Meet Your Creator"
+                'message': "Object not found in database."
             }
+
         else:
             vectorUsed = True
             print("most similar: ", mostSimilar)
             db_ret = db_query_single(user, mostSimilar, index)
             if db_ret == None:
-
 
                 return {
                     'success': False,
@@ -239,19 +254,25 @@ def handle_sentence_query(user, query, index=0, token=None):
                 }
     else:
         print("object found in database")
-    response = downloadImgFromUrl(user, db_ret, query)
+    
+    print("system time before openAI")
+    print("time: ", time.time()*1000)
+    response = getResponseFromGPT(user, db_ret, query)
+    print("system time after openAI")
+    print("time: ", time.time()*1000)
     print(response.message.content)
 
     response = response.message.content
     if vectorUsed:
         response = f"Object not found in database. However, the closest object to a {query} is a {mostSimilar}. {response}"
-
-
         
     # TODO: See what other stuff is necessary in the future 
+    print("system time after sentence query")
+    print("time: ", time.time()*1000)
     return {
         'success': True,
-        'wordResponse': response
+        'wordResponse': response,
+        'imagePath': db_ret.img_url
     }    
 
 def handle_text_range_query(user, query, low=0, high=0):

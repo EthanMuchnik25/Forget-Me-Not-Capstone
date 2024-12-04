@@ -120,10 +120,43 @@ dino_confidence_threshold = 0.30
 # If inferences don't make sense, check to see if DINO server is recognizing the 
 #  words in its 'noun_phrases'
 # Be careful when changing this!!!
-dino_obj_list = ['person', 
+dino_obj_list = ['hat',
+                 'marker'
+                 'backpack',
+                 'umbrella',
+                 'shoe',
+                 'eye glasses',
+                 'handbag',
+                 'suitcase',
+                 'bottle',
+                 'plate',
+                 'cup',
+                 'fork',
+                 'knife',
+                 'spoon',
+                 'bowl',
+                 'chair',
+                 'bed',
+                 'mirror',
+                 'dining table',
+                 'window',
+                 'desk',
+                 'door',
+                 'tv',
+                 'laptop',
+                 'mouse',
+                 'remote',
+                 'keyboard',
+                 'cell phone',
+                 'book',
+                 'clock',
+                 'hair brush',
+                 'person', 
+                 'bicycle',
                  'pencil',
-                 'pen',
-                 'snake',]
+                 'watch'
+                 'bench',
+                 'wallet']
 
 def format_texts_lists(texts_lists):
     texts = ""

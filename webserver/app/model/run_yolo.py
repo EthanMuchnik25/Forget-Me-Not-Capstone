@@ -1,6 +1,7 @@
 import cv2
 from ultralytics import YOLO
 import numpy as np
+import time
 
 
 # TODO run_yolo prints something every time it runs. Is there some way to shut it 
@@ -12,7 +13,7 @@ model = YOLO("./app/model/binaries/best2.pt")
 
 
 def run_yolo(f):
-
+    print("time at beginning of run_yolo:", time.time())
     
     #change the default path to dataset.yaml
     class_names = model.names
@@ -59,6 +60,7 @@ def run_yolo(f):
     # [write the code to run the yolo here]
 
     # This code now returns a list of yolo output tuples
+    print("time at end of run_yolo:", time.time())
     return ret
 
 

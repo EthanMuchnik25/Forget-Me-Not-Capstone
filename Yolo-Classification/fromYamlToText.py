@@ -1,5 +1,5 @@
-yamlFile = 'C:\\Users\\muchn\\Documents\\Classes\\18500\\Forget-Me-Not-Capstone\\Yolo-Classification\\dataset.yaml'
-textFile = 'C:\\Users\\muchn\\Documents\\Classes\\18500\\Forget-Me-Not-Capstone\\Yolo-Classification\\categoriesNum.txt'
+yamlFile = 'data.yaml'
+textFile = 'allcategories.txt'
 finalTextFile = 'C:\\Users\\muchn\Documents\\Classes\\18500\Forget-Me-Not-Capstone\\Yolo-Classification\\categories.txt'
 with open((yamlFile), 'r') as file:
     data = file.read()
