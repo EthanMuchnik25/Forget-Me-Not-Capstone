@@ -36,7 +36,7 @@ my_app is the container name, but you can rename it if you wish
 
 Next, to run the container, and enter a shell on it, type:
 ```
-docker run -v $(pwd)/:/webserver -p 4000:80 -it --entrypoint /bin/bash --name myapp-dbg myapp-dbg
+docker run --gpus all --shm-size=16g -v $(pwd)/:/webserver -p 4000:80 -it --entrypoint /bin/bash --name myapp-dbg myapp-dbg
 ```
 
 Once you are in a shell in the container, you first want to start nginx because the dockerfile is stupid ;-;. Type this in the terminal:
@@ -48,7 +48,7 @@ This command must be run whenever you restart the container.
 
 Next, you will want to run gunicorn to get the server operational. To do this, type: 
 ```
-gunicorn -c gunicorn.conf.py --workers 1 --bind 0.0.0.0:8000 myapp:app
+gunicorn -c gunicorn.conf.py --workers 2 --bind 0.0.0.0:8000 myapp:app
 ```
 
 If you would like to get back into a shell on the container after leaving, type:

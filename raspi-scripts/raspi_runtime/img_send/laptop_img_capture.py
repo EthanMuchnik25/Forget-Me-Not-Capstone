@@ -29,3 +29,6 @@ def capture_image():
         print("Error: Could not read frame.")
     return temp_img_name
 
+if __name__ == "__main__":
+    a = capture_image()
+    print(a)

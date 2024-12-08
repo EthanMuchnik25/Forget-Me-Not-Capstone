@@ -1,0 +1,757 @@
+1949  execve("/usr/bin/tmux", ["tmux", "new"], 0x7fff0f745e70 /* 41 vars */) = 0
+1949  brk(NULL)                         = 0x55f78e767000
+1949  mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f739a5f7000
+1949  access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=18859, ...}) = 0
+1949  mmap(NULL, 18859, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f739a5f2000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libsystemd.so.0", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=910592, ...}) = 0
+1949  mmap(NULL, 915016, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a512000
+1949  mmap(0x7f739a528000, 585728, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x16000) = 0x7f739a528000
+1949  mmap(0x7f739a5b7000, 188416, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xa5000) = 0x7f739a5b7000
+1949  mmap(0x7f739a5e5000, 49152, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xd2000) = 0x7f739a5e5000
+1949  mmap(0x7f739a5f1000, 1608, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f739a5f1000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libutempter.so.0", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=14416, ...}) = 0
+1949  mmap(NULL, 16416, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a50d000
+1949  mmap(0x7f739a50e000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1000) = 0x7f739a50e000
+1949  mmap(0x7f739a50f000, 4096, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7f739a50f000
+1949  mmap(0x7f739a510000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7f739a510000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libtinfo.so.6", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=208328, ...}) = 0
+1949  mmap(NULL, 211240, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a4d9000
+1949  mmap(0x7f739a4e7000, 77824, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xe000) = 0x7f739a4e7000
+1949  mmap(0x7f739a4fa000, 57344, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x21000) = 0x7f739a4fa000
+1949  mmap(0x7f739a508000, 20480, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2e000) = 0x7f739a508000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libevent_core-2.1.so.7", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=215216, ...}) = 0
+1949  mmap(NULL, 214632, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a4a4000
+1949  mmap(0x7f739a4ad000, 126976, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x9000) = 0x7f739a4ad000
+1949  mmap(0x7f739a4cc000, 45056, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7f739a4cc000
+1949  mmap(0x7f739a4d7000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x33000) = 0x7f739a4d7000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=952616, ...}) = 0
+1949  mmap(NULL, 950296, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a3bb000
+1949  mmap(0x7f739a3cb000, 520192, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x10000) = 0x7f739a3cb000
+1949  mmap(0x7f739a44a000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x8f000) = 0x7f739a44a000
+1949  mmap(0x7f739a4a2000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xe7000) = 0x7f739a4a2000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libresolv.so.2", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=68104, ...}) = 0
+1949  mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f739a3b9000
+1949  mmap(NULL, 75912, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a3a6000
+1949  mmap(0x7f739a3a9000, 40960, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x3000) = 0x7f739a3a9000
+1949  mmap(0x7f739a3b3000, 8192, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xd000) = 0x7f739a3b3000
+1949  mmap(0x7f739a3b5000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xf000) = 0x7f739a3b5000
+1949  mmap(0x7f739a3b7000, 6280, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f739a3b7000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\220\243\2\0\0\0\0\0"..., 832) = 832
+1949  pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+1949  fstat(3, {st_mode=S_IFREG|0755, st_size=2125328, ...}) = 0
+1949  pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+1949  mmap(NULL, 2170256, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a194000
+1949  mmap(0x7f739a1bc000, 1605632, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7f739a1bc000
+1949  mmap(0x7f739a344000, 323584, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1b0000) = 0x7f739a344000
+1949  mmap(0x7f739a393000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1fe000) = 0x7f739a393000
+1949  mmap(0x7f739a399000, 52624, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f739a399000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libcap.so.2", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\340\201\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=51536, ...}) = 0
+1949  mmap(NULL, 49224, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a187000
+1949  mmap(0x7f739a18a000, 24576, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x3000) = 0x7f739a18a000
+1949  mmap(0x7f739a190000, 8192, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x9000) = 0x7f739a190000
+1949  mmap(0x7f739a192000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xb000) = 0x7f739a192000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libgcrypt.so.20", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=1340976, ...}) = 0
+1949  mmap(NULL, 1340272, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a03f000
+1949  mmap(0x7f739a04e000, 999424, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xf000) = 0x7f739a04e000
+1949  mmap(0x7f739a142000, 241664, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x103000) = 0x7f739a142000
+1949  mmap(0x7f739a17d000, 36864, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x13e000) = 0x7f739a17d000
+1949  mmap(0x7f739a186000, 880, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f739a186000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/liblz4.so.1", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=137440, ...}) = 0
+1949  mmap(NULL, 135264, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f739a01d000
+1949  mmap(0x7f739a020000, 110592, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x3000) = 0x7f739a020000
+1949  mmap(0x7f739a03b000, 8192, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1e000) = 0x7f739a03b000
+1949  mmap(0x7f739a03d000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x20000) = 0x7f739a03d000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/liblzma.so.5", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=202904, ...}) = 0
+1949  mmap(NULL, 200728, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f7399feb000
+1949  mmap(0x7f7399fee000, 139264, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x3000) = 0x7f7399fee000
+1949  mmap(0x7f739a010000, 45056, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x25000) = 0x7f739a010000
+1949  mmap(0x7f739a01b000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x30000) = 0x7f739a01b000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libzstd.so.1", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=755864, ...}) = 0
+1949  mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f7399fe9000
+1949  mmap(NULL, 757816, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f7399f2f000
+1949  mmap(0x7f7399f33000, 684032, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x4000) = 0x7f7399f33000
+1949  mmap(0x7f7399fda000, 53248, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xab000) = 0x7f7399fda000
+1949  mmap(0x7f7399fe7000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xb7000) = 0x7f7399fe7000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libgpg-error.so.0", O_RDONLY|O_CLOEXEC) = 3
+1949  read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=149760, ...}) = 0
+1949  mmap(NULL, 147880, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f7399f0a000
+1949  mmap(0x7f7399f0e000, 90112, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x4000) = 0x7f7399f0e000
+1949  mmap(0x7f7399f24000, 36864, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1a000) = 0x7f7399f24000
+1949  mmap(0x7f7399f2d000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x23000) = 0x7f7399f2d000
+1949  close(3)                          = 0
+1949  mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f7399f08000
+1949  mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f7399f05000
+1949  arch_prctl(ARCH_SET_FS, 0x7f7399f05800) = 0
+1949  set_tid_address(0x7f7399f05ad0)   = 1949
+1949  set_robust_list(0x7f7399f05ae0, 24) = 0
+1949  rseq(0x7f7399f06120, 0x20, 0, 0x53053053) = 0
+1949  mprotect(0x7f739a393000, 16384, PROT_READ) = 0
+1949  mprotect(0x7f7399f2d000, 4096, PROT_READ) = 0
+1949  mprotect(0x7f7399fe7000, 4096, PROT_READ) = 0
+1949  mprotect(0x7f739a01b000, 4096, PROT_READ) = 0
+1949  mprotect(0x7f739a03d000, 4096, PROT_READ) = 0
+1949  mprotect(0x7f739a17d000, 20480, PROT_READ) = 0
+1949  mprotect(0x7f739a192000, 4096, PROT_READ) = 0
+1949  mprotect(0x7f739a3b5000, 4096, PROT_READ) = 0
+1949  mprotect(0x7f739a4a2000, 4096, PROT_READ) = 0
+1949  mprotect(0x7f739a4d7000, 4096, PROT_READ) = 0
+1949  mprotect(0x7f739a508000, 16384, PROT_READ) = 0
+1949  mprotect(0x7f739a510000, 4096, PROT_READ) = 0
+1949  mprotect(0x7f739a5e5000, 45056, PROT_READ) = 0
+1949  mprotect(0x55f772779000, 77824, PROT_READ) = 0
+1949  mprotect(0x7f739a62f000, 8192, PROT_READ) = 0
+1949  prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+1949  munmap(0x7f739a5f2000, 18859)     = 0
+1949  getrandom("\x09\x47\x2e\x2c\x70\x00\xc5\x24", 8, GRND_NONBLOCK) = 8
+1949  brk(NULL)                         = 0x55f78e767000
+1949  brk(0x55f78e788000)               = 0x55f78e788000
+1949  prctl(PR_CAPBSET_READ, CAP_MAC_OVERRIDE) = 1
+1949  prctl(PR_CAPBSET_READ, 0x30 /* CAP_??? */) = -1 EINVAL (Invalid argument)
+1949  prctl(PR_CAPBSET_READ, CAP_CHECKPOINT_RESTORE) = 1
+1949  prctl(PR_CAPBSET_READ, 0x2c /* CAP_??? */) = -1 EINVAL (Invalid argument)
+1949  prctl(PR_CAPBSET_READ, 0x2a /* CAP_??? */) = -1 EINVAL (Invalid argument)
+1949  prctl(PR_CAPBSET_READ, 0x29 /* CAP_??? */) = -1 EINVAL (Invalid argument)
+1949  openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/usr/share/locale/locale.alias", O_RDONLY|O_CLOEXEC) = 3
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=2996, ...}) = 0
+1949  read(3, "# Locale name alias data base.\n#"..., 4096) = 2996
+1949  read(3, "", 4096)                 = 0
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/usr/lib/locale/en_US.UTF-8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/usr/lib/locale/en_US.utf8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/usr/lib/locale/en_US/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/usr/lib/locale/en.UTF-8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/usr/lib/locale/en.utf8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/usr/lib/locale/en/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/usr/lib/locale/C.UTF-8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/usr/lib/locale/C.utf8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = 3
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=360460, ...}) = 0
+1949  mmap(NULL, 360460, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f7399eac000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache", O_RDONLY|O_CLOEXEC) = 3
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=27028, ...}) = 0
+1949  mmap(NULL, 27028, PROT_READ, MAP_SHARED, 3, 0) = 0x7f7399ea5000
+1949  close(3)                          = 0
+1949  futex(0x7f739a39872c, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+1949  openat(AT_FDCWD, "/usr/lib/locale/C.UTF-8/LC_TIME", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+1949  openat(AT_FDCWD, "/usr/lib/locale/C.utf8/LC_TIME", O_RDONLY|O_CLOEXEC) = 3
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=3360, ...}) = 0
+1949  mmap(NULL, 3360, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f739a5f6000
+1949  close(3)                          = 0
+1949  openat(AT_FDCWD, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=3552, ...}) = 0
+1949  fstat(3, {st_mode=S_IFREG|0644, st_size=3552, ...}) = 0
+1949  read(3, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\6\0\0\0\6\0\0\0\0"..., 4096) = 3552
+1949  lseek(3, -2260, SEEK_CUR)         = 1292
+1949  read(3, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\6\0\0\0\6\0\0\0\0"..., 4096) = 2260
+1949  close(3)                          = 0
+1949  getcwd("/mnt/c/Users/ethanm/Documents/18500/Forget-Me-Not-Capstone", 4096) = 59
+1949  readlink("/mnt", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents/18500", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents/18500/Forget-Me-Not-Capstone", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents/18500", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents/18500/Forget-Me-Not-Capstone", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/etc", 0x7fff70f9eed0, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/etc/tmux.conf", 0x7fff70f9eed0, 1023) = -1 ENOENT (No such file or directory)
+1949  readlink("/home", 0x7fff70f9eed0, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/home/ethanm", 0x7fff70f9eed0, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/home/ethanm/.tmux.conf", 0x7fff70f9eed0, 1023) = -1 ENOENT (No such file or directory)
+1949  readlink("/home", 0x7fff70f9eed0, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/home/ethanm", 0x7fff70f9eed0, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/home/ethanm/.config", 0x7fff70f9eed0, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/home/ethanm/.config/tmux", 0x7fff70f9eed0, 1023) = -1 ENOENT (No such file or directory)
+1949  access("/bin/bash", X_OK)         = 0
+1949  getuid()                          = 1000
+1949  readlink("/tmp", 0x7fff70f9eed0, 1023) = -1 EINVAL (Invalid argument)
+1949  faccessat2(AT_FDCWD, "/tmp/", F_OK, AT_EACCESS) = 0
+1949  mkdir("/tmp/tmux-1000", 0700)     = -1 EEXIST (File exists)
+1949  newfstatat(AT_FDCWD, "/tmp/tmux-1000", {st_mode=S_IFDIR|0700, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
+1949  getuid()                          = 1000
+1949  geteuid()                         = 1000
+1949  getgid()                          = 1000
+1949  getegid()                         = 1000
+1949  getuid()                          = 1000
+1949  geteuid()                         = 1000
+1949  getgid()                          = 1000
+1949  getegid()                         = 1000
+1949  getuid()                          = 1000
+1949  geteuid()                         = 1000
+1949  getgid()                          = 1000
+1949  getegid()                         = 1000
+1949  pipe2([3, 4], O_NONBLOCK|O_CLOEXEC) = 0
+1949  getpid()                          = 1949
+1949  getuid()                          = 1000
+1949  geteuid()                         = 1000
+1949  getgid()                          = 1000
+1949  getegid()                         = 1000
+1949  prctl(PR_SET_NAME, "tmux: client") = 0
+1949  uname({sysname="Linux", nodename="DESKTOP-QLRUEQR", ...}) = 0
+1949  getpid()                          = 1949
+1949  rt_sigaction(SIGPIPE, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, NULL, 8) = 0
+1949  rt_sigaction(SIGTSTP, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, NULL, 8) = 0
+1949  rt_sigaction(SIGTTIN, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, NULL, 8) = 0
+1949  rt_sigaction(SIGTTOU, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, NULL, 8) = 0
+1949  rt_sigaction(SIGQUIT, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, NULL, 8) = 0
+1949  rt_sigaction(SIGINT, {sa_handler=0x7f739a4c89e0, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1949  rt_sigaction(SIGHUP, {sa_handler=0x7f739a4c89e0, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1949  rt_sigaction(SIGCHLD, {sa_handler=0x7f739a4c89e0, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1949  rt_sigaction(SIGCONT, {sa_handler=0x7f739a4c89e0, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1949  rt_sigaction(SIGTERM, {sa_handler=0x7f739a4c89e0, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1949  rt_sigaction(SIGUSR1, {sa_handler=0x7f739a4c89e0, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1949  rt_sigaction(SIGUSR2, {sa_handler=0x7f739a4c89e0, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1949  rt_sigaction(SIGWINCH, {sa_handler=0x7f739a4c89e0, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f739a1d9320}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1949  socket(AF_UNIX, SOCK_STREAM, 0)   = 5
+1949  connect(5, {sa_family=AF_UNIX, sun_path="/tmp/tmux-1000/default"}, 110) = 0
+1949  fcntl(5, F_GETFL)                 = 0x2 (flags O_RDWR)
+1949  fcntl(5, F_SETFL, O_RDWR|O_NONBLOCK) = 0
+1949  brk(0x55f78e7ad000)               = 0x55f78e7ad000
+1949  getpid()                          = 1949
+1949  getsockopt(5, SOL_SOCKET, SO_PEERCRED, {pid=1607, uid=1000, gid=1000}, [12]) = 0
+1949  getcwd("/mnt/c/Users/ethanm/Documents/18500/Forget-Me-Not-Capstone", 4096) = 59
+1949  readlink("/mnt", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents/18500", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents/18500/Forget-Me-Not-Capstone", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents/18500", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  readlink("/mnt/c/Users/ethanm/Documents/18500/Forget-Me-Not-Capstone", 0x7fff70f9df20, 1023) = -1 EINVAL (Invalid argument)
+1949  ioctl(0, TCGETS, {c_iflag=BRKINT|ICRNL|IXON|IXANY|IMAXBEL|IUTF8, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD|HUPCL, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
+1949  ioctl(0, TCGETS, {c_iflag=BRKINT|ICRNL|IXON|IXANY|IMAXBEL|IUTF8, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD|HUPCL, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
+1949  fstat(0, {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0x2), ...}) = 0
+1949  readlink("/proc/self/fd/0", "/dev/pts/2", 4095) = 10
+1949  newfstatat(AT_FDCWD, "/dev/pts/2", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0x2), ...}, 0) = 0
+1949  ioctl(0, TCGETS, {c_iflag=BRKINT|ICRNL|IXON|IXANY|IMAXBEL|IUTF8, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD|HUPCL, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
+1949  newfstatat(AT_FDCWD, "/home/ethanm/.terminfo", 0x55f78e78e180, 0) = -1 ENOENT (No such file or directory)
+1949  newfstatat(AT_FDCWD, "/etc/terminfo", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+1949  newfstatat(AT_FDCWD, "/lib/terminfo", 0x55f78e78e210, 0) = -1 ENOENT (No such file or directory)
+1949  newfstatat(AT_FDCWD, "/usr/share/terminfo", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0
+1949  access("/etc/terminfo/x/xterm-256color", R_OK) = -1 ENOENT (No such file or directory)
+1949  access("/usr/share/terminfo/x/xterm-256color", R_OK) = 0
+1949  getuid()                          = 1000
+1949  setfsuid(1000)                    = 1000
+1949  getgid()                          = 1000
+1949  setfsgid(1000)                    = 1000
+1949  openat(AT_FDCWD, "/usr/share/terminfo/x/xterm-256color", O_RDONLY) = 6
+1949  geteuid()                         = 1000
+1949  setfsuid(1000)                    = 1000
+1949  getegid()                         = 1000
+1949  setfsgid(1000)                    = 1000
+1949  fstat(6, {st_mode=S_IFREG|0644, st_size=4071, ...}) = 0
+1949  read(6, "\36\2%\0&\0\17\0\235\1Z\6xterm-256color|xterm"..., 32768) = 4071
+1949  read(6, "", 28672)                = 0
+1949  close(6)                          = 0
+1949  ioctl(0, TCGETS, {c_iflag=BRKINT|ICRNL|IXON|IXANY|IMAXBEL|IUTF8, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD|HUPCL, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
+1949  ioctl(0, TCGETS, {c_iflag=BRKINT|ICRNL|IXON|IXANY|IMAXBEL|IUTF8, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD|HUPCL, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
+1949  ioctl(0, TCGETS, {c_iflag=BRKINT|ICRNL|IXON|IXANY|IMAXBEL|IUTF8, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD|HUPCL, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
+1949  ioctl(0, TCGETS, {c_iflag=BRKINT|ICRNL|IXON|IXANY|IMAXBEL|IUTF8, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD|HUPCL, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
+1949  ioctl(0, TIOCGWINSZ, {ws_row=39, ws_col=107, ws_xpixel=0, ws_ypixel=0}) = 0
+1949  close(2147483647)                 = -1 EBADF (Bad file descriptor)
+1949  dup(0)                            = 6
+1949  dup(1)                            = 7
+1949  getpid()                          = 1949
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="d\0\0\0\24\0\0\0\10\0\0\0\377\377\377\377\0\0\1\30", iov_len=20}, {iov_base="o\0\0\0\30\0\0\0\10\0\0\0\377\377\377\377\0\0\1\30\0\0\0\0", iov_len=24}, {iov_base="e\0\0\0\37\0\0\0\10\0\0\0\377\377\377\377xterm-256color\0", iov_len=31}, {iov_base="m\0\0\0\24\0\0\0\10\0\0\0\377\377\377\377\0\0\0\0", iov_len=20}, {iov_base="f\0\0\0\33\0\0\0\10\0\0\0\377\377\377\377/dev/pts/2\0", iov_len=27}, {iov_base="l\0\0\0K\0\0\0\10\0\0\0\377\377\377\377/mnt/c/Users/eth"..., iov_len=75}, {iov_base="p\0\0\0J\0\0\0\10\0\0\0\377\377\377\377acsc=``aaffggiij"..., iov_len=74}, {iov_base="p\0\0\0\25\0\0\0\10\0\0\0\377\377\377\377am=1\0", iov_len=21}, {iov_base="p\0\0\0\25\0\0\0\10\0\0\0\377\377\377\377AX=1\0", iov_len=21}, {iov_base="p\0\0\0\26\0\0\0\10\0\0\0\377\377\377\377bce=1\0", iov_len=22}, {iov_base="p\0\0\0\26\0\0\0\10\0\0\0\377\377\377\377bel=\7\0", iov_len=22}, {iov_base="p\0\0\0\33\0\0\0\10\0\0\0\377\377\377\377blink=\33[5m\0", iov_len=27}, {iov_base="p\0\0\0\32\0\0\0\10\0\0\0\377\377\377\377bold=\33[1m\0", iov_len=26}, {iov_base="p\0\0\0\35\0\0\0\10\0\0\0\377\377\377\377civis=\33[?25l\0", iov_len=29}, {iov_base="p\0\0\0\36\0\0\0\10\0\0\0\377\377\377\377clear=\33[H\33[2J\0", iov_len=30}, {iov_base="p\0\0\0#\0\0\0\10\0\0\0\377\377\377\377cnorm=\33[?12l\33[?2"..., iov_len=35}, {iov_base="p\0\0\0\33\0\0\0\10\0\0\0\377\377\377\377colors=256\0", iov_len=27}, {iov_base="p\0\0\0\32\0\0\0\10\0\0\0\377\377\377\377Cr=\33]112\7\0", iov_len=26}, {iov_base="p\0\0\0\37\0\0\0\10\0\0\0\377\377\377\377Cs=\33]12;%p1%s\7\0", iov_len=31}, {iov_base="p\0\0\0%\0\0\0\10\0\0\0\377\377\377\377csr=\33[%i%p1%d;%p"..., iov_len=37}, {iov_base="p\0\0\0\35\0\0\0\10\0\0\0\377\377\377\377cub=\33[%p1%dD\0", iov_len=29}, {iov_base="p\0\0\0\27\0\0\0\10\0\0\0\377\377\377\377cub1=\10\0", iov_len=23}, {iov_base="p\0\0\0\35\0\0\0\10\0\0\0\377\377\377\377cud=\33[%p1%dB\0", iov_len=29}, {iov_base="p\0\0\0\27\0\0\0\10\0\0\0\377\377\377\377cud1=\n\0", iov_len=23}, {iov_base="p\0\0\0\35\0\0\0\10\0\0\0\377\377\377\377cuf=\33[%p1%dC\0", iov_len=29}, {iov_base="p\0\0\0\31\0\0\0\10\0\0\0\377\377\377\377cuf1=\33[C\0", iov_len=25}, {iov_base="p\0\0\0%\0\0\0\10\0\0\0\377\377\377\377cup=\33[%i%p1%d;%p"..., iov_len=37}, {iov_base="p\0\0\0\35\0\0\0\10\0\0\0\377\377\377\377cuu=\33[%p1%dA\0", iov_len=29}, {iov_base="p\0\0\0\31\0\0\0\10\0\0\0\377\377\377\377cuu1=\33[A\0", iov_len=25}, {iov_base="p\0\0\0 \0\0\0\10\0\0\0\377\377\377\377cvvis=\33[?12;25h\0", iov_len=32}, {iov_base="p\0\0\0\35\0\0\0\10\0\0\0\377\377\377\377dch=\33[%p1%dP\0", iov_len=29}, {iov_base="p\0\0\0\31\0\0\0\10\0\0\0\377\377\377\377dch1=\33[P\0", iov_len=25}, ...], msg_iovlen=206, msg_controllen=0, msg_flags=0}, 0) = 5933
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="h\0\0\0\20\0\1\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_control=[{cmsg_len=20, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, cmsg_data=[6]}], msg_controllen=24, msg_flags=0}, 0) = 16
+1949  close(6)                          = 0
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="n\0\0\0\20\0\1\0\10\0\0\0\377\377\377\377", iov_len=16}, {iov_base="k\0\0\0\24\0\0\0\10\0\0\0\377\377\377\377\235\7\0\0", iov_len=20}, {iov_base="i\0\0\0 \0\0\0\10\0\0\0\377\377\377\377SHELL=/bin/bash\0", iov_len=32}, {iov_base="i\0\0\0$\0\0\0\10\0\0\0\377\377\377\377COLORTERM=trueco"..., iov_len=36}, {iov_base="i\0\0\0(\0\0\0\10\0\0\0\377\377\377\377WSL2_GUI_APPS_EN"..., iov_len=40}, {iov_base="i\0\0\0,\0\0\0\10\0\0\0\377\377\377\377TERM_PROGRAM_VER"..., iov_len=44}, {iov_base="i\0\0\0'\0\0\0\10\0\0\0\377\377\377\377WSL_DISTRO_NAME="..., iov_len=39}, {iov_base="i\0\0\0%\0\0\0\10\0\0\0\377\377\377\377NAME=DESKTOP-QLR"..., iov_len=37}, {iov_base="i\0\0\0O\0\0\0\10\0\0\0\377\377\377\377PWD=/mnt/c/Users"..., iov_len=79}, {iov_base="i\0\0\0\37\0\0\0\10\0\0\0\377\377\377\377LOGNAME=ethanm\0", iov_len=31}, {iov_base="i\0\0\0\205\0\0\0\10\0\0\0\377\377\377\377VSCODE_GIT_ASKPA"..., iov_len=133}, {iov_base="i\0\0\0\"\0\0\0\10\0\0\0\377\377\377\377HOME=/home/ethan"..., iov_len=34}, {iov_base="i\0\0\0\35\0\0\0\10\0\0\0\377\377\377\377LANG=C.UTF-8\0", iov_len=29}, {iov_base="i\0\0\0001\0\0\0\10\0\0\0\377\377\377\377WSL_INTEROP=/run"..., iov_len=49}, {iov_base="i\0\0\0)\7\0\0\10\0\0\0\377\377\377\377LS_COLORS=rs=0:d"..., iov_len=1833}, {iov_base="i\0\0\0\\\0\0\0\10\0\0\0\377\377\377\377VIRTUAL_ENV=/mnt"..., iov_len=92}, {iov_base="i\0\0\0*\0\0\0\10\0\0\0\377\377\377\377WAYLAND_DISPLAY="..., iov_len=42}, {iov_base="i\0\0\0000\0\0\0\10\0\0\0\377\377\377\377SSL_CERT_DIR=/us"..., iov_len=48}, {iov_base="i\0\0\0\223\0\0\0\10\0\0\0\377\377\377\377GIT_ASKPASS=/hom"..., iov_len=147}, {iov_base="i\0\0\0/\0\0\0\10\0\0\0\377\377\377\377VSCODE_GIT_ASKPA"..., iov_len=47}, {iov_base="i\0\0\0002\0\0\0\10\0\0\0\377\377\377\377LESSCLOSE=/usr/b"..., iov_len=50}, {iov_base="i\0\0\0$\0\0\0\10\0\0\0\377\377\377\377TERM=xterm-256co"..., iov_len=36}, {iov_base="i\0\0\0000\0\0\0\10\0\0\0\377\377\377\377LESSOPEN=| /usr/"..., iov_len=48}, {iov_base="i\0\0\0\34\0\0\0\10\0\0\0\377\377\377\377USER=ethanm\0", iov_len=28}, {iov_base="i\0\0\0P\0\0\0\10\0\0\0\377\377\377\377VSCODE_GIT_IPC_H"..., iov_len=80}, {iov_base="i\0\0\0\33\0\0\0\10\0\0\0\377\377\377\377DISPLAY=:0\0", iov_len=27}, {iov_base="i\0\0\0\30\0\0\0\10\0\0\0\377\377\377\377SHLVL=1\0", iov_len=24}, {iov_base="i\0\0\0*\0\0\0\10\0\0\0\377\377\377\377BASH_ENV=/etc/ba"..., iov_len=42}, {iov_base="i\0\0\0+\0\0\0\10\0\0\0\377\377\377\377VIRTUAL_ENV_PROM"..., iov_len=43}, {iov_base="i\0\0\0000\0\0\0\10\0\0\0\377\377\377\377XDG_RUNTIME_DIR="..., iov_len=48}, {iov_base="i\0\0\0004\0\0\0\10\0\0\0\377\377\377\377SSL_CERT_FILE=/u"..., iov_len=52}, {iov_base="i\0\0\0\253\0\0\0\10\0\0\0\377\377\377\377PS1=\\[\33]633;A\7\\]"..., iov_len=171}, ...], msg_iovlen=44, msg_control=[{cmsg_len=20, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, cmsg_data=[7]}], msg_controllen=24, msg_flags=0}, 0) = 5787
+1949  close(7)                          = 0
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\310\0\0\0\30\0\0\0\10\0\0\0\377\377\377\377\1\0\0\0new\0", iov_len=24}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 24
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=5, revents=POLLIN}])
+1949  getpid()                          = 1949
+1949  openat(AT_FDCWD, "/proc/1949/fd", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 6
+1949  fstat(6, {st_mode=S_IFDIR|0500, st_size=0, ...}) = 0
+1949  getdents64(6, 0x55f78e79e1b0 /* 11 entries */, 32768) = 264
+1949  getdents64(6, 0x55f78e79e1b0 /* 0 entries */, 32768) = 0
+1949  close(6)                          = 0
+1949  prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+1949  recvmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\317\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=65535}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGWINCH {si_signo=SIGWINCH, si_code=SI_KERNEL} ---
+1949  write(4, "\34", 1)                = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\34", 1024)              = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\320\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+1949  --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=695, si_uid=1000} ---
+1949  write(4, "\1", 1)                 = 1
+1949  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+1949  read(3, "\1", 1024)               = 1
+1949  read(3, 0x7f739a4d8240, 1024)     = -1 EAGAIN (Resource temporarily unavailable)
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN|POLLOUT}], 2, -1) = 1 ([{fd=5, revents=POLLOUT}])
+1949  sendmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\315\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=16}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  poll([{fd=3, events=POLLIN}, {fd=5, events=POLLIN}], 2, -1) = 1 ([{fd=5, revents=POLLIN}])
+1949  getpid()                          = 1949
+1949  openat(AT_FDCWD, "/proc/1949/fd", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 6
+1949  fstat(6, {st_mode=S_IFDIR|0500, st_size=0, ...}) = 0
+1949  getdents64(6, 0x55f78e79e1b0 /* 11 entries */, 32768) = 264
+1949  getdents64(6, 0x55f78e79e1b0 /* 0 entries */, 32768) = 0
+1949  close(6)                          = 0
+1949  prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+1949  recvmsg(5, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\314\0\0\0\20\0\0\0\10\0\0\0\377\377\377\377", iov_len=65535}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, 0) = 16
+1949  fcntl(0, F_GETFL)                 = 0x2 (flags O_RDWR)
+1949  fcntl(0, F_SETFL, O_RDWR)         = 0
+1949  fcntl(1, F_GETFL)                 = 0x2 (flags O_RDWR)
+1949  fcntl(1, F_SETFL, O_RDWR)         = 0
+1949  fcntl(2, F_GETFL)                 = 0x2 (flags O_RDWR)
+1949  fcntl(2, F_SETFL, O_RDWR)         = 0
+1949  fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0x2), ...}) = 0
+1949  write(1, "[lost tty]\n", 11)      = 11
+1949  getppid()                         = 1946
+1949  exit_group(1)                     = ?
+1949  +++ exited with 1 +++

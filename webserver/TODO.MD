@@ -23,6 +23,10 @@ This hopes to document some of the things we probably eventually have to get sor
 - [ ] It seems like YOLO resizes the images to only work on 384x640
   - Is this intentional?
   - If so, should we decrease image size?
+- [ ] rewrite client script
+  - Use library functions
+  - restart upon crash?
+  - mic queries?
 
 ### Proof of concept
 (Mostl are done - see Complete)
@@ -41,7 +45,8 @@ This hopes to document some of the things we probably eventually have to get sor
 - [ ] Database solidified and implemented
   - [x] Mock database made
   - [ ] Real databases implemented
-    - [ ] SQLITE
+    - [x] SQLITE
+      - NOTE: Not solid, but we don't need it to be for the demo
     - [ ] RDS
 - [x] mic/recieve workflow
 - [ ] Run on cloud
@@ -58,29 +63,23 @@ This hopes to document some of the things we probably eventually have to get sor
   - [ ] mic and speaker
   - [x] SD card 
   - [x] jetson dongle
+  - [ ] new cable
 
 ### Software Engineering - increase speed of development
 - [ ] Add versions for all the python packages
 - [x] Refactor database layout - each version gets it's own dir
-- [ ] Re-refactor database layout
-  - [ ] 1 table for all users
-  - [ ] no tuples to strings, col for each
-  - [ ] integer ids
-    - one table has per-user info: uname -> id | pw
-    - other has id -> [object record]
-  - [ ] don't open and close connection every time?
 
 ### Website: user flow
 How should a user interact with our website?
 
 - [x] Discuss: Should we invest time in a fancy web framework?
-- [ ] Implement basic web framework
+- [x] Implement basic web framework
 - [ ] What pages should our website have?
   - Will we have a top-level website? Must we buy a domain?
   - home page, login, auth, eventually our other webpage
   - do urls make sense?
-- [ ] How should UI look? 
-  - [ ] How should users be able to find what they want?
+- [x] How should UI look? 
+  - [x] How should users be able to find what they want?
     - Thumbnails?
     - Date entry?
     - Dropdown?
@@ -88,7 +87,7 @@ How should a user interact with our website?
       - Many policy ideas required to implement this... table join? weird query?
 - [ ] What differences should there be for web vs local versions?
   - How can I implement those differences?
-- [ ] UI sketches
+- [x] UI sketches
 - [ ] Discussion points for when frontend is implemented 
   - How exactly should the average api response look?
   - What code does what?
@@ -112,7 +111,7 @@ How should a user interact with our website?
   - Change password?
     - raspi must change creds... Can this be improved?
   - 2fa?
-- [ ] Discuss how login flow should go
+- [x] Discuss how login flow should go
   - [x] Discuss what should happen when someone deletes their account
   - [x] Discuss what should happen when someone logs out
     - Should all things log out?
@@ -141,19 +140,12 @@ How should a user interact with our website?
 
 ### Performance testing: latency
 
-#### Performance counters
-- [x] Discuss what performance counters we want
-- [x] Design performance counting in a way that won't slow everything down a ton
-  - real-time?
-  - interactive?
-- [ ] Add the discussed performance counters
-
 #### Raspi: Get testing
 - [ ] Could we literally run the whole system on a raspberry pi?
   - [ ] Ensure tests fall within guidelines
     - observe latencies
-- [ ] Check scaling for parallel
-- [ ] inspect for bottleneck
+- [x] Check scaling for parallel
+- [x] inspect for bottleneck
 
 #### Cloud: Get testing
 - [ ] Make sure testing perf runs on cloud
@@ -179,7 +171,6 @@ How should a user interact with our website?
 
 ### Performance testing: data
 - [ ] come up with """normal trace"""
-
 
 
 ### Optimizations
@@ -210,6 +201,29 @@ How should a user interact with our website?
     - Quantization?
     - tensorrt?
   
+### Presentability/hardware
+- [ ] Hardware
+  - [x] Design raspi case
+  - [x] Print raspi case
+  - [ ] Test raspi case
+  - [ ] Repeat above steps
+
+### Low Priority:
+
+### Database refactor
+- [ ] refactor layout
+  - 1 table for all users
+  - no tuples to strings, col for each
+  - integer ids
+    - one table has per-user info: uname -> id | pw
+    - other has id -> [object record]
+- [ ] don't open and close connection every time?
+- [ ] Verify all functionality
+  - Delete workflow
+    - Deleting users doesn't delete their images?
+  - Token invalidation workflow
+- [ ] Investigate failure on first startup - some file not made that gets made on exit??
+- [ ] Sanitize inputs
 
 
 ### Documentation maintenance
@@ -234,15 +248,6 @@ How should a user interact with our website?
 - [ ] document anything someone would need to get up and running with the system
   - [ ] document the raspi script 
   - [ ] document the convenient script for testing -> modify the convenient script so that it makes an account
-
-### Not mine
-
-#### Presentability
-- [ ] Hardware
-  - [x] Design raspi case
-  - [x] Print raspi case
-  - [ ] Test raspi case
-  - [ ] Repeat above steps
 
 
 ## Design decisions
@@ -319,6 +324,14 @@ Designing testing methodology for concurrent testing:
   - [x] Ensure tests fall within guidelines
     - observe latencies
   - RESULT: Giving up on this shit
+
+
+#### Performance counters
+- [x] Discuss what performance counters we want
+- [x] Design performance counting in a way that won't slow everything down a ton
+  - real-time?
+  - interactive?
+- [x] Add the discussed performance counters
 
 
 ## Personal notes dump
