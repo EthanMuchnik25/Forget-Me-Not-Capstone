@@ -57,6 +57,11 @@ def login_page():
 def register_page():
     return render_template('register.html')
 
+@app.route('/speech.html')
+@time_and_log
+def speech_page():
+    return render_template('speech.html')
+
 # ========================== Auth Routes ==========================
 
 @app.route("/test_auth")
