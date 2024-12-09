@@ -102,7 +102,6 @@
             }
         }
 
-        /* Styling for the buttons */
         .button-container {
             margin-top: 20px;
         }
@@ -156,10 +155,10 @@
 </div>
 
 <script>
-    // Function to send data to the /voice_query endpoint
+
     async function sendVoiceQuery(query, index) {
-        const url = "/voice_query"; // The endpoint
-        const token = localStorage.getItem('token'); // Replace with actual JWT token retrieval logic
+        const url = "/voice_query"; 
+        const token = localStorage.getItem('token');
 
         const data = {
             query: query,
@@ -171,7 +170,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // JWT token
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(data)
             });
@@ -179,7 +178,7 @@
             if (response.ok) {
                 const result = await response.json();
                 console.log("Response from server:", result);
-                updateUI(result); // Optional: Update the UI with the server response
+                updateUI(result); 
             } else {
                 console.error("Failed to send voice query:", response.statusText);
             }
@@ -188,28 +187,27 @@
         }
     }
 
-    // Example function to update the UI with the response data
     function updateUI(data) {
         const statusDiv = document.getElementById('status');
         statusDiv.textContent = `Response received: ${JSON.stringify(data)}`;
         statusDiv.classList.add('speaking');
     }
 
-    // Simulate voice query sending when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        const query = "Example voice input"; // Replace this with actual voice input logic
-        const index = 0; // Replace with the actual index logic, if applicable
 
-        // Send the voice query to the server
+    document.addEventListener('DOMContentLoaded', () => {
+        const query = "Example voice input"; 
+        const index = 0; 
+
+
         sendVoiceQuery(query, index);
     });
 
-    // Back Button functionality: takes the user back to img_search.html
+
     document.getElementById('back-button').addEventListener('click', function () {
         window.location.href = "img_search.html";
     });
 
-    // Simulated status changes for Listening and Speaking
+
     const statusDiv = document.getElementById('status');
     setInterval(() => {
         if (statusDiv.classList.contains('listening')) {
