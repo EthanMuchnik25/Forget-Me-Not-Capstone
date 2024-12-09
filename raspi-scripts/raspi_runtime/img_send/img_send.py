@@ -71,7 +71,7 @@ def send_img_req(img_file):
 
     files = {'file': img_file}
     headers = {'Authorization': f'Bearer {token}'}
-    
+    print("headers", headers)
     response = requests.post(img_url, headers=headers, files=files)
     if response.status_code == 200:
         return

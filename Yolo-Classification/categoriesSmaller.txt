@@ -1,0 +1,20 @@
+tv
+chair
+person
+book
+dining table
+bed
+handbag
+cell phone
+bowl
+laptop
+mouse
+keyboard
+cup
+spoon
+bottle
+couch
+remote
+scissors
+toothbrush
+toaster

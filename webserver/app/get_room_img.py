@@ -21,7 +21,7 @@ else:
 font_scale = 1
 font_thickness = 5
 rect_line_thickness = 7
-def draw_boxes(img_handle, obj):
+def draw_box(img_handle, obj):
     nparr = np.frombuffer(img_handle.read(), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     height, width, _ = img.shape
@@ -48,11 +48,12 @@ def draw_boxes(img_handle, obj):
 
 def fs_get_room_img(user, db_ret):
     # NOTE: May be none
+    print("db_ret.img_url: ", db_ret.img_url)
     img = db_get_image(user, db_ret.img_url)
     if img == None:
         return None
 
-    box_img = draw_boxes(img, db_ret)
+    box_img = draw_box(img, db_ret)
 
     img.close() 
 

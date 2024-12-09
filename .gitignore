@@ -157,3 +157,10 @@ tmp/
 
 
 *groundingdino_swint_ogc.pth*
+*.pth*
+*.pth.*
+*my_image.tar*
+*cat*
+*preds*
+*annotations*
+mmdetection*

@@ -94,7 +94,8 @@ def send_text_query(server_url, token, query: str, index: int):
     response = requests.get(query_url, headers=token_header(token))
     if response.ok:
         img_url = response.json().get('imageUrl')
-        return img_url
+        img_path = response.json().get('imagePath')
+        return (img_url, img_path)
     else:
         print('Send text query error: ',response.text)
         return None
