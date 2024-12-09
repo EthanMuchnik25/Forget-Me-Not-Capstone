@@ -23,7 +23,6 @@ def read_creds_file():
         pw = file.readline().strip()
         return (uname, pw)
     raise Exception("Failed acquiring credentials from file. Does file exist?")
-<<<<<<< HEAD
 
 
 def read_token_file():
@@ -67,7 +66,6 @@ def reauthenticate():
     return False
 
 
-=======
 
 def read_token_file():
     if not os.path.exists(Config.TOKEN_FILE_PATH):
@@ -109,7 +107,6 @@ def reauthenticate():
     return False
 
 
->>>>>>> ccbb3579298f9701f119b948cdd104aa2efc9120
 def send_mic_query(query_text):
     global token
     global mic_url
