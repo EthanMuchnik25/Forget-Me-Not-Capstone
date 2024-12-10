@@ -24,49 +24,6 @@ def read_creds_file():
         return (uname, pw)
     raise Exception("Failed acquiring credentials from file. Does file exist?")
 
-
-def read_token_file():
-    if not os.path.exists(Config.TOKEN_FILE_PATH):
-        with open(Config.TOKEN_FILE_PATH, "w") as file:
-            file.write("")
-
-    with open(Config.TOKEN_FILE_PATH, "r") as file:
-        token = file.readline().strip()
-        return token
-    raise Exception("Failed acquiring token from file")
-
-
-def write_token_file(new_token):
-    with open(Config.TOKEN_FILE_PATH, "w") as file:
-        file.write(new_token)
-
-def set_new_token(new_token):
-    global token
-    write_token_file(new_token)
-    token = new_token
-
-def reauthenticate():
-    login_url = Config.URL + "/login"
-    uname, pw = read_creds_file()
-    payload = {
-        'username': uname,
-        'password': pw
-        }
-    response = requests.post(login_url, json=payload)
-
-    if response.status_code == 200:
-        print('Login successful!')
-        print('Access token:', response.json().get('access_token'))
-        set_new_token(response.json().get('access_token'))
-        return True
-    elif response.status_code == 400:
-        print('Login failed:', response.json().get('msg'))
-    else:
-        print('Unexpected error:', response.status_code, response.text)
-    return False
-
-
-
 def read_token_file():
     if not os.path.exists(Config.TOKEN_FILE_PATH):
         with open(Config.TOKEN_FILE_PATH, "w") as file:

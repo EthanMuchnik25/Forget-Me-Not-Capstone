@@ -6,7 +6,6 @@ def speak(text):
 
     # Set the output device to the Mac's built-in speaker (optional)
     engine.setProperty('volume', 1.0)  # Max volume
-
     engine.setProperty('voice', "com.apple.voice.compact.ru-RU.Milena")
 
     # com.apple.speech.synthesis.voice.GoodNews

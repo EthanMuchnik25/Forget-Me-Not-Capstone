@@ -7,4 +7,4 @@ model = whisper.load_model("base")
 result = model.transcribe("Recordings/recording2.wav")
 
 # Print the recognized text
-print(result['text'])
+print("hello", result['text'])

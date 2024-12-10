@@ -9,6 +9,9 @@ from config import Config
 import os
 from PIL import Image
 from io import BytesIO
+import asyncio
+import websockets
+import functools
 from macSpeaker import speak
 if Config.SPEECH_ENGINE == "MAC":
     from macSpeaker import speak
@@ -46,40 +49,49 @@ def read_token_file():
         return token
     raise Exception("Failed acquiring token from file")
 
-def listen(audio_queue, state):
-    print("Starting audio listening process...")
-    sample_rate = 16000
-    recording_data = []
+# def listen(audio_queue, state):
+#     print("Starting audio listening process...")
+#     sample_rate = 16000
+#     recording_data = []
     
-    def audio_callback(indata, frames, time, status):
-        recording_data.append(indata.copy())
+#     def audio_callback(indata, frames, time, status):
+#         recording_data.append(indata.copy())
 
-    try:
-        with sd.InputStream(callback=audio_callback, 
-                          samplerate=sample_rate,
-                          channels=1,
-                          dtype=np.float32):
-            print("\nRecording... (Press Ctrl+C to stop)")
+#     try:
+#         with sd.InputStream(callback=audio_callback, 
+#                           samplerate=sample_rate,
+#                           channels=1,
+#                           dtype=np.float32):
+#             print("\nRecording... (Press Ctrl+C to stop)")
             
-            while True:
-                current_state = state.value
-                if current_state in [State.LISTENING_FOR_FRANK.value, State.INTAKING_QUERY.value]:
-                    recording_data.clear()
-                    time.sleep(2)
+#             while True:
+#                 current_state = state.value
+#                 if current_state in [State.LISTENING_FOR_FRANK.value, State.INTAKING_QUERY.value]:
+#                     recording_data.clear()
+#                     time.sleep(2)
                     
-                    # if current_state == State.INTAKING_QUERY.value:
-                    #     print("listening")
+#                     # if current_state == State.INTAKING_QUERY.value:
+#                     #     print("listening")
 
-                    if recording_data:
-                        # print("\nProcessing audio chunk...")
-                        audio = np.concatenate(recording_data, axis=0)
-                        audio = audio.flatten()
-                        audio_queue.put(audio)
+#                     if recording_data:
+#                         # print("\nProcessing audio chunk...")
+#                         audio = np.concatenate(recording_data, axis=0)
+#                         audio = audio.flatten()
+#                         audio_queue.put(audio)
 
-    except KeyboardInterrupt:
-        print("\nRecording stopped")
-    except Exception as e:
-        print(f"\nError in listen process: {e}")
+#     except KeyboardInterrupt:
+#         print("\nRecording stopped")
+#     except Exception as e:
+#         print(f"\nError in listen process: {e}")
+
+
+def listen(audio_queue, state):
+    """
+    Starts the WebSocket server to listen for audio data sent
+    from the frontend. Audio data is placed into the queue for transcription.
+    """
+    print("Starting WebSocket-based audio listener...")
+    start_audio_server(audio_queue, state)
 
 def reauthenticate():
     login_url = Config.URL + "/login"
@@ -217,7 +229,8 @@ def transcribe(audio_queue, state):
 def main():
     audio_queue = Queue(maxsize=10)
     state = Value('i', State.LISTENING_FOR_FRANK.value)
-    
+    asyncio.run(start_audio_server(audio_queue, state))
+
     listen_process = Process(target=listen, args=(audio_queue, state))
     transcribe_process = Process(target=transcribe, args=(audio_queue, state))
 
@@ -235,5 +248,53 @@ def main():
         listen_process.join()
         transcribe_process.join()
 
+async def audio_receiver(websocket, audio_queue, state, path = None):
+    """
+    Receives audio data from the frontend WebSocket client
+    and puts it into the audio queue for transcription.
+    """
+    print("Client connected for audio streaming")
+    try:
+        while True:
+            audio_chunk = await websocket.recv()
+            audio_array = np.frombuffer(audio_chunk, dtype=np.float32)
+
+            audio_queue.put(audio_array)
+
+            current_state = state.value
+            if current_state == State.LISTENING_FOR_FRANK.value:
+                state.value = State.INTAKING_QUERY.value
+
+    except websockets.exceptions.ConnectionClosed:
+        print("Client disconnected from audio stream")
+    except Exception as e:
+        print(f"Error in audio receiver: {e}")
+
+
+import numpy as np
+
+async def audio_handler(connection, audio_queue, state, path=None):
+    print(f"New connection: {connection} with path: {path}")
+    try:
+        async for message in connection:
+            audio_data = np.frombuffer(message, dtype=np.float32)
+            audio_queue.put(audio_data)
+            if state.value == State.LISTENING_FOR_FRANK.value:
+                state.value = State.INTAKING_QUERY.value
+    except Exception as e:
+        print(f"Error in audio handler: {e}")
+    finally:
+        await connection.close()
+
+async def start_audio_server(audio_queue, state):
+    print("Starting WebSocket server on localhost:4001...")
+    server = await websockets.serve(functools.partial(audio_handler, audio_queue=audio_queue, state=state), "localhost", 4001)
+    print("WebSocket server is running. Waiting for connections...")
+    await server.wait_closed()
+
+
+
 if __name__ == "__main__":
     main()
+
+
