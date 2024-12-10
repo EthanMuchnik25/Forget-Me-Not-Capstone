@@ -2,6 +2,7 @@ import sounddevice as sd
 import numpy as np
 import whisper
 import time
+import logging
 from multiprocessing import Queue, Process, Value
 from enum import Enum
 import requests
@@ -9,15 +10,21 @@ from config import Config
 import os
 from PIL import Image
 from io import BytesIO
-import asyncio
-import websockets
-import functools
-from macSpeaker import speak
 if Config.SPEECH_ENGINE == "MAC":
     from macSpeaker import speak
 elif Config.SPEECH_ENGINE == "GOOGLE":
     from googlespeak import speak_text as speak
 # from googlespeak import speak_text as speak
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, 
+    format='%(message)s',
+    handlers=[ 
+        logging.FileHandler('../../webserver/app/app.log')
+        # logging.StreamHandler()         
+    ]
+)
 
 class State(Enum):
     INTAKING_QUERY = 1
@@ -51,11 +58,12 @@ def read_token_file():
 
 # def listen(audio_queue, state):
 #     print("Starting audio listening process...")
-#     sample_rate = 16000
+#     # logging.info("Starting audio listening process...")
+    sample_rate = 16000
 #     recording_data = []
     
-#     def audio_callback(indata, frames, time, status):
-#         recording_data.append(indata.copy())
+    def audio_callback(indata, frames, time, status):
+        recording_data.append(indata.copy())
 
 #     try:
 #         with sd.InputStream(callback=audio_callback, 
@@ -63,6 +71,7 @@ def read_token_file():
 #                           channels=1,
 #                           dtype=np.float32):
 #             print("\nRecording... (Press Ctrl+C to stop)")
+            # logging.info("\nRecording... (Press Ctrl+C to stop)")
             
 #             while True:
 #                 current_state = state.value
@@ -116,6 +125,7 @@ def reauthenticate():
 
 def send_mic_query(query_text, token, mic_url):
     speak("Sure, let me check that for you.")
+    logging.info("Sure, let me check that for you")
     headers = {'Authorization': f'Bearer {token}'}
     body = {'query': query_text}
     # print('mic_url', mic_url)
@@ -127,9 +137,8 @@ def send_mic_query(query_text, token, mic_url):
     response = requests.post(mic_url, headers=headers, json=body)
     if response.status_code != 200:
         print(f"Error sending request: {response.status_code}  Response: {response.text}")
-    
-    if not reauthenticate():
-        raise Exception("Failed to reauthenticate")
+        if not reauthenticate():
+            raise Exception("Failed to reauthenticate")
     
     token = read_token_file()
     
@@ -146,6 +155,7 @@ def send_mic_query(query_text, token, mic_url):
     if data['success']:
         theResponse = data['wordResponse']
         print("theResponse", theResponse)
+        logging.info(theResponse)
         speak(theResponse)
     else:
         # data
@@ -206,10 +216,12 @@ def transcribe(audio_queue, state):
             if transcribed_text:
                 word_array.append(transcribed_text)
                 print(f"\nTranscription: {transcribed_text}")
+                logging.info(f"\n{transcribed_text}")
                 
                 if Config.NAME_OF_VOICE_ASSISTANT.lower() in transcribed_text:
                     state.value = State.INTAKING_QUERY.value
                     print(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
+                    logging.info(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
             else:
                 if state.value == State.INTAKING_QUERY.value:
                     query_text = process_query(word_array)
@@ -229,8 +241,7 @@ def transcribe(audio_queue, state):
 def main():
     audio_queue = Queue(maxsize=10)
     state = Value('i', State.LISTENING_FOR_FRANK.value)
-    asyncio.run(start_audio_server(audio_queue, state))
-
+    
     listen_process = Process(target=listen, args=(audio_queue, state))
     transcribe_process = Process(target=transcribe, args=(audio_queue, state))
 
@@ -247,6 +258,7 @@ def main():
     finally:
         listen_process.join()
         transcribe_process.join()
+
 
 async def audio_receiver(websocket, audio_queue, state, path = None):
     """

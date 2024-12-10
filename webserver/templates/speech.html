@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi, I'm Kira</title>
+    <style>
+        /* Existing styles from your original HTML */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background-color: #f3f4f6; color: #333; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; flex-direction: column; }
+        .container { background: #ffffff; padding: 40px; width: 100%; max-width: 600px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); text-align: center; }
+        .container h1 { font-size: 28px; margin-bottom: 15px; color: #00796b; }
+        .status { margin: 20px 0; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; transition: background-color 0.3s, color 0.3s; }
+        .status.listening { background-color: #e0f7fa; color: #00796b; }
+        .status.speaking { background-color: #fbe9e7; color: #d84315; }
+        .wave { margin: 20px 0; display: flex; justify-content: center; gap: 5px; }
+        .wave span { width: 10px; height: 20px; background-color: #00796b; border-radius: 5px; animation: bounce 1.5s infinite ease-in-out; }
+        .wave span:nth-child(2) { animation-delay: 0.2s; }
+        .wave span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 100% { transform: scaleY(0.6); } 50% { transform: scaleY(1.2); } }
+        .button-container { margin-top: 20px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 10px; border: none; background-color: #00796b; color: white; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease; }
+        button:hover { background-color: #004d40; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Hi, I'm Kira</h1>
+    <p>The system is currently:</p>
+    <div id="status" class="status listening">Listening...</div>
+
+
+    <div id="log-container">
+        <h3>Logs</h3>
+        <ul id="log-list"></ul>
+    </div>
+
+    <div id="log-display" style="white-space: pre-wrap;"></div>
+
+    <div class="wave">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="button-container">
+        <!-- Back Button -->
+        <button id="back-button">Back to Text Search</button>
+    </div>
+
+</div>
+
+
+
+<script>
+    function fetchLogs() {
+    fetch('http://localhost:4000/logs')
+        .then(response => response.json())
+        .then(data => {
+            if (data.logs) {
+                console.log(data.logs);  // Display logs in the console
+                // You can also display them in an element on the page:
+                document.getElementById('log-display').textContent = data.logs;
+            } else {
+                console.error('Error fetching logs:', data.error);
+            }
+        })
+        .catch(error => console.error('Error fetching logs:', error));
+}
+
+    // Call fetchLogs periodically, or use an event to trigger it
+    setInterval(fetchLogs, 2000);  // Fetch every 5 seconds
+
+
+
+    document.getElementById("back-button").addEventListener("click", function () {
+        window.location.href = "img_search.html";
+    });
+
+    // Fetch logs on initial load
+    fetchLogs();
+
+    async function sendVoiceQuery(query) {
+        const url = "/voice_query"; // Backend endpoint
+        const token = localStorage.getItem('token'); // JWT token for auth
+
+        const body = { query };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(body),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log("Response from server:", result);
+                speak(result.wordResponse); 
+                updateUI("Speaking...", "speaking");
+            } else {
+                console.error("Failed to send voice query:", response.statusText);
+                updateUI("Error processing query.", "speaking");
+            }
+        } catch (error) {
+            console.error("Error occurred while sending voice query:", error);
+            updateUI("Network error.", "speaking");
+        }
+    }
+
+
+    function updateUI(statusText, statusClass) {
+        const statusDiv = document.getElementById("status");
+        statusDiv.textContent = statusText;
+        statusDiv.className = `status ${statusClass}`;
+    }
+
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+    }
+
+    document.getElementById("back-button").addEventListener("click", function () {
+        window.location.href = "img_search.html";
+    });
+
+    // UI Animation
+    const statusDiv = document.getElementById("status");
+    setInterval(() => {
+        if (statusDiv.classList.contains("listening")) {
+            statusDiv.classList.remove("listening");
+            statusDiv.classList.add("speaking");
+            statusDiv.textContent = "Speaking...";
+        } else {
+            statusDiv.classList.remove("speaking");
+            statusDiv.classList.add("listening");
+            statusDiv.textContent = "Listening...";
+        }
+    }, 3000);
+</script>
+
+</body>
+</html>

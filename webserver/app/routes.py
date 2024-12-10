@@ -3,6 +3,9 @@ import urllib
 import json
 from flask_jwt_extended import jwt_required, get_jwt
 
+import logging
+import os
+
 from myapp import app
 from myapp import jwt
 
@@ -187,6 +190,9 @@ def voice_query():
 
         # Debug logging (secure)
         print(f"User: {user}, Query: {query}, Index: {index}")
+    logging.info(f"User: {user}, Query: {query}, Index: {index}")
+    # Log additional details
+    logging.debug(f"Received token: {token}")
 
         # Process query
         response = handle_sentence_query(user, query, index, token)
@@ -199,6 +205,29 @@ def voice_query():
         # Log error for debugging
         print(f"Error in /voice_query: {str(e)}")
         return jsonify({"error": "An internal error occurred"}), 500
+
+
+
+@app.route('/logs', methods=['GET'])
+def get_logs():
+    print(f"Current working directory: {os.getcwd()}")
+    log_file = '/webserver/app/app.log'  # Full absolute path to the log file
+    logging.info(f"Trying to open log file at: {log_file}")
+    print(f"Trying to open log file at: {log_file}")
+
+    # Check if the log file exists
+    if os.path.exists(log_file):
+        try:
+            with open(log_file, 'r') as f:
+                logs = f.read()
+            return jsonify(logs=logs)
+        except Exception as e:
+            # If an error occurs while reading the log file
+            print(f"Error reading the log file: {e}")
+            return jsonify(error=f"Error reading log file: {e}"), 500
+    else:
+        return jsonify(error="Log file not found"), 404
+
 
 
 # TODO this seems like shitty api design, maybe it would be useful to have a 
@@ -232,7 +261,7 @@ def get_room_img():
     user = jwt['sub']
 
     data_arg = request.args.get('data')
-    print("data arg is: ", data_arg)
+    # print("data arg is: ", data_arg)
 
     if data_arg == None:
         # TODO standardize error, msg, etc., whatever
@@ -309,4 +338,14 @@ def get_unique_objects():
         return jsonify(objects_data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 422
+    
+
+@app.route('/speech.html')
+@time_and_log
+def speech_page():
+    return render_template('speech.html')
+
+
+
+
 
