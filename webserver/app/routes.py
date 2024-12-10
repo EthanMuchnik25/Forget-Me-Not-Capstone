@@ -164,47 +164,26 @@ def text_query():
 @jwt_required()
 @time_and_log
 def voice_query():
-    try:
-        jwt = get_jwt()
-        user = jwt['sub']
-        
-        # Validate JWT user field
-        if not isinstance(user, str) or not user.isalnum():
-            return jsonify({"error": "Invalid user in token"}), 400
+    jwt = get_jwt()
+    user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
+    data = request.get_json()
+    query = data.get('query')
+    index = data.get('index', 0) 
+    token = request.headers.get('Authorization', None)
+    print(f"Token: {token}")
 
-        # Parse and validate request JSON
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "Missing JSON body"}), 400
-        
-        query = data.get('query')
-        index = data.get('index', 0)
-        
-        if not isinstance(query, str) or not query.strip():
-            return jsonify({"error": "Invalid or missing query"}), 400
-        
-        if not isinstance(index, int) or index < 0:
-            return jsonify({"error": "Invalid index"}), 400
 
-        token = request.headers.get('Authorization', None)
-
-        # Debug logging (secure)
-        print(f"User: {user}, Query: {query}, Index: {index}")
+    print(f"User: {user}, Query: {query}, Index: {index}")
+    print("in voice query")
     logging.info(f"User: {user}, Query: {query}, Index: {index}")
     # Log additional details
     logging.debug(f"Received token: {token}")
 
-        # Process query
-        response = handle_sentence_query(user, query, index, token)
-        if not isinstance(response, dict):
-            raise ValueError("handle_sentence_query must return a dictionary")
+    # Simple way to case on stuff to test database, neg num is how many back
+    # In the future, can complicate policies to add stuff like auth/security
+    response = handle_sentence_query(user, query, index, token) 
 
-        return jsonify(response), 200
-
-    except Exception as e:
-        # Log error for debugging
-        print(f"Error in /voice_query: {str(e)}")
-        return jsonify({"error": "An internal error occurred"}), 500
+    return jsonify(response), 200
 
 
 
