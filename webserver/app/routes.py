@@ -4,7 +4,9 @@ import json
 from flask_jwt_extended import jwt_required, get_jwt
 
 import logging
+import threading
 import os
+import time
 
 from myapp import app
 from myapp import jwt
@@ -181,26 +183,47 @@ def voice_query():
     return jsonify(response), 200
 
 
+# @app.route('/logs', methods=['GET'])
+# def get_logs():
+#     log_file = '/webserver/app/app.log'  
+#     # Check if the log file exists
+#     if os.path.exists(log_file):
+#         try:
+#             with open(log_file, 'r') as f:
+#                 logs = f.read()
+#             return jsonify(logs=logs)
+#         except Exception as e:
+
+#             print(f"Error reading the log file: {e}")
+#             return jsonify(error=f"Error reading log file: {e}"), 500
+#     else:
+#         return jsonify(error="Log file not found"), 404
+
+log_file = '/webserver/app/app.log'  
+
+last_read_pos = 0
+
+
+def read_log_file():
+    global last_read_pos
+    if os.path.exists(log_file):
+        with open(log_file, 'r') as file:
+            file.seek(last_read_pos) 
+            new_logs = file.read() 
+            if new_logs:
+                last_read_pos = file.tell()  
+                return new_logs
+            else:
+                return None  # If no new logs, return None
+    return None  # If file does not exist, return None
+
 @app.route('/logs', methods=['GET'])
 def get_logs():
-    print(f"Current working directory: {os.getcwd()}")
-    log_file = '/webserver/app/app.log'  
-    logging.info(f"Trying to open log file at: {log_file}")
-    print(f"Trying to open log file at: {log_file}")
-
-    # Check if the log file exists
-    if os.path.exists(log_file):
-        try:
-            with open(log_file, 'r') as f:
-                logs = f.read()
-            return jsonify(logs=logs)
-        except Exception as e:
-
-            print(f"Error reading the log file: {e}")
-            return jsonify(error=f"Error reading log file: {e}"), 500
+    logs = read_log_file()
+    if logs:
+        return jsonify(logs=logs)
     else:
-        return jsonify(error="Log file not found"), 404
-
+        return jsonify(logs="No new logs"), 200
 
 
 # TODO this seems like shitty api design, maybe it would be useful to have a 

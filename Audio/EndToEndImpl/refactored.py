@@ -314,6 +314,8 @@ def process_audio(audio_queue, state, stop_event):
     print("Loading Whisper model...")
     model = whisper.load_model("tiny")
     print("Model loaded!")
+    log_and_flush("Model loaded!")
+    time.sleep(0.1)
     
     word_array = []
     token = read_token_file()
