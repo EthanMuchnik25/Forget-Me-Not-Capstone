@@ -60,11 +60,6 @@ def login_page():
 def register_page():
     return render_template('register.html')
 
-@app.route('/speech.html')
-@time_and_log
-def speech_page():
-    return render_template('speech.html')
-
 # ========================== Auth Routes ==========================
 
 @app.route("/test_auth")
@@ -186,11 +181,10 @@ def voice_query():
     return jsonify(response), 200
 
 
-
 @app.route('/logs', methods=['GET'])
 def get_logs():
     print(f"Current working directory: {os.getcwd()}")
-    log_file = '/webserver/app/app.log'  # Full absolute path to the log file
+    log_file = '/webserver/app/app.log'  
     logging.info(f"Trying to open log file at: {log_file}")
     print(f"Trying to open log file at: {log_file}")
 
@@ -201,7 +195,7 @@ def get_logs():
                 logs = f.read()
             return jsonify(logs=logs)
         except Exception as e:
-            # If an error occurs while reading the log file
+
             print(f"Error reading the log file: {e}")
             return jsonify(error=f"Error reading log file: {e}"), 500
     else:
@@ -307,12 +301,12 @@ def speech_query():
 @time_and_log
 def get_unique_objects():
     try:
-        user = get_jwt()['sub']  # Get the user from the JWT token
-        objects = db_get_all_unique_objects(user)  # Get the objects from DB
+        user = get_jwt()['sub'] 
+        objects = db_get_all_unique_objects(user)  
         if objects is None:
-            return jsonify([]), 200  # Return empty list if no objects
+            return jsonify([]), 200  
         
-        # Serialize the objects if necessary
+     
         objects_data = [obj.__dict__ for obj in objects]
         return jsonify(objects_data), 200
     except Exception as e:
