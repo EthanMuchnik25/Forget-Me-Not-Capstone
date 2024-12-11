@@ -25,8 +25,8 @@ RUN rm /etc/nginx/sites-enabled/default
 
 # Step 8: Copy the custom Nginx config file into the container
 COPY nginx.conf /etc/nginx/sites-available/nginx.conf
-COPY app/model/binaries/models--dunzhang--stella_en_1.5B_v5 /root/.cache/huggingface/hub/models--dunzhang--stella_en_1.5B_v5
-COPY app/model/binaries/models--dunzhang--stella_en_400M_v5 /root/.cache/huggingface/hub/models--dunzhang--stella_en_400M_v5
+# COPY app/model/binaries/models--dunzhang--stella_en_1.5B_v5 /root/.cache/huggingface/hub/models--dunzhang--stella_en_1.5B_v5
+# COPY app/model/binaries/models--dunzhang--stella_en_400M_v5 /root/.cache/huggingface/hub/models--dunzhang--stella_en_400M_v5
 ARG KEY
 
 ENV OPENAI_API_KEY=$KEY

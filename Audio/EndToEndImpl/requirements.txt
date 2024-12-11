@@ -1,0 +1,8 @@
+sounddevice
+numpy
+openai-whisper
+requests
+Pillow
+gtts
+pygame
+pyaudio
