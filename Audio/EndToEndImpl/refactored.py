@@ -21,10 +21,17 @@ logging.basicConfig(
     level=logging.INFO, 
     format='%(message)s',
     handlers=[ 
-        logging.FileHandler('../../webserver/app/app.log')
+        logging.FileHandler('../../webserver/app/app.log'),
         # logging.StreamHandler()         
     ]
 )
+
+
+logger = logging.getLogger()
+
+def log_and_flush(message):
+    with open('../../webserver/app/app.log', 'a') as f:
+        f.write(message)
 
 class State(Enum):
     INTAKING_QUERY = 1
@@ -71,7 +78,10 @@ def listen(audio_queue, state):
                           channels=1,
                           dtype=np.float32):
             print("\nRecording... (Press Ctrl+C to stop)")
-            # logging.info("\nRecording... (Press Ctrl+C to stop)")
+            # log_and_flush("\nRecording... (Press Ctrl+C to stop)")
+            for handler in logging.getLogger().handlers:
+                handler.flush()
+            time.sleep(0.1)
             
             while True:
                 current_state = state.value
@@ -116,7 +126,14 @@ def reauthenticate():
 
 def send_mic_query(query_text, token, mic_url):
     speak("Sure, let me check that for you.")
-    logging.info("Sure, let me check that for you")
+    log_and_flush("Sure, let me check that for you")
+    for handler in logging.getLogger().handlers:
+        handler.flush()
+    time.sleep(0.1)
+    log_and_flush("You are trying to find your {query_text}")
+    for handler in logging.getLogger().handlers:
+        handler.flush()
+    time.sleep(0.1)
     headers = {'Authorization': f'Bearer {token}'}
     body = {'query': query_text}
     # print('mic_url', mic_url)
@@ -146,7 +163,10 @@ def send_mic_query(query_text, token, mic_url):
     if data['success']:
         theResponse = data['wordResponse']
         print("theResponse", theResponse)
-        logging.info(theResponse)
+        log_and_flush(theResponse)
+        for handler in logging.getLogger().handlers:
+            handler.flush()
+        time.sleep(0.1)
         speak(theResponse)
     else:
         # data
@@ -193,6 +213,8 @@ def transcribe(audio_queue, state):
     print("Loading Whisper model...")
     model = whisper.load_model("base")
     print("Model loaded!")
+    log_and_flush("Model loaded!")
+    time.sleep(0.1)
     
     word_array = []
     token = read_token_file()
@@ -207,12 +229,14 @@ def transcribe(audio_queue, state):
             if transcribed_text:
                 word_array.append(transcribed_text)
                 print(f"\nTranscription: {transcribed_text}")
-                logging.info(f"\n{transcribed_text}")
+                log_and_flush(f"\n{transcribed_text}")
+                time.sleep(0.1)
                 
                 if Config.NAME_OF_VOICE_ASSISTANT.lower() in transcribed_text:
                     state.value = State.INTAKING_QUERY.value
                     print(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
-                    logging.info(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
+                    log_and_flush(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
+                    time.sleep(0.1)
             else:
                 if state.value == State.INTAKING_QUERY.value:
                     query_text = process_query(word_array)
