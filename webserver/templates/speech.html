@@ -28,7 +28,7 @@
 <div class="container">
     <h1>Hi, I'm Kira</h1>
     <p>The system is currently:</p>
-    <div id="status" class="status listening">Listening...</div>
+    <div id="status" class="status listening">Analyzing...</div>
 
 
     <!-- <div id="log-container">
@@ -55,23 +55,41 @@
 
 <script>
 
-    function fetchLogs() {
-    fetch('http://localhost:4000/logs')
-        .then(response => response.json())
-        .then(data => {
-            if (data.logs) {
-                console.log(data.logs);  // Display logs in the console
-                // You can also display them in an element on the page:
-                document.getElementById('log-display').textContent = data.logs;
+async function fetchLogs() {
+    const token = localStorage.getItem('token'); 
+
+    try {
+        const response = await fetch('/get_logs', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+        if (response.ok) {
+        
+            const data = await response.json();
+            if (data.text) {
+                const formattedLogs = data.text.join('\n'); 
+                console.log(formattedLogs); // Debug log
+
+                document.getElementById('log-display').textContent = formattedLogs;
             } else {
-                console.error('Error fetching logs:', data.error);
+                console.error('No logs found in response:', data);
+                document.getElementById('log-display').textContent = 'No logs found.';
             }
-        })
-        .catch(error => console.error('Error fetching logs:', error));
+        } else {
+            console.error('Error fetching logs:', response.status, response.statusText);
+            document.getElementById('log-display').textContent = 'Failed to fetch logs.';
+        }
+    } catch (error) {
+        console.error('Network error while fetching logs:', error);
+        document.getElementById('log-display').textContent = 'Network error while fetching logs.';
+    }
 }
 
-
-    setInterval(fetchLogs, 2000);  // Fetch every 5 seconds
+// Refresh logs every second
+setInterval(fetchLogs, 1000);
 
 
 

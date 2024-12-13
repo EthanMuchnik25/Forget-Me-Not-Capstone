@@ -253,6 +253,12 @@ def transcribe():
     # print("result: ", result)
     transcribed_text = json_response["text"].strip().lower()
     # print("transcribed text is: ", transcribed_text)
+
+    # This is a hack. Writing latest query to a text file so that the latest 
+    #  query can be seen by anyone.
+    with open(Config.SPEECH_LOGS_FILE, "w") as f:
+        print("hi tascrtiped", transcribed_text)
+        f.write(transcribed_text)
     
     response = {'text': transcribed_text}
 
@@ -273,13 +279,13 @@ def transcribe():
 
     return jsonify(response), 200
 
-@app.route('/logs', methods=['GET'])
-def get_logs():
-    logs = read_log_file()
-    if logs:
-        return jsonify(logs=logs)
-    else:
-        return jsonify(logs="No new logs"), 200
+# @app.route('/logs', methods=['GET'])
+# def get_logs():
+#     logs = read_log_file()
+#     if logs:
+#         return jsonify(logs=logs)
+#     else:
+#         return jsonify(logs="No new logs"), 200
 
 
 # TODO this seems like shitty api design, maybe it would be useful to have a 
@@ -391,6 +397,20 @@ def get_unique_objects():
     except Exception as e:
         return jsonify({"error": str(e)}), 422
     
+@app.route('/get_logs')
+# @jwt_required()
+@time_and_log
+def get_logs():
+    try:
+        with open(Config.SPEECH_LOGS_FILE, "r") as f:
+            latest_str = f.readlines()
+
+        return {'text': latest_str}, 200
+    except Exception as e:
+        app.logger.error(f"Error reading logs: {e}")
+        return {'error': 'Failed to read logs.'}, 500
+    
+
 
 @app.route('/speech.html')
 @time_and_log
