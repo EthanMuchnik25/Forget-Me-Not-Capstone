@@ -2,6 +2,8 @@ from flask import render_template, request, send_file, jsonify
 import urllib
 import json
 from flask_jwt_extended import jwt_required, get_jwt
+import whisper
+import numpy as np
 
 import logging
 import os
@@ -23,14 +25,27 @@ from app.perf.perf import time_and_log
 if Config.DATABASE_VER == "RDS":
     raise NotImplementedError
 elif Config.DATABASE_VER == "SQLITE":
-    from app.database.sqlite import db_get_all_unique_objects
+    from app.database.sqlite import db_get_all_unique_objects, db_get_last_image
 elif Config.DATABASE_VER == "DEBUG":
     raise NotImplementedError
 else:
     raise NotImplementedError
 
+if Config.PRUNING:
+    from app.database.sqlite import db_get_last_image
+
+model = None
+
 
 # ========================== Page Routes ==========================
+
+# Load models before first request
+
+@app.before_request
+def load_models():
+    global model
+    model = whisper.load_model("base.en")
+    print("Model loaded and ready to serve requests")
 
 # TODO For now, don't use blueprints
 
@@ -38,7 +53,6 @@ else:
 @time_and_log
 def front_page():
     return render_template('front_page.html')
-
 
 @app.route('/img_search.html')
 # @jwt_required() # Fuck. The alternative is tragic. See index.html
@@ -108,6 +122,17 @@ def logout():
     jwt = get_jwt()
     logout_user(jwt)
     return jsonify(msg="Logout successful"), 200
+
+# @app.before_first_request
+# def initialize_model():
+#     global model
+#     if model is None:
+#         model = load_model()
+#         print("Model loaded and ready to serve requests")
+
+# def load_models():
+#     model = whisper.load_model("base")
+#     return model
 
 
 @app.route('/deregister', methods=['POST'])
@@ -180,6 +205,42 @@ def voice_query():
 
     return jsonify(response), 200
 
+@app.route('/transcribe', methods=['POST'])
+@jwt_required()
+@time_and_log
+def transcribe():
+    jwt = get_jwt()
+    user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
+    data = request.get_json()
+    audio_chunk = np.array(data.get('list'))
+    # print("i am here")
+    index = data.get('index', 0) 
+    token = request.headers.get('Authorization', None)
+
+    global model
+    audio_chunk = audio_chunk.astype(np.float32)
+    print("made it here")
+    result = model.transcribe(audio_chunk, fp16=False, language='en', no_speech_threshold=0.4)
+    print("result: ", result)
+    transcribed_text = result["text"].strip().lower()
+    # print("transcribed text is: ", transcribed_text)
+    
+    response = {'text': transcribed_text}
+
+    # print(f"Token: {token}")
+
+
+    # print(f"User: {user}, Query: {query}, Index: {index}")
+    # print("in voice query")
+    # logging.info(f"User: {user}, Query: {query}, Index: {index}")
+    # # Log additional details
+    # logging.debug(f"Received token: {token}")
+
+    # # Simple way to case on stuff to test database, neg num is how many back
+    # # In the future, can complicate policies to add stuff like auth/security
+    # response = handle_sentence_query(user, query, index, token) 
+
+    return jsonify(response), 200
 
 @app.route('/logs', methods=['GET'])
 def get_logs():

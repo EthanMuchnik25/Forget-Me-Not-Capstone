@@ -2,8 +2,22 @@ from sentence_transformers import SentenceTransformer
 
 #check for gpu usage
 import torch
+import requests
 from app.config import Config 
 print(torch.cuda.is_available())
+
+def doRemoteInfs(query, wordList):
+    # print(format_texts_lists(texts_lists))
+
+    data = {"query": query, "wordList": wordList}
+    
+    response = requests.post(Config.VECTOR_COSINE_REMOTE_ENDPOINT, json=data)
+
+    if response.status_code == 200:
+        # request was successful
+        return response.json()
+    else:
+        return None
 
 
 def getModelName():
@@ -25,7 +39,7 @@ def getMostSimilar(query, listofNames):
 
 def getSimilarityMatrix(listofNames):
 
-    model = SentenceTransformer(getModelName(), trust_remote_code=True)
+    model = SentenceTransformer(getModelName())
     # In case you want to reduce the maximum length:
     model.max_seq_length = 8192
 

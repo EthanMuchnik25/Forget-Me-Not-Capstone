@@ -21,11 +21,14 @@ else:
 if Config.DATABASE_VER == "RDS":
     from app.database.rds import db_write_line
 elif Config.DATABASE_VER == "SQLITE":
-    from app.database.sqlite import db_write_line, db_save_image
+    from app.database.sqlite import db_write_line, db_save_image, db_get_last_image
 elif Config.DATABASE_VER == "DEBUG":
     from app.database.debug_db.debug_db import db_write_line, db_save_image
 else:
     raise NotImplementedError
+
+from app.utils.scripts.pruning_tests.compare_adj_diffs import mse
+from app.get_room_img import fs_get_room_img
 
 
 # TODO: weird code, vals keep getting casted between float and int... 
@@ -68,8 +71,24 @@ def handle_img(user, f):
         parsed_line = parse_yolo_line(line)
         # TODO I don't know if I like this, should user pass datetime?
         output_pkt = ImgObject(user, str(parsed_line[0]), parsed_line[1], parsed_line[2], image_path, time.time())
-        if not db_write_line(user, output_pkt):
-            return False, "Cannot find user"
+        # get the last line of the user's data
+        mse_val = 1
+        if Config.PRUNING:
+            imgData = db_get_last_image(user)
+            pastImg = fs_get_room_img(user, imgData)
+            currImg = fs_get_room_img(user, output_pkt)
+
+            # get the mse between the two images
+            mse_val = mse(pastImg, currImg)
+
+            # if the mse is less than the threshold, don't save the image
+
+
+
+
+        if mse_val > Config.MSE_THRESHOLD:
+            if not db_write_line(user, output_pkt):
+                return False, "Cannot find user"
     return True, None
 
         

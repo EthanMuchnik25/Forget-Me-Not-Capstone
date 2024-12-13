@@ -95,6 +95,27 @@ def db_get_user_pw(uname: str) -> Optional[str]:
 
 # ------------------ Image Storage and Retrieval Functions ------------------
 
+def db_get_last_image(user: str) -> Optional[ImgObject]:
+    """Retrieve the last image for a user from the database."""
+    create_user_table_if_not_exists(user)
+    table_name = get_table_name_for_user(user)
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(f'''
+            SELECT object_name, p1, p2, img_url, created_at
+            FROM {table_name}
+            ORDER BY id DESC
+            LIMIT 1
+        ''')
+        row = cur.fetchone()
+        if row:
+            object_name, p1, p2, img_url, created_at = row
+            p1 = tuple(map(float, p1.strip('[]').split(',')))
+            p2 = tuple(map(float, p2.strip('[]').split(',')))
+            return ImgObject(user, object_name, p1, p2, img_url, created_at)
+    return None
+
+
 def db_write_line(user: str, output_pkt: ImgObject) -> bool:
     """Insert a record into the user's unique table for tracking an object."""
     with get_db_connection() as conn:
@@ -136,7 +157,7 @@ def db_query_single(user: str, object_name: str, index: int) -> Optional[ImgObje
     """Query an object from the database by user name and object name."""
     if index < 0:
         return None
-
+    print("got past inital check, index: ", user, object_name, index)
     create_user_table_if_not_exists(user)
     table_name = get_table_name_for_user(user)
     with get_db_connection() as conn:
@@ -163,7 +184,7 @@ def db_query_range(user: str, object_name: str, low: int, high: int) -> Optional
 
     if high< 0 or low <0 or high<low:
         return None
-
+    print("got past inital check, index: ", user, object_name)
     create_user_table_if_not_exists(user)
     table_name = get_table_name_for_user(user)
     with get_db_connection() as conn:

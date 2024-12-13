@@ -11,7 +11,8 @@ from PIL import Image, ImageDraw, ImageFont
 import mimetypes
 from app.get_room_img import fs_get_room_img
 from app.database.sqlite import db_get_image, db_get_all_unique_objects
-from app.vectorstuffs import getMostSimilar
+from app.vectorstuffs import getMostSimilar, doRemoteInfs
+
 import time
 
 
@@ -178,7 +179,7 @@ def openAIGetWord(query):
     )
 
     chain = prompt | chat
-
+    print("query is", query)
     a = chain.invoke(
         [
             HumanMessage(
@@ -225,12 +226,15 @@ def handle_sentence_query(user, query, index=0, token=None):
     vectorUsed = False
     if db_ret == None:
         print("object not found in database")
+        print("user: ", user)
         getAllClasses = db_get_all_unique_objects(user)
         extractClasses = [i.object_name for i in getAllClasses]
         print("all classes: ", extractClasses)
         print("System time before getMostSimilar")
         print("time: ", time.time()*1000)
-        mostSimilar = getMostSimilar(query, extractClasses) 
+        
+        # mostSimilar = getMostSimilar(query, extractClasses) 
+        mostSimilar = doRemoteInfs(query, extractClasses)
         print("System time after getMostSimilar")
         print("time: ", time.time()*1000)
         print("most similar: ", mostSimilar)

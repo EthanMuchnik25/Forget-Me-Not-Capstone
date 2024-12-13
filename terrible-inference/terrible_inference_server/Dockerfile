@@ -41,5 +41,9 @@ RUN conda clean --all \
     && git clone https://github.com/open-mmlab/mmdetection.git /mmdetection \
     && cd /mmdetection \
     && pip install --no-cache-dir -e .
-
+    
+COPY app/model/binaries/models--dunzhang--stella_en_1.5B_v5 /root/.cache/huggingface/hub/models--dunzhang--stella_en_1.5B_v5
+COPY app/model/binaries/models--dunzhang--stella_en_400M_v5 /root/.cache/huggingface/hub/models--dunzhang--stella_en_400M_v5
+    
 WORKDIR /mmdetection
+
