@@ -12,9 +12,9 @@
         .container h1 { font-size: 28px; margin-bottom: 15px; color: #00796b; }
         .status { margin: 20px 0; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; transition: background-color 0.3s, color 0.3s; }
         .status.listening { background-color: #e0f7fa; color: #00796b; }
-        .status.speaking { background-color: #fbe9e7; color: #d84315; } 
-        .wave { margin: 20px 0; display: flex; justify-content: center; gap: 10px; }
-        .wave span { width: 15px; height: 40px; background-color: #00796b; border-radius: 5px; animation: bounce 1.5s infinite ease-in-out; }
+        .status.speaking { background-color: #fbe9e7; color: #d84315; }
+        .wave { margin: 20px 0; display: flex; justify-content: center; gap: 5px; }
+        .wave span { width: 10px; height: 20px; background-color: #00796b; border-radius: 5px; animation: bounce 1.5s infinite ease-in-out; }
         .wave span:nth-child(2) { animation-delay: 0.2s; }
         .wave span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes bounce { 0%, 100% { transform: scaleY(0.6); } 50% { transform: scaleY(1.2); } }
@@ -25,13 +25,9 @@
 </head>
 <body>
 
-    <!--  .status { margin: 20px 0; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; transition: background-color 0.3s, color 0.3s; }
-        .status.listening { background-color: #e0f7fa; color: #00796b; }
-        .status.speaking { background-color: #fbe9e7; color: #d84315; } -->
-
 <div class="container">
     <h1>Hi, I'm Kira</h1>
-    <p>What can I help you find?</p>
+    <p>The system is currently:</p>
     <div id="status" class="status listening">Analyzing...</div>
 
 
@@ -59,23 +55,41 @@
 
 <script>
 
-    function fetchLogs() {
-    fetch('http://localhost:4000/logs')
-        .then(response => response.json())
-        .then(data => {
-            if (data.logs) {
-                console.log(data.logs);  // Display logs in the console
-                // You can also display them in an element on the page:
-                document.getElementById('log-display').textContent = data.logs;
+async function fetchLogs() {
+    const token = localStorage.getItem('token'); 
+
+    try {
+        const response = await fetch('/get_logs', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+        if (response.ok) {
+        
+            const data = await response.json();
+            if (data.text) {
+                const formattedLogs = data.text.join('\n'); 
+                console.log(formattedLogs); // Debug log
+
+                document.getElementById('log-display').textContent = formattedLogs;
             } else {
-                console.error('Error fetching logs:', data.error);
+                console.error('No logs found in response:', data);
+                document.getElementById('log-display').textContent = 'No logs found.';
             }
-        })
-        .catch(error => console.error('Error fetching logs:', error));
+        } else {
+            console.error('Error fetching logs:', response.status, response.statusText);
+            document.getElementById('log-display').textContent = 'Failed to fetch logs.';
+        }
+    } catch (error) {
+        console.error('Network error while fetching logs:', error);
+        document.getElementById('log-display').textContent = 'Network error while fetching logs.';
+    }
 }
 
-
-    setInterval(fetchLogs, 2000);  // Fetch every 5 seconds
+// Refresh logs every second
+setInterval(fetchLogs, 1000);
 
 
 
@@ -133,19 +147,19 @@
         window.location.href = "img_search.html";
     });
 
-    // // UI Animation
-    // const statusDiv = document.getElementById("status");
-    // setInterval(() => {
-    //     if (statusDiv.classList.contains("listening")) {
-    //         statusDiv.classList.remove("listening");
-    //         statusDiv.classList.add("speaking");
-    //         statusDiv.textContent = "Speaking...";
-    //     } else {
-    //         statusDiv.classList.remove("speaking");
-    //         statusDiv.classList.add("listening");
-    //         statusDiv.textContent = "Listening...";
-    //     }
-    // }, 3000);
+    // UI Animation
+    const statusDiv = document.getElementById("status");
+    setInterval(() => {
+        if (statusDiv.classList.contains("listening")) {
+            statusDiv.classList.remove("listening");
+            statusDiv.classList.add("speaking");
+            statusDiv.textContent = "Speaking...";
+        } else {
+            statusDiv.classList.remove("speaking");
+            statusDiv.classList.add("listening");
+            statusDiv.textContent = "Listening...";
+        }
+    }, 3000);
 </script>
 
 </body>
