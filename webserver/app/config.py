@@ -35,3 +35,9 @@ class Config:
     PRUNING = True
     MSE_THRESHOLD = 0.28
 
+
+    # For the text pipeline in the server, this is the janky file where stuff is 
+    # stored.
+    SPEECH_LOGS_FILE = "./logs.txt"
+
+

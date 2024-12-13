@@ -243,6 +243,11 @@ def transcribe():
     # print("result: ", result)
     transcribed_text = json_response["text"].strip().lower()
     # print("transcribed text is: ", transcribed_text)
+
+    # This is a hack. Writing latest query to a text file so that the latest 
+    #  query can be seen by anyone.
+    with open(Config.SPEECH_LOGS_FILE, "w") as f:
+        f.write(transcribed_text)
     
     response = {'text': transcribed_text}
 
@@ -379,6 +384,15 @@ def get_unique_objects():
     except Exception as e:
         return jsonify({"error": str(e)}), 422
     
+@app.route('/get_logs')
+@jwt_required()
+@time_and_log
+def get_logs():
+    latest_str = ""
+    with open(Config.SPEECH_LOGS_FILE, "r") as f:
+        latest_str = f.readlines()
+
+    return {'text': latest_str}, 200
 
 @app.route('/speech.html')
 @time_and_log
