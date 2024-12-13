@@ -289,6 +289,7 @@ def audio_callback(indata, frames, time, status, audio_queue):
     """Callback function to handle audio data"""
     if status:
         print(f'Audio callback status: {status}')
+    print("in data size is", np.shape(indata))
     audio_queue.put(indata.copy())
 
 def listen_and_buffer(audio_queue, state, stop_event):
