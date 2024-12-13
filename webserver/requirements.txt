@@ -12,6 +12,7 @@ Flask-JWT-Extended
 # TODO add these for sqlite, however, I can't get them to work on my machine
 sqlite-utils
 # json
+torch
 ultralytics
 matplotlib
 ultralytics-thop
@@ -24,5 +25,5 @@ langchain_community
 langchain
 openai
 sentence_transformers
-xformers
 openai-whisper
+# xformers

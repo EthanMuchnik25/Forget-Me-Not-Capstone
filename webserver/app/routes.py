@@ -6,7 +6,9 @@ import whisper
 import numpy as np
 
 import logging
+import threading
 import os
+import time
 
 from myapp import app
 from myapp import jwt
@@ -244,24 +246,11 @@ def transcribe():
 
 @app.route('/logs', methods=['GET'])
 def get_logs():
-    print(f"Current working directory: {os.getcwd()}")
-    log_file = '/webserver/app/app.log'  
-    logging.info(f"Trying to open log file at: {log_file}")
-    print(f"Trying to open log file at: {log_file}")
-
-    # Check if the log file exists
-    if os.path.exists(log_file):
-        try:
-            with open(log_file, 'r') as f:
-                logs = f.read()
-            return jsonify(logs=logs)
-        except Exception as e:
-
-            print(f"Error reading the log file: {e}")
-            return jsonify(error=f"Error reading log file: {e}"), 500
+    logs = read_log_file()
+    if logs:
+        return jsonify(logs=logs)
     else:
-        return jsonify(error="Log file not found"), 404
-
+        return jsonify(logs="No new logs"), 200
 
 
 # TODO this seems like shitty api design, maybe it would be useful to have a 
