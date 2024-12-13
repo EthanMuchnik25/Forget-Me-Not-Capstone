@@ -32,6 +32,6 @@ class Config:
     PERF_LOG_DIR = "./app/perf/logs"
 
     #EXTRA FEATURES
-    PRUNING = True
+    PRUNING = False
     MSE_THRESHOLD = 0.28
 

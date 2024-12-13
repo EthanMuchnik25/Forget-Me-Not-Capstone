@@ -17,6 +17,9 @@
 # # # from googlespeak import speak_text as speak
 
 
+import sys
+
+
 import sounddevice as sd
 import numpy as np
 import whisper
@@ -455,90 +458,191 @@ class State(Enum):
     LISTENING_FOR_FRANK = 2
     NOT_LISTENING = 3
 
+# class AudioHandler:
+#     def __init__(self):
+#         self.sample_rate = 16000
+#         self.audio_buffer = deque(maxlen=5)  # Adjust buffer size as needed
+#         self.word_array = []
+#         self.token = read_token_file()
+#         self.mic_url = Config.URL + "/voice_query"
+#         self.transcribe_url = Config.URL + "/transcribe"
+#         self.state = State.LISTENING_FOR_FRANK
+#         self.is_running = True
+
+#         self.stream = sd.InputStream(
+#         callback=self.audio_callback,
+#         samplerate=self.sample_rate,
+#         channels=1,
+#         dtype=np.float32,
+#         blocksize=32000
+#         )
+
+#     def audio_callback(self, indata, frames, time, status):
+#         """Callback to handle incoming audio data"""
+#         if status:
+#             print(f'Audio callback status: {status}')
+#         # sys.stdout.write("in call back\r")
+#         # sys.stdout.flush()
+#         # print("hello its a me", end='\r\n', flush=True)        # print("calling callback")
+#         # print("inddeed so", end='\r\n', flush=True)
+#         # print("suciety", end='\r\n', flush=True)
+#         # Add new audio data to buffer
+#         print(np.shape(indata))
+#         if self.state != State.NOT_LISTENING:
+#             self.audio_buffer.append(indata.copy())
+        
+#         # Process buffer when it reaches certain size
+#         if len(self.audio_buffer) >= 2:
+#             self.process_audio_buffer()
+
+#     def process_audio_buffer(self):
+#         """Process accumulated audio data"""
+#         try:
+#             # Concatenate and flatten audio data
+#             audio_data = np.concatenate(self.audio_buffer, axis=0)
+#             audio_data = audio_data.flatten()
+            
+#             # Clear buffer after processing
+#             self.audio_buffer.clear()
+#             # model = whisper.load_model("tiny")
+#             # result = model.transcribe(audio_data, fp16=False, language='en', no_speech_threshold=0.4)
+#             # transcribed_text = result["text"].strip().lower()
+#             # print("just processed", transcribed_text)
+            
+#             # Send for transcription
+#             #time before
+#             before = time.time()
+#             transcribed_text = self.send_transcribe_query(audio_data)
+#             after = time.time() - before
+#             print(after)
+            
+#             if transcribed_text:
+#                 self.word_array.append(transcribed_text)
+#                 print(f"\nTranscription: {transcribed_text}")
+#                 logging.info(f"\n{transcribed_text}")
+                
+#                 if Config.NAME_OF_VOICE_ASSISTANT.lower() in transcribed_text:
+#                     self.state = State.INTAKING_QUERY
+#                     print(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
+#                     logging.info(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
+#                 else:
+#                     if self.state == State.INTAKING_QUERY:
+#                         query_text = self.process_query()
+#                         if query_text:
+#                             self.state = State.NOT_LISTENING
+#                             self.handle_query(query_text)
+#                             self.state = State.LISTENING_FOR_FRANK
+
+#                 # Maintain word array size
+#                 if len(self.word_array) > 1000:
+#                     self.word_array = self.word_array[-1000:]
+#             else:
+#                 if self.state == State.INTAKING_QUERY:
+#                     query_text = self.process_query()
+#                     if query_text:
+#                         self.state = State.NOT_LISTENING
+#                         self.handle_query(query_text)
+#                         self.state = State.LISTENING_FOR_FRANK
+#                         afterafteer = time.time()
+#                         print("full time is: ", (afterafteer - before))
+#         except Exception as e:
+#             print(f"Error processing audio: {e}")
+
+#     def send_transcribe_query(self, audio_data):
+#         # speak("Sure, let me check that for you.")
+#         logging.info("Sure, let me check that for you")
+#         # print("self token is", self.token)
+#         headers = {'Authorization': f'Bearer {self.token}'}
+
+#         body = {'list': audio_data.tolist()}
+#         # print("About to send header: ", headers)
+#         response = requests.post(self.transcribe_url, headers=headers, json=body)
+        
+#         if response.status_code != 200:
+#             if reauthenticate():
+#                 self.token = read_token_file()
+#                 headers = {'Authorization': f'Bearer {self.token}'}
+#                 response = requests.post(self.transcribe_url, headers=headers, json=body)
+#                 if response.status_code != 200:
+#                     return None
+#             else:
+#                 return None
+        
+#         data = response.json()
+#         return data['text']
+
+#     def handle_query(self, query_text):
+#         """Handle processing of recognized query"""
+#         print("self token is", self.token)
+#         print("query text is:", query_text)
+#         try:
+#             speak("Sure, let me check that for you.")
+#             headers = {'Authorization': f'Bearer {self.token}'}
+#             body = {'query': query_text}
+#             print("query_text", query_text)
+            
+#             print("About to send header: ", headers)
+#             response = requests.post(self.mic_url, headers=headers, json=body)
+            
+#             if response.status_code != 200:
+#                 if reauthenticate():
+#                     self.token = read_token_file()
+#                     headers = {'Authorization': f'Bearer {self.token}'}
+#                     response = requests.post(self.mic_url, headers=headers, json=body)
+                    
+#             data = response.json()
+#             if data['success']:
+#                 theResponse = data['wordResponse']
+#                 print("theResponse", theResponse)
+#                 logging.info(theResponse)
+#                 speak(theResponse)
+#             else:
+#                 speak(data['message'])
+                
+#         except Exception as e:
+#             print(f"Error handling query: {e}")
+
+#     def process_query(self):
+#         """Process word array to extract query"""
+#         last_index = len(self.word_array) - 1
+#         while last_index >= 0:
+#             if Config.NAME_OF_VOICE_ASSISTANT.lower() in self.word_array[last_index]:
+#                 frank_index = self.word_array[last_index].index(Config.NAME_OF_VOICE_ASSISTANT.lower()) + len(Config.NAME_OF_VOICE_ASSISTANT.lower())
+#                 query_text = self.word_array[last_index][frank_index:]
+#                 if last_index < len(self.word_array) - 1:
+#                     query_text += " " + " ".join(self.word_array[last_index + 1:])
+#                 return query_text.strip()
+#             last_index -= 1
+#         return None
+
+#     def start(self):
+#         """Start the audio processing"""
+#         with self.stream:
+#             print("Recording started...")
+#             while self.is_running:
+#                 time.sleep(0.1)  # Prev
+
+import threading
+
 class AudioHandler:
     def __init__(self):
         self.sample_rate = 16000
-        self.audio_buffer = deque(maxlen=5)  # Adjust buffer size as needed
+        self.audio_buffer = deque(maxlen=5)
         self.word_array = []
         self.token = read_token_file()
         self.mic_url = Config.URL + "/voice_query"
         self.transcribe_url = Config.URL + "/transcribe"
         self.state = State.LISTENING_FOR_FRANK
         self.is_running = True
+        self.is_handling_query = False
 
         self.stream = sd.InputStream(
-        callback=self.audio_callback,
-        samplerate=self.sample_rate,
-        channels=1,
-        dtype=np.float32,
-        blocksize=24000
+            callback=self.audio_callback,
+            samplerate=self.sample_rate,
+            channels=1,
+            dtype=np.float32,
+            blocksize=48000
         )
-
-    def audio_callback(self, indata, frames, time, status):
-        """Callback to handle incoming audio data"""
-        if status:
-            print(f'Audio callback status: {status}')
-        print("calling callback")
-        # Add new audio data to buffer
-        if self.state != State.NOT_LISTENING:
-            self.audio_buffer.append(indata.copy())
-        
-        # Process buffer when it reaches certain size
-        print("shape of np", np.shape(indata) )
-        if len(self.audio_buffer) >= 2:
-            self.process_audio_buffer()
-
-    def process_audio_buffer(self):
-        """Process accumulated audio data"""
-        try:
-            # Concatenate and flatten audio data
-            audio_data = np.concatenate(self.audio_buffer, axis=0)
-            audio_data = audio_data.flatten()
-            
-            # Clear buffer after processing
-            self.audio_buffer.clear()
-            # model = whisper.load_model("tiny")
-            # result = model.transcribe(audio_data, fp16=False, language='en', no_speech_threshold=0.4)
-            # transcribed_text = result["text"].strip().lower()
-            # print("just processed", transcribed_text)
-            
-            # Send for transcription
-            #time before
-            before = time.time()
-            transcribed_text = self.send_transcribe_query(audio_data)
-            after = time.time() - before
-            print(after)
-            
-            if transcribed_text:
-                self.word_array.append(transcribed_text)
-                print(f"\nTranscription: {transcribed_text}")
-                logging.info(f"\n{transcribed_text}")
-                
-                if Config.NAME_OF_VOICE_ASSISTANT.lower() in transcribed_text:
-                    self.state = State.INTAKING_QUERY
-                    print(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
-                    logging.info(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
-                else:
-                    if self.state == State.INTAKING_QUERY:
-                        query_text = self.process_query()
-                        if query_text:
-                            self.state = State.NOT_LISTENING
-                            self.handle_query(query_text)
-                            self.state = State.LISTENING_FOR_FRANK
-
-                # Maintain word array size
-                if len(self.word_array) > 1000:
-                    self.word_array = self.word_array[-1000:]
-            else:
-                if self.state == State.INTAKING_QUERY:
-                    query_text = self.process_query()
-                    if query_text:
-                        self.state = State.NOT_LISTENING
-                        self.handle_query(query_text)
-                        self.state = State.LISTENING_FOR_FRANK
-        except Exception as e:
-            print(f"Error processing audio: {e}")
-
     def send_transcribe_query(self, audio_data):
         # speak("Sure, let me check that for you.")
         logging.info("Sure, let me check that for you")
@@ -561,38 +665,7 @@ class AudioHandler:
         
         data = response.json()
         return data['text']
-
-    def handle_query(self, query_text):
-        """Handle processing of recognized query"""
-        print("self token is", self.token)
-        print("query text is:", query_text)
-        try:
-            speak("Sure, let me check that for you.")
-            headers = {'Authorization': f'Bearer {self.token}'}
-            body = {'query': query_text}
-            print("query_text", query_text)
-            
-            print("About to send header: ", headers)
-            response = requests.post(self.mic_url, headers=headers, json=body)
-            
-            if response.status_code != 200:
-                if reauthenticate():
-                    self.token = read_token_file()
-                    headers = {'Authorization': f'Bearer {self.token}'}
-                    response = requests.post(self.mic_url, headers=headers, json=body)
-                    
-            data = response.json()
-            if data['success']:
-                theResponse = data['wordResponse']
-                print("theResponse", theResponse)
-                logging.info(theResponse)
-                speak(theResponse)
-            else:
-                speak(data['message'])
-                
-        except Exception as e:
-            print(f"Error handling query: {e}")
-
+    
     def process_query(self):
         """Process word array to extract query"""
         last_index = len(self.word_array) - 1
@@ -606,12 +679,100 @@ class AudioHandler:
             last_index -= 1
         return None
 
+    def audio_callback(self, indata, frames, time, status):
+        """Callback to handle incoming audio data"""
+        if status:
+            print(f'Audio callback status: {status}', flush=True)
+        
+        print(".", end="", flush=True)  # Visual indicator that callback is running
+        
+        # Only process audio if we're not handling a query and not in NOT_LISTENING state
+        if not self.is_handling_query and self.state != State.NOT_LISTENING:
+            self.audio_buffer.append(indata.copy())
+            
+            # Process buffer when it reaches certain size
+            if len(self.audio_buffer) >= 2:
+                # Start processing in a separate thread to avoid blocking the callback
+                process_thread = threading.Thread(target=self.process_audio_buffer)
+                process_thread.start()
+
+    def process_audio_buffer(self):
+        """Process accumulated audio data"""
+        try:
+            # Make a copy of the buffer and clear it
+            buffer_copy = list(self.audio_buffer)
+            self.audio_buffer.clear()
+            print("hi")
+            # Process the copy
+            audio_data = np.concatenate(buffer_copy, axis=0)
+            audio_data = audio_data.flatten()
+            
+            before = time.time()
+            transcribed_text = self.send_transcribe_query(audio_data)
+            after = time.time() - before
+            print(f"\nTranscription time: {after}", flush=True)
+            
+            if transcribed_text:
+                self.word_array.append(transcribed_text)
+                print(f"\nTranscription: {transcribed_text}", flush=True)
+                logging.info(f"\n{transcribed_text}")
+                
+                if Config.NAME_OF_VOICE_ASSISTANT.lower() in transcribed_text:
+                    self.state = State.INTAKING_QUERY
+                    print(f"\n{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...", flush=True)
+                    logging.info(f"{Config.NAME_OF_VOICE_ASSISTANT.lower()} detected. Intaking query...")
+                else:
+                    if self.state == State.INTAKING_QUERY:
+                        query_text = self.process_query()
+                        if query_text:
+                            # Handle query in a separate thread
+                            query_thread = threading.Thread(target=self._handle_query, args=(query_text,))
+                            query_thread.start()
+
+        except Exception as e:
+            print(f"\nError processing audio: {e}", flush=True)
+
+    def _handle_query(self, query_text):
+        """Internal method to handle query in a separate thread"""
+        try:
+            self.is_handling_query = True
+            self.state = State.NOT_LISTENING
+            
+            print("\nHandling query:", query_text, flush=True)
+            speak("Sure, let me check that for you.")
+            
+            headers = {'Authorization': f'Bearer {self.token}'}
+            body = {'query': query_text}
+            
+            response = requests.post(self.mic_url, headers=headers, json=body)
+            
+            if response.status_code != 200:
+                if reauthenticate():
+                    self.token = read_token_file()
+                    headers = {'Authorization': f'Bearer {self.token}'}
+                    response = requests.post(self.mic_url, headers=headers, json=body)
+            
+            data = response.json()
+            if data['success']:
+                theResponse = data['wordResponse']
+                print("\nResponse:", theResponse, flush=True)
+                logging.info(theResponse)
+                speak(theResponse)
+            else:
+                speak(data['message'])
+                
+        except Exception as e:
+            print(f"\nError handling query: {e}", flush=True)
+        finally:
+            self.is_handling_query = False
+            self.state = State.LISTENING_FOR_FRANK
+
     def start(self):
         """Start the audio processing"""
         with self.stream:
-            print("Recording started...")
+            print("Recording started...", flush=True)
             while self.is_running:
-                time.sleep(0.1)  # Prev
+                time.sleep(0.1)
 
 def main():
     logging.basicConfig(

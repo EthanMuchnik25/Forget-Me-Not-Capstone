@@ -44,11 +44,11 @@ model = None
 
 # Load models before first request
 
-@app.before_request
-def load_models():
-    global model
-    model = whisper.load_model("base.en")
-    print("Model loaded and ready to serve requests")
+# @app.before_request
+#def load_models():
+#    global model
+#    model = whisper.load_model("base.en")
+#    print("Model loaded and ready to serve requests")
 
 # TODO For now, don't use blueprints
 
@@ -208,10 +208,18 @@ def voice_query():
 
     return jsonify(response), 200
 
+
+@time_and_log
+def do_post(data):
+    response = requests.post(Config.TRANSCRIBE_REMOTE_ENDPOINT, json=data)
+    return response
+
+
 @app.route('/transcribe', methods=['POST'])
 @jwt_required()
 @time_and_log
 def transcribe():
+    beforeTrans = time.time()
     jwt = get_jwt()
     user = jwt['sub']  # TODO, sanitize inputs? is it ok if thread dies?
     data = request.get_json()
@@ -228,15 +236,17 @@ def transcribe():
     audio_chunk = audio_chunk.tolist()
 
     data = {"audio_chunk": audio_chunk}
-    
-    response = requests.post(Config.TRANSCRIBE_REMOTE_ENDPOINT, json=data)
+    print("am here")
+    # response = requests.post(Config.TRANSCRIBE_REMOTE_ENDPOINT, json=data)
+    response = do_post(data)
+    print("am here after")
 
     if response.status_code == 200:
         # request was successful
         json_response = response.json()
     else:
         return {"error": "GPU failed to process Transcribe"}, 400
-    
+    print("we here?")
 
 
     # result = model.transcribe(audio_chunk, fp16=False, language='en', no_speech_threshold=0.4)
@@ -258,6 +268,8 @@ def transcribe():
     # # Simple way to case on stuff to test database, neg num is how many back
     # # In the future, can complicate policies to add stuff like auth/security
     # response = handle_sentence_query(user, query, index, token) 
+    afterTrans = time.time() -beforeTrans
+    print("server took this long for trans:", afterTrans)
 
     return jsonify(response), 200
 
