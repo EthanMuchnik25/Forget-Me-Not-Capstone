@@ -261,13 +261,13 @@ def transcribe():
 
     return jsonify(response), 200
 
-@app.route('/logs', methods=['GET'])
-def get_logs():
-    logs = read_log_file()
-    if logs:
-        return jsonify(logs=logs)
-    else:
-        return jsonify(logs="No new logs"), 200
+# @app.route('/logs', methods=['GET'])
+# def get_logs():
+#     logs = read_log_file()
+#     if logs:
+#         return jsonify(logs=logs)
+#     else:
+#         return jsonify(logs="No new logs"), 200
 
 
 # TODO this seems like shitty api design, maybe it would be useful to have a 
