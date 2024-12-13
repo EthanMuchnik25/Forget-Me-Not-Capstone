@@ -9,6 +9,7 @@ import logging
 import threading
 import os
 import time
+import requests
 
 from myapp import app
 from myapp import jwt
@@ -222,9 +223,25 @@ def transcribe():
     global model
     audio_chunk = audio_chunk.astype(np.float32)
     print("made it here")
-    result = model.transcribe(audio_chunk, fp16=False, language='en', no_speech_threshold=0.4)
-    print("result: ", result)
-    transcribed_text = result["text"].strip().lower()
+
+    #prepare audio_chunk to be sent via requests
+    audio_chunk = audio_chunk.tolist()
+
+    data = {"audio_chunk": audio_chunk}
+    
+    response = requests.post(Config.TRANSCRIBE_REMOTE_ENDPOINT, json=data)
+
+    if response.status_code == 200:
+        # request was successful
+        json_response = response.json()
+    else:
+        return {"error": "GPU failed to process Transcribe"}, 400
+    
+
+
+    # result = model.transcribe(audio_chunk, fp16=False, language='en', no_speech_threshold=0.4)
+    # print("result: ", result)
+    transcribed_text = json_response["text"].strip().lower()
     # print("transcribed text is: ", transcribed_text)
     
     response = {'text': transcribed_text}

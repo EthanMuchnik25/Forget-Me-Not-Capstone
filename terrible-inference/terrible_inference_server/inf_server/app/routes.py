@@ -4,9 +4,16 @@ from app.infer_gd import handle_img
 from app.speech_compute import getMostSimilar
 import os
 import time
+import numpy as np
+import whisper
 
+model = None
 
-
+@app.before_request
+def load_models():
+    global model
+    model = whisper.load_model("base.en")
+    print("Model loaded and ready to serve requests")
 
 @app.route('/ask_abadi', methods=['POST'])
 def ask_abadi():
@@ -35,6 +42,27 @@ def similar_vector_compute():
 
     closestName = getMostSimilar(query, wordList)
     return {"closestName": closestName}, 200
+
+@app.route('/transcribe', methods=['POST'])
+def transcribe():
+
+    data = request.get_json()
+    audio_chunk = data['audio_chunk']
+
+    audio_chunk = np.array(audio_chunk)
+    audio_chunk = audio_chunk.astype(np.float32)
+
+
+    global model
+
+    result = model.transcribe(audio_chunk, fp16=False, language='en', no_speech_threshold=0.4)
+    transcribed_text = result["text"].strip().lower()
+    # print("transcribed text is: ", transcribed_text)
+    
+    response = {'text': transcribed_text}
+    print("transcribed text is: ", transcribed_text)
+
+    return jsonify(response), 200
 
 
 @app.route('/', methods=['GET'])

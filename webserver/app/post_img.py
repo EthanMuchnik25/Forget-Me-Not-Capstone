@@ -27,7 +27,7 @@ elif Config.DATABASE_VER == "DEBUG":
 else:
     raise NotImplementedError
 
-from app.utils.scripts.pruning_tests.compare_adj_diffs import mse
+from utils.scripts.pruning_tests.compare_adj_diffs import mse
 from app.get_room_img import fs_get_room_img
 
 

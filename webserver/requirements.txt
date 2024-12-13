@@ -26,4 +26,5 @@ langchain
 openai
 sentence_transformers
 openai-whisper
+scikit-image
 # xformers

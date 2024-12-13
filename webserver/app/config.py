@@ -16,6 +16,8 @@ class Config:
     SIMILARITY_THRESHOLD = 0.70 # 0.75 is good for HEAVY-COMPUTE but 0.7 is probably better for LIGHT-COMPUTE
     VECTOR_COSINE_REMOTE_IP = '172.24.156.5'
     VECTOR_COSINE_REMOTE_ENDPOINT = f'http://{VECTOR_COSINE_REMOTE_IP}:3999/similar_vector_compute'
+    TRANSCRIBE_REMOTE_IP = '172.24.156.5'
+    TRANSCRIBE_REMOTE_ENDPOINT = f'http://{TRANSCRIBE_REMOTE_IP}:3999/transcribe'
 
     # For auth
     JWT_SECRET_KEY = "this can sorta be anything"
@@ -32,4 +34,4 @@ class Config:
     #EXTRA FEATURES
     PRUNING = True
     MSE_THRESHOLD = 0.28
-    
+
